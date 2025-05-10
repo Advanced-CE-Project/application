@@ -4,7 +4,6 @@
     "slug": "BeMo",
     "version": "0.0.1",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
     "scheme": "bemo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -20,7 +19,6 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
       "expo-router",
