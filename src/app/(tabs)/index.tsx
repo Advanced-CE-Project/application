@@ -6,7 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, Text, StyleSheet } from 'react-native';
-import { COLORS } from '../theme';
+import { COLORS } from '@/app/theme';
 
 // 각 화면 import (screens 폴더에 구현)
 import HomeScreen from './home.tsx';

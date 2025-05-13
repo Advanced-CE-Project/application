@@ -1,7 +1,7 @@
 // screens/ProfileScreen.tsx
 import React, { useState } from 'react';
 import { View, Text, Image, TextInput, Button, StyleSheet } from 'react-native';
-import { COLORS } from "./theme";
+import { COLORS } from '@/app/theme';
 
 export default function ProfileScreen() {
   const [nickname, setNickname] = useState('홍길동');

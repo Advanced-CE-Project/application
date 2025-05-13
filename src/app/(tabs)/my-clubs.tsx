@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Button } from 'react-native';
 import { useRouter } from 'expo-router';
-import { COLORS } from '../theme';
+import { COLORS } from '@/app/theme';
 
 type Group = {
   id: string;

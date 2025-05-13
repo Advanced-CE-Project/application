@@ -1,7 +1,7 @@
 // screens/SearchScreen.tsx
 import React from 'react';
 import { View, TextInput, FlatList, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { COLORS } from '../theme';
+import { COLORS } from '@/app/theme';
 
 // import MapView, { Marker } from 'react-native-maps';
 //
