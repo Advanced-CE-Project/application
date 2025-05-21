@@ -1,4 +1,3 @@
-// screens/SearchScreen.tsx
 import React from 'react';
 import { View, TextInput, FlatList, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { COLORS } from '@/app/theme';

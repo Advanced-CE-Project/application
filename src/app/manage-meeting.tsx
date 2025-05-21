@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 // screens/ManageMeetingScreen.tsx
+=======
+>>>>>>> fdd7784 (feat: add auth)
 import React from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 
@@ -30,4 +33,8 @@ const styles = StyleSheet.create({
   title: { fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
   card: { padding: 16, backgroundColor: '#f6f6f6', borderRadius: 8, marginBottom: 10 },
   name: { fontWeight: 'bold', fontSize: 16 },
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> fdd7784 (feat: add auth)

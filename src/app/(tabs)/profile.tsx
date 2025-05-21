@@ -1,4 +1,3 @@
-// screens/ProfileScreen.tsx
 import React, { useState } from 'react';
 import { View, Text, Image, TextInput, Button, StyleSheet } from 'react-native';
 import { COLORS } from '@/app/theme';

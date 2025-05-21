@@ -1,4 +1,3 @@
-// index.tsx
 import 'react-native-gesture-handler'; // 네비게이션을 위한 필수 import (최상단)
 import { registerRootComponent } from 'expo'; // Expo 프로젝트일 경우 필요
 import React from 'react';
@@ -8,22 +7,21 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, Text, StyleSheet } from 'react-native';
 import { COLORS } from '@/app/theme';
 
-// 각 화면 import (screens 폴더에 구현)
-import HomeScreen from './home.tsx';
-import SearchScreen from './search.tsx';
-import MyClubsScreen from './my-clubs.tsx';
-import ProfileScreen from './profile.tsx';
+import HomeScreen from '@/app/(tabs)/home';
+import SearchScreen from '@/app/(tabs)/search';
+import MyClubsScreen from '@/app/(tabs)/my-clubs';
+import ProfileScreen from '@/app/(tabs)/profile';
 
-import CreateMeetingScreen from '../create-meeting.tsx';
-import ManageMeetingScreen from '../manage-meeting.tsx';
-import AttendanceScreen from '../attendance.tsx';
-import ShareScreen from '../share.tsx';
-import MissionScreen from '../mission.tsx';
-import EvaluationScreen from '../evaluation.tsx';
-import NotificationScreen from '../notification.tsx';
-import SettingsScreen from '../settings.tsx';
-import PlaceRecommendScreen from '../place-recommend.tsx';
-import QuickContactScreen from '../quick-contact.tsx';
+import CreateMeetingScreen from '@/app/create-meeting';
+import ManageMeetingScreen from '@/app/manage-meeting';
+import AttendanceScreen from '@/app/attendance';
+import ShareScreen from '@/app/share';
+import MissionScreen from '@/app/mission';
+import EvaluationScreen from '@/app/evaluation';
+import NotificationScreen from '@/app/notification';
+import SettingsScreen from '@/app/settings';
+import PlaceRecommendScreen from '@/app/place-recommend';
+import QuickContactScreen from '@/app/quick-contact';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();

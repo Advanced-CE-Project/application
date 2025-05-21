@@ -1,4 +1,3 @@
-// screens/MissionScreen.tsx
 import React, { useState } from 'react';
 import { View, Text, TextInput, Switch, Button, StyleSheet } from 'react-native';
 

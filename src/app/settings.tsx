@@ -1,4 +1,3 @@
-// screens/SettingsScreen.tsx
 import React, { useState } from 'react';
 import { View, Text, Switch, StyleSheet, ScrollView } from 'react-native';
 

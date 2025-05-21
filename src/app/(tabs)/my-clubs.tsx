@@ -1,5 +1,3 @@
-// src/app/(tabs)/my-groups.tsx
-
 import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Button } from 'react-native';
 import { useRouter } from 'expo-router';

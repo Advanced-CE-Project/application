@@ -1,4 +1,3 @@
-// screens/AttendanceScreen.tsx
 import React from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 
