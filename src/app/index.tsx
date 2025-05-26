@@ -2,11 +2,11 @@ import { Stack } from 'expo-router'
 import { useColorScheme } from 'react-native'
 import { UnistylesRuntime } from 'react-native-unistyles'
 import { useFonts } from 'expo-font'
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { QueryClientProvider } from '@tanstack/react-query'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
-import { lightTheme, darkTheme } from '@/constants/themes'
 import { queryClient } from '@/app/lib/queryClient'
+import { lightTheme, darkTheme } from '@/constants/themes'
 
 // UnistylesRuntime.setThemes({ light: lightTheme, dark: darkTheme })
 // UnistylesRuntime.setConfig({ initialTheme: 'light' })
@@ -14,7 +14,7 @@ import { queryClient } from '@/app/lib/queryClient'
 export const Layout = () => {
   const scheme = useColorScheme()
   const [fontsLoaded] = useFonts({
-    Inter: require('@/assets/fonts/Inter-Regular.ttf'),
+    Inter: require('../assets/fonts/Inter-Regular.ttf'),
   })
 
   if (!fontsLoaded) return null
@@ -22,10 +22,7 @@ export const Layout = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-        </Stack>
+        <Stack screenOptions={{ headerShown: false }} />
       </QueryClientProvider>
     </GestureHandlerRootView>
   )
