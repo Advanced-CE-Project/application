@@ -2,10 +2,14 @@ import React from 'react';
 import { View, Text, ScrollView, Pressable, Switch } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 
 const SettingsScreen = () => {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
+  const router = useRouter();
+  const handleLogout = () => {
+    router.replace('/start');
+  }
 
   const commonStyle = {
     backgroundColor: '#fff',
@@ -59,15 +63,15 @@ const SettingsScreen = () => {
           <Text style={{ fontSize: 16, fontWeight: '600', color: '#333', marginBottom: 16 }}>계정</Text>
 
           <View style={{ paddingBottom: 24 }}>
-            <Pressable onPress={() => {}} style={{ ...commonStyle }}>
+            <Pressable style={{ ...commonStyle }}>
                 <Text style={{ fontSize: 16, color: '#333' }}>프로필 관리</Text>
             </Pressable>
 
-            <Pressable onPress={() => {}} style={{ ...commonStyle }}>
+            <Pressable style={{ ...commonStyle }}>
                 <Text style={{ fontSize: 16, color: '#333' }}>개인정보 보호</Text>
             </Pressable>
 
-            <Pressable onPress={() => {}} style={{ ...commonStyle }}>
+            <Pressable style={{ ...commonStyle }}>
                 <Text style={{ fontSize: 16, color: '#333' }}>보안</Text>
             </Pressable>
           </View>
@@ -100,11 +104,11 @@ const SettingsScreen = () => {
                 <Switch value={false} onValueChange={() => {}} />
             </View>
 
-            <Pressable onPress={() => {}} style={{ ...commonStyle }}>
+            <Pressable style={{ ...commonStyle }}>
                 <Text style={{ fontSize: 16, color: '#333' }}>언어</Text>
             </Pressable>
 
-            <Pressable onPress={() => {}} style={{ ...commonStyle }}>
+            <Pressable style={{ ...commonStyle }}>
                 <Text style={{ fontSize: 16, color: '#333' }}>위치 서비스</Text>
             </Pressable>
           </View>
@@ -113,16 +117,16 @@ const SettingsScreen = () => {
           <Text style={{ fontSize: 16, fontWeight: '600', color: '#333', marginBottom: 16 }}>기타</Text>
 
           <View style={{ paddingBottom: 24 }}>
-            <Pressable onPress={() => {}} style={{ ...commonStyle }}>
+            <Pressable style={{ ...commonStyle }}>
                 <Text style={{ fontSize: 16, color: '#333' }}>이용약관</Text>
             </Pressable>
 
-            <Pressable onPress={() => {}} style={{ ...commonStyle }}>
+            <Pressable style={{ ...commonStyle }}>
                 <Text style={{ fontSize: 16, color: '#333' }}>개인정보 처리방침</Text>
             </Pressable>
 
-            <Pressable onPress={() => {}} style={{ ...commonStyle }}>
-                <Text style={{ fontSize: 16, color: '#d00' }}>로그아웃</Text>
+            <Pressable style={{ ...commonStyle }}>
+                <Text onPress={handleLogout} style={{ fontSize: 16, color: '#d00' }}>로그아웃</Text>
             </Pressable>
           </View>
 
