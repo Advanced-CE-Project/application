@@ -254,4 +254,4 @@ const CreateMeetingScreen = () => {
   );
 };
 
-export default CreateMeeting;
+export default CreateMeetingScreen;
