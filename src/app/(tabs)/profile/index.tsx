@@ -1,12 +1,13 @@
 import { Feather } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Alert, Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spacer } from '@/components/ui/spacer';
 import { Tag } from '@/components/ui/tag';
+import { router } from 'expo-router';
 
 const DUMMY_USER = {
   email: 'bemo@bemo.com',
@@ -57,8 +58,9 @@ const useProfile = () => {
 
   const navigateToSettings = () => {
     // 설정 화면으로 이동
-    console.log('Navigate to settings');
-    Alert.alert('설정', '설정 기능이 구현될 예정입니다.');
+    // console.log('Navigate to settings');
+    // Alert.alert('설정', '설정 기능이 구현될 예정입니다.');
+    router.push('/settings');
   };
 
   return {

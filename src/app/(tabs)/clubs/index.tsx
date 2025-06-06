@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MeetingCard } from '@/components/ui/meeting-card';
 import { Spacer } from '@/components/ui/spacer';
+import { router } from 'expo-router';
 
 // 더미 데이터 - 내가 만든 모임들
 const MY_MEETINGS = [
@@ -48,12 +49,14 @@ const useClubs = () => {
 
   const navigateToCreateMeeting = () => {
     // 새 모임 만들기 화면으로 이동
-    console.log('Navigate to create meeting');
+    // console.log('Navigate to create meeting');
+    router.push('/create-meeting');
   };
 
   const navigateToMeetingDetail = (meetingId: string) => {
     // 모임 상세 페이지로 이동 (관리 모드)
-    console.log('Navigate to meeting detail:', meetingId);
+    // console.log('Navigate to meeting detail:', meetingId);
+    router.push(`/meeting-detail?id=${meetingId}&mode=manage`);
   };
 
   return {
