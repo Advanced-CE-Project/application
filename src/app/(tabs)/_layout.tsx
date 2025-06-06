@@ -1,3 +1,14 @@
+<<<<<<< HEAD
+import { Tabs } from 'expo-router'
+import { TabBarIcon } from '@/components/TabBarIcon'
+
+export const Layout = () => (
+  <Tabs screenOptions={{ headerShown: false }}>
+    <Tabs.Screen name="home" options={{ tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} /> }} />
+    <Tabs.Screen name="profile" options={{ tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} /> }} />
+  </Tabs>
+)
+=======
 import { Feather, FontAwesome6 } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 
@@ -57,3 +68,4 @@ const TabLayout = () => (
 );
 
 export default TabLayout;
+>>>>>>> 49ba8d8cd622b1a84e8ad0b4c823069d4178f287

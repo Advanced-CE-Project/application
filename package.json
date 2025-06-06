@@ -16,16 +16,33 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "@expo/vector-icons": "^14.0.2",
+    "@expo/config": "^8.1.1",
+    "@expo/metro-config": "^0.10.0",
+    "@expo/vector-icons": "^14.1.0",
+    "@hookform/resolvers": "^5.0.1",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
+<<<<<<< HEAD
+    "@shopify/flash-list": "^1.8.0",
+    "@tanstack/react-query": "^5.77.0",
+    "expo": "^53.0.9",
+    "expo-barcode-scanner": "^13.0.1",
+=======
     "@shopify/flash-list": "1.7.3",
     "@tanstack/react-query": "^5.79.0",
     "expo": "52.0.46",
+>>>>>>> 49ba8d8cd622b1a84e8ad0b4c823069d4178f287
     "expo-blur": "~14.0.3",
+    "expo-cli": "^6.3.12",
     "expo-constants": "~17.0.8",
+    "expo-document-picker": "^13.1.5",
     "expo-font": "~13.0.4",
+<<<<<<< HEAD
+    "expo-haptics": "~14.0.1",
+    "expo-image-picker": "^16.1.4",
+=======
     "expo-haptics": "14.0.1",
+>>>>>>> 49ba8d8cd622b1a84e8ad0b4c823069d4178f287
     "expo-linking": "~7.0.5",
     "expo-router": "4.0.21",
     "expo-splash-screen": "0.29.24",
@@ -33,23 +50,38 @@
     "expo-symbols": "~0.2.2",
     "expo-system-ui": "~4.0.9",
     "expo-web-browser": "~14.0.2",
+    "nvm": "^0.0.4",
     "react": "18.3.1",
     "react-dom": "18.3.1",
+    "react-hook-form": "^7.56.4",
     "react-native": "0.76.9",
+<<<<<<< HEAD
+    "react-native-fast-image": "^8.6.3",
+    "react-native-gesture-handler": "~2.24.0",
+    "react-native-mmkv": "^3.2.0",
+    "react-native-reanimated": "~3.17.4",
+    "react-native-safe-area-context": "4.12.0",
+    "react-native-screens": "~4.4.0",
+    "react-native-unistyles": "^2.32.0",
+=======
     "react-native-gesture-handler": "2.20.2",
     "react-native-mmkv": "^3.2.0",
     "react-native-reanimated": "~3.16.1",
     "react-native-safe-area-context": "4.12.0",
     "react-native-screens": "~4.4.0",
     "react-native-unistyles": "^2.42.0",
+>>>>>>> 49ba8d8cd622b1a84e8ad0b4c823069d4178f287
     "react-native-web": "~0.19.13",
-    "react-native-webview": "13.12.5"
+    "react-native-webview": "13.12.5",
+    "zod": "^3.25.28",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/jest": "^29.5.12",
     "@types/react": "~18.3.12",
+    "@types/react-native": "^0.73.0",
     "@types/react-test-renderer": "^18.3.0",
     "jest": "^29.2.1",
     "jest-expo": "~52.0.6",
