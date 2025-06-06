@@ -52,12 +52,14 @@ const useHome = () => {
 
   const navigateToMeetingDetail = (meetingId: string) => {
     // 모임 상세 페이지로 이동
-    console.log('Navigate to meeting:', meetingId);
+    // console.log('Navigate to meeting:', meetingId);
+    router.push(`/meeting-detail?id=${meetingId}`);
   };
 
   const viewAllRecent = () => {
     // 최근 모임 전체 보기
-    console.log('View all recent meetings');
+    // console.log('View all recent meetings');
+    router.push('/recent-meetings');
   };
 
   return {
