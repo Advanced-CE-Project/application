@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Stack } from 'expo-router'
 import { useColorScheme } from 'react-native'
 import { UnistylesRuntime } from 'react-native-unistyles'
@@ -18,8 +19,15 @@ export const Layout = () => {
   })
 
   if (!fontsLoaded) return null
+=======
+import { Stack } from 'expo-router';
 
+import Providers from '@/app/_providers';
+>>>>>>> 49ba8d8cd622b1a84e8ad0b4c823069d4178f287
+
+const Layout = () => {
   return (
+<<<<<<< HEAD
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
         <Stack>
@@ -30,3 +38,15 @@ export const Layout = () => {
     </GestureHandlerRootView>
   )
 }
+=======
+    <Providers>
+      <Stack>
+        <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+        {/* <Stack.Screen name='modal' options={{ presentation: 'modal' }} /> */}
+      </Stack>
+    </Providers>
+  );
+};
+
+export default Layout;
+>>>>>>> 49ba8d8cd622b1a84e8ad0b4c823069d4178f287
