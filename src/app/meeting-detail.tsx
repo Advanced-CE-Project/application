@@ -2,6 +2,7 @@ import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { View, Text, ScrollView, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';  
 
 const MEETING_DETAILS = {
   '1': {
@@ -14,6 +15,10 @@ const MEETING_DETAILS = {
 };
 
 const MeetingDetailScreen = () => {
+  const router = useRouter();
+  const handleContact = () => {
+    router.push('/contact');
+  };
   const { id } = useLocalSearchParams<{ id: string }>();
   const meeting = MEETING_DETAILS[id ?? '1'];
 
@@ -82,8 +87,7 @@ const MeetingDetailScreen = () => {
                 marginBottom: 8,
             }}
             >
-            <Feather name="user" size={20} color="#666" />
-            {/* 추훟 참가자 프로필 연동  */}
+            <Feather onPress={handleContact} name="user" size={20} color="#666" />
             </View>
         ))}
         </View>
