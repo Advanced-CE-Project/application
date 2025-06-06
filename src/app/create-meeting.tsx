@@ -44,7 +44,7 @@ export const useCreateMeetingForm = () => {
           selectedTime.getMinutes()
         )
       );
-    }
+    } 
     setShowTimePicker(false);
   };
 
