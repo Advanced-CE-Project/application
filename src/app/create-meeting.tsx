@@ -67,7 +67,7 @@ export const useCreateMeetingForm = () => {
   };
 };
 
-const CreateMeeting = () => {
+const CreateMeetingScreen = () => {
   const navigation = useNavigation();
   const {
     insets,
