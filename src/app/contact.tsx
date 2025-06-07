@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context'; 
+import { useRouter } from 'expo-router';
 
 const CURRENT_MEETINGS = [
   {
@@ -28,7 +29,12 @@ const commonStyle = {
 
 const ContactScreen = () => {
   const insets = useSafeAreaInsets();
-    
+  const router = useRouter();
+
+  const handleEvaluate = () => {
+    router.push('/evaluate');
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
       {/* 고정 헤더 */}
@@ -86,6 +92,13 @@ const ContactScreen = () => {
             </Pressable>
         </View>
       </View>
+
+      {/* 평가하기 */}
+      <View style={{ padding: 12 }}>
+        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#374151', marginBottom: 12 }}>평가하기</Text>
+        <Pressable onPress={handleEvaluate}>평가하기</Pressable>
+      </View>
+
     </View>
   );
 };
