@@ -10,6 +10,7 @@ export interface MeetingCardProps {
   tags: string[];
   onPress?: () => void;
   style?: ViewStyle;
+  description?: string;
   participants?: {
     current: number;
     max: number;
