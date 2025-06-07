@@ -1,11 +1,11 @@
 import { Feather } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import React from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MeetingCard } from '@/components/ui/meeting-card';
 import { Spacer } from '@/components/ui/spacer';
-import { router } from 'expo-router';
 
 // 더미 데이터 - 내가 만든 모임들
 const MY_MEETINGS = [
@@ -50,13 +50,13 @@ const useClubs = () => {
   const navigateToCreateMeeting = () => {
     // 새 모임 만들기 화면으로 이동
     // console.log('Navigate to create meeting');
-    router.push('/create-meeting');
+    router.push('/meeting/create');
   };
 
   const navigateToMeetingDetail = (meetingId: string) => {
     // 모임 상세 페이지로 이동 (관리 모드)
     // console.log('Navigate to meeting detail:', meetingId);
-    router.push(`/meeting-detail?id=${meetingId}&mode=manage`);
+    router.push(`/meeting/detail?id=${meetingId}&mode=manage`);
   };
 
   return {
@@ -91,7 +91,7 @@ const ClubsScreen = () => {
         >
           <Text
             style={{
-              fontSize: 20,
+              fontSize: 24,
               fontWeight: '600',
               color: '#333',
             }}
@@ -102,15 +102,16 @@ const ClubsScreen = () => {
           <Pressable
             onPress={navigateToCreateMeeting}
             style={{
-              width: 32,
-              height: 32,
-              borderRadius: 16,
+              padding: 8,
+              width: 40,
+              height: 40,
+              borderRadius: 20,
               backgroundColor: '#4A90E2',
               alignItems: 'center',
               justifyContent: 'center',
             }}
           >
-            <Feather name='plus' size={18} color='#fff' />
+            <Feather name='plus' size={20} color='#fff' />
           </Pressable>
         </View>
       </View>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
+import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const TAGS = ['운동', '스터디', '네트워킹', '문화생활', '취미'];
@@ -12,7 +12,7 @@ const MissionSettingScreen = () => {
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
     );
   };
 
@@ -33,7 +33,7 @@ const MissionSettingScreen = () => {
         <TextInput
           value={title}
           onChangeText={setTitle}
-          placeholder="예: 주말 등산 참여하기"
+          placeholder='예: 주말 등산 참여하기'
           style={{
             borderWidth: 1,
             borderColor: '#ddd',
@@ -47,7 +47,7 @@ const MissionSettingScreen = () => {
         <TextInput
           value={description}
           onChangeText={setDescription}
-          placeholder="미션에 대한 설명을 입력하세요."
+          placeholder='미션에 대한 설명을 입력하세요.'
           multiline
           numberOfLines={4}
           style={{

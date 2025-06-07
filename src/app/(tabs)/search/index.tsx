@@ -1,12 +1,29 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MeetingCard } from '@/components/ui/meeting-card';
 import { Spacer } from '@/components/ui/spacer';
 import { Tag } from '@/components/ui/tag';
+
+// 토스 스타일 색상 팔레트
+const colors = {
+  primary: '#3182F6',
+  gray900: '#191F28',
+  gray800: '#333D4B',
+  gray700: '#4E5968',
+  gray600: '#6B7684',
+  gray500: '#8B95A1',
+  gray400: '#B0B8C1',
+  gray300: '#C9CFD6',
+  gray200: '#E5E8EB',
+  gray100: '#F2F4F6',
+  gray50: '#F9FAFB',
+  white: '#FFFFFF',
+  background: '#FAFBFC',
+};
 
 // 카테고리 데이터
 const CATEGORIES = ['전체', '운동', '스터디', '친목', '음식', '여행'];
@@ -126,13 +143,16 @@ const SearchScreen = () => {
         >
           <Text
             style={{
-              fontSize: 20,
+              fontSize: 24,
               fontWeight: '600',
               color: '#333',
             }}
           >
             검색
           </Text>
+
+          {/* 높이 통일을 위한 빈 공간 */}
+          <View style={{ width: 40, height: 40 }} />
         </View>
       </View>
 

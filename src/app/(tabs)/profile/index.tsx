@@ -1,4 +1,5 @@
 import { Feather } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spacer } from '@/components/ui/spacer';
 import { Tag } from '@/components/ui/tag';
-import { router } from 'expo-router';
 
 const DUMMY_USER = {
   email: 'bemo@bemo.com',
@@ -122,7 +122,7 @@ const ProfileScreen = () => {
         >
           <Text
             style={{
-              fontSize: 20,
+              fontSize: 24,
               fontWeight: '600',
               color: '#333',
             }}

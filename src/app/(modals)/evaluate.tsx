@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const EVALUATION_TAGS = [
@@ -17,7 +17,7 @@ const EvaluationScreen = () => {
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
     );
   };
 
@@ -52,9 +52,7 @@ const EvaluationScreen = () => {
                   backgroundColor: isSelected ? '#4A90E2' : '#f0f0f0',
                 }}
               >
-                <Text style={{ color: isSelected ? '#fff' : '#333', fontSize: 15 }}>
-                  {tag}
-                </Text>
+                <Text style={{ color: isSelected ? '#fff' : '#333', fontSize: 15 }}>{tag}</Text>
               </Pressable>
             );
           })}

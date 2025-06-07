@@ -53,13 +53,13 @@ const useHome = () => {
   const navigateToMeetingDetail = (meetingId: string) => {
     // 모임 상세 페이지로 이동
     // console.log('Navigate to meeting:', meetingId);
-    router.push(`/meeting-detail?id=${meetingId}`);
+    router.push(`/meeting/detail?id=${meetingId}`);
   };
 
   const viewAllRecent = () => {
     // 최근 모임 전체 보기
     // console.log('View all recent meetings');
-    router.push('/recent-meetings');
+    router.push('/meeting/recent');
   };
 
   return {
@@ -95,7 +95,7 @@ const HomeScreen = () => {
         >
           <Text
             style={{
-              fontSize: 28,
+              fontSize: 24,
               fontWeight: 'bold',
               color: '#4A90E2',
             }}
