@@ -4,6 +4,8 @@ import { View, Text, ScrollView, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';  
 
+import { Button } from '@/components/ui/button';
+
 const MEETING_DETAILS = {
   '1': {
     title: '주말 등산 모임',
@@ -18,6 +20,10 @@ const MeetingDetailScreen = () => {
   const router = useRouter();
   const handleContact = () => {
     router.push('/contact');
+  };
+  const handleApplication = () => {
+    console.log('참가 신청받기');
+    // router.push('/application');
   };
   const { id } = useLocalSearchParams<{ id: string }>();
   const meeting = MEETING_DETAILS[id ?? '1'];
@@ -103,20 +109,8 @@ const MeetingDetailScreen = () => {
           backgroundColor: '#fff',
         }}
       >
-        <Pressable
-          style={{
-            backgroundColor: '#4A90E2',
-            paddingVertical: 14,
-            borderRadius: 8,
-            alignItems: 'center',
-          }}
-          onPress={() => {
-            // 신청 처리 로직
-            alert('참가 신청 완료!');
-          }}
-        >
-          <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>참가 신청하기</Text>
-        </Pressable>
+        <Button title='참가 신청하기' onPress={handleApplication}></Button>
+
       </View>
     </View>
   );

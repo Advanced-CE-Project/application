@@ -57,9 +57,6 @@ const useProfile = () => {
   };
 
   const navigateToSettings = () => {
-    // 설정 화면으로 이동
-    // console.log('Navigate to settings');
-    // Alert.alert('설정', '설정 기능이 구현될 예정입니다.');
     router.push('/settings');
   };
 

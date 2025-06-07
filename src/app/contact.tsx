@@ -63,14 +63,12 @@ const ContactScreen = () => {
 
       {/* 모임 정보 */}
       <View style={{ marginBottom: 24 }}>
-        {/* <Text style={{ fontSize: 16, fontWeight: '500' }}>주말 등산 모임</Text>
-        <Text style={{ fontSize: 14, color: '#6B7280' }}>4월 15일 (토) 오전 8시 · 회기역 1번 출구</Text> */}
         {CURRENT_MEETINGS.map((meeting) => (
             <View key={meeting.id} style={{ marginTop: 8, padding: 12 }}>
                 <Text style={{fontSize: 14, fontWeight: 'bold', color: '#333', marginBottom: 12 }}>{meeting.title}</Text>
                 <Text style={{ fontSize: 12, color: '#6B7280' }}>{meeting.date} · {meeting.location}</Text>
             </View>
-            ))}
+        ))}
       </View>
 
       {/* 빠른 메시지 보내기 */}
