@@ -7,6 +7,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/ui/button';
 
+import InfoTab from '@/app/info';
+import ResourcesTab from '@/app/(modals)/share';
+import MissionTab from '@/app/(modals)/mission';
+
 const MEETING_DETAILS = [
   {
     id: '1',
@@ -42,14 +46,6 @@ const MeetingDetailScreen = () => {
   const handleApplication = () => {
     console.log('참가 신청받기');
     // 추후 알고리즘 추가
-  };
-
-  const handleMission = () => {
-    router.push('/(modals)/mission');
-  };
-
-  const handleSharing = () => {
-    router.push('/(modals)/share');
   };
 
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -133,251 +129,12 @@ const MeetingDetailScreen = () => {
 
         {/* 탭 콘텐츠 */}
         {/* 정보 탭 내용 */}
-        {selectedTab === '정보' && (
-          <>
-            {/* 기본 정보 카드 */}
-            <View
-              style={{
-                backgroundColor: '#f8f9fa',
-                borderRadius: 16,
-                padding: 20,
-                marginBottom: 24,
-              }}
-            >
-              {/* 날짜 */}
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-                <View
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
-                    backgroundColor: '#4A90E2',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginRight: 12,
-                  }}
-                >
-                  <Feather name='calendar' size={20} color='#fff' />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 12, color: '#666', marginBottom: 2 }}>일시</Text>
-                  <Text style={{ fontSize: 16, color: '#1a1a1a', fontWeight: '500' }}>
-                    {meeting.date}
-                  </Text>
-                </View>
-              </View>
-
-              {/* 장소 */}
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-                <View
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
-                    backgroundColor: '#34c759',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginRight: 12,
-                  }}
-                >
-                  <Feather name='map-pin' size={20} color='#fff' />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 12, color: '#666', marginBottom: 2 }}>장소</Text>
-                  <Text style={{ fontSize: 16, color: '#1a1a1a', fontWeight: '500' }}>
-                    {meeting.location}
-                  </Text>
-                </View>
-              </View>
-
-              {/* 인원 */}
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <View
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
-                    backgroundColor: '#ff9500',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginRight: 12,
-                  }}
-                >
-                  <Feather name='users' size={20} color='#fff' />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 12, color: '#666', marginBottom: 2 }}>참여 인원</Text>
-                  <Text style={{ fontSize: 16, color: '#1a1a1a', fontWeight: '500' }}>
-                    {meeting.participants.current}/{meeting.participants.max}명 참여 중
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            {/* 지도 */}
-            <View
-              style={{
-                height: 180,
-                backgroundColor: '#f0f0f0',
-                borderRadius: 16,
-                marginBottom: 24,
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderWidth: 1,
-                borderColor: '#e0e0e0',
-              }}
-            >
-              <Feather name='map' size={32} color='#999' />
-              <Text style={{ color: '#999', marginTop: 8, fontSize: 14 }}>지도 위치</Text>
-            </View>
-
-            {/* 설명 */}
-            <View style={{ marginBottom: 24 }}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 12, color: '#1a1a1a' }}>
-                모임 설명
-              </Text>
-              <Text
-                style={{
-                  color: '#555',
-                  lineHeight: 24,
-                  fontSize: 16,
-                  backgroundColor: '#f8f9fa',
-                  padding: 16,
-                  borderRadius: 12,
-                }}
-              >
-                {meeting.description}
-              </Text>
-            </View>
-
-            {/* 참가자 */}
-            <View style={{ marginBottom: 24 }}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 16, color: '#1a1a1a' }}>
-                참가자 ({meeting.participants.current}/{meeting.participants.max}명)
-              </Text>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
-                {Array.from({ length: meeting.participants.current }).map((_, index) => (
-                  <Pressable
-                    key={index}
-                    onPress={() => setSelectedUser(index)}
-                    style={{
-                      width: 48,
-                      height: 48,
-                      borderRadius: 24,
-                      backgroundColor: '#e0e0e0',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      borderWidth: 2,
-                      borderColor: '#4A90E2',
-                    }}
-                  >
-                    <Feather name='user' size={22} color='#4A90E2' />
-                  </Pressable>
-                ))}
-              </View>
-            </View>
-          </>
-        )}
-
+        {selectedTab === '정보' && <InfoTab meeting={meeting} />}
         {/* 자료 탭 내용 */}
-        {selectedTab === '자료' && (
-          <View
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              paddingVertical: 60,
-              backgroundColor: '#f8f9fa',
-              borderRadius: 16,
-              marginTop: 20,
-            }}
-          >
-            <View
-              style={{
-                width: 80,
-                height: 80,
-                borderRadius: 40,
-                backgroundColor: '#4A90E2',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginBottom: 20,
-              }}
-            >
-              <Feather name='file-text' size={36} color='#fff' />
-            </View>
-            <Text
-              style={{
-                fontSize: 18,
-                color: '#1a1a1a',
-                marginBottom: 8,
-                fontWeight: '600',
-              }}
-            >
-              모임 자료
-            </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                color: '#666',
-                marginBottom: 24,
-                textAlign: 'center',
-                paddingHorizontal: 20,
-              }}
-            >
-              모임 자료를 확인하려면{'\n'}공유 페이지로 이동하세요.
-            </Text>
-            <Button title='자료 보기' onPress={handleSharing} />
-          </View>
-        )}
-
+        {selectedTab === '자료' && <ResourcesTab />}
         {/* 미션 탭 내용 */}
-        {selectedTab === '미션' && (
-          <View
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              paddingVertical: 60,
-              backgroundColor: '#f8f9fa',
-              borderRadius: 16,
-              marginTop: 20,
-            }}
-          >
-            <View
-              style={{
-                width: 80,
-                height: 80,
-                borderRadius: 40,
-                backgroundColor: '#ff9500',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginBottom: 20,
-              }}
-            >
-              <Feather name='target' size={36} color='#fff' />
-            </View>
-            <Text
-              style={{
-                fontSize: 18,
-                color: '#1a1a1a',
-                marginBottom: 8,
-                fontWeight: '600',
-              }}
-            >
-              모임 미션
-            </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                color: '#666',
-                marginBottom: 24,
-                textAlign: 'center',
-                paddingHorizontal: 20,
-              }}
-            >
-              모임 미션을 확인하려면{'\n'}미션 페이지로 이동하세요.
-            </Text>
-            <Button title='미션 보기' onPress={handleMission} />
-          </View>
-        )}
+        {selectedTab === '미션' && <MissionTab />}
+       
       </ScrollView>
 
       {/* 하단 고정 버튼 */}
