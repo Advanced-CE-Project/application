@@ -25,6 +25,7 @@
     "@tanstack/react-query": "^5.79.0",
     "expo": "^52.0.46",
     "expo-blur": "~14.0.3",
+    "expo-cli": "^6.3.12",
     "expo-constants": "~17.0.8",
     "expo-font": "~13.0.4",
     "expo-haptics": "14.0.1",
