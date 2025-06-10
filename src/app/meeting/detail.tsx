@@ -48,14 +48,6 @@ const MeetingDetailScreen = () => {
     // 추후 알고리즘 추가
   };
 
-  const handleMission = () => {
-    router.push('/(modals)/mission');
-  };
-
-  const handleSharing = () => {
-    router.push('/(modals)/share');
-  };
-
   const { id } = useLocalSearchParams<{ id: string }>();
   const meeting = MEETING_DETAILS.find((m) => m.id === (id ?? '1'));
   if (!meeting)
