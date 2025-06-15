@@ -20,6 +20,7 @@ const MEETING_DETAILS = [
     description:
       '북한산 둘레길을 걸으며 힐링하는 모임입니다. 등산 초보자도 환영하며, 점심은 근처 맛집에서 먹을 예정입니다. 날씨가 좋을 경우 사진도 찍어요!',
     participants: { current: 5, max: 10 },
+    isEnded: true,
   },
 ];
 
@@ -157,7 +158,11 @@ const MeetingDetailScreen = () => {
           elevation: 10,
         }}
       >
-        <Button title='참가 신청하기' onPress={handleApplication} />
+        {meeting.isEnded ? (
+          <Button title='모임 평가하기' onPress={handleEvaluation} />
+        ) : (
+          <Button title='참가 신청하기' onPress={handleApplication} />
+        )}
       </View>
 
       {/* 참가자 모달 */}
