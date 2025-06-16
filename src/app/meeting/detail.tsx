@@ -24,6 +24,20 @@ const MEETING_DETAILS = [
   },
 ];
 
+const commonStyle = {
+  backgroundColor: '#fff',
+  borderRadius: 12,
+  padding: 16,
+  borderWidth: 1,
+  borderColor: '#f0f0f0',
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 4,
+  elevation: 2,
+  marginBottom: 6,
+};
+
 const TABS = ['정보', '자료', '미션'];
 
 const MeetingDetailScreen = () => {
@@ -35,11 +49,7 @@ const MeetingDetailScreen = () => {
 
   // 하단 버튼 영역 높이 계산
   const bottomButtonHeight = 16 + 52 + insets.bottom + 16; // paddingTop + 버튼높이 + safeArea + paddingBottom
-
-  const handleContact = () => {
-    router.push('/contact');
-  };
-
+  
   const handleEvaluation = () => {
     router.push('/(modals)/evaluate');
   };
@@ -164,58 +174,6 @@ const MeetingDetailScreen = () => {
           <Button title='참가 신청하기' onPress={handleApplication} />
         )}
       </View>
-
-      {/* 참가자 모달 */}
-      <Modal visible={selectedUser !== null} transparent animationType='slide'>
-        <Pressable
-          onPress={() => setSelectedUser(null)}
-          style={{
-            flex: 1,
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            justifyContent: 'flex-end',
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: '#fff',
-              paddingHorizontal: 20,
-              paddingTop: 24,
-              paddingBottom: insets.bottom + 20,
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
-            }}
-          >
-            {/* 핸들 바 */}
-            <View
-              style={{
-                width: 40,
-                height: 4,
-                backgroundColor: '#d1d5db',
-                borderRadius: 2,
-                alignSelf: 'center',
-                marginBottom: 20,
-              }}
-            />
-
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: '700',
-                marginBottom: 24,
-                textAlign: 'center',
-                color: '#1a1a1a',
-              }}
-            >
-              참가자 행동
-            </Text>
-
-            <View style={{ gap: 12 }}>
-              <Button title='연락하기' onPress={handleContact} />
-              <Button title='평가하기' onPress={handleEvaluation} />
-            </View>
-          </View>
-        </Pressable>
-      </Modal>
     </View>
   );
 };

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { ScrollView, Text, View, TextInput, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Rating } from 'react-native-ratings'; // 설치 필요
-import { Ionicons } from '@expo/vector-icons';
+import { Button } from '@/components/ui/button';
 
 const mockParticipants = ['김참여', '이산악'];
 const keywordOptions = ['친절함', '적극적', '시간약속', '지식공유'];
@@ -108,19 +108,9 @@ const EvaluateMeetingScreen = () => {
       {/* 모임 평가 완료 */}
 
       {/* 제출 버튼 */}
-      <Pressable
-        onPress={handleSubmit}
-        style={{
-          backgroundColor: '#4F46E5',
-          paddingVertical: 14,
-          borderRadius: 10,
-          alignItems: 'center',
-          marginTop: 10,
-          marginBottom: 40,
-        }}
-      >
+      <Button title="제출하기" onPress={handleSubmit}>
         <Text style={{ color: 'white', fontWeight: '600', fontSize: 16 }}>제출하기</Text>
-      </Pressable>
+      </Button>
     </ScrollView>
   );
 };
