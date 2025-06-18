@@ -1,8 +1,7 @@
-// app/(modals)/evaluate-meeting.tsx
 import React, { useState } from 'react';
 import { ScrollView, Text, View, TextInput, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Rating } from 'react-native-ratings'; // 설치 필요
+import { Rating } from 'react-native-ratings'; 
 import { Button } from '@/components/ui/button';
 
 const mockParticipants = ['김참여', '이산악'];

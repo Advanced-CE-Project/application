@@ -44,6 +44,24 @@ export default function ModalsLayout() {
           title: '평가하기',
         }}
       />
+      <Stack.Screen
+        name='attendance-check'
+        options={{
+          title: '출석 체크',
+        }}
+      />
+      <Stack.Screen
+        name='attendance-manage'
+        options={{
+          title: '출석 관리',
+        }}
+        />
+      <Stack.Screen
+        name='contact'
+        options={{
+          title: '빠른 연락보내기',
+        }}
+      />
     </Stack>
   );
 }

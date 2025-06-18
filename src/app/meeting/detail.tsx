@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,8 @@ const MEETING_DETAILS = [
     description:
       '북한산 둘레길을 걸으며 힐링하는 모임입니다. 등산 초보자도 환영하며, 점심은 근처 맛집에서 먹을 예정입니다. 날씨가 좋을 경우 사진도 찍어요!',
     participants: { current: 5, max: 10 },
-    isEnded: true,
+    isEnded: false,
+    isOngoing: true,
   },
 ];
 
@@ -45,13 +46,16 @@ const MeetingDetailScreen = () => {
   const insets = useSafeAreaInsets();
 
   const [selectedTab, setSelectedTab] = useState<'정보' | '자료' | '미션'>('정보');
-  const [selectedUser, setSelectedUser] = useState<number | null>(null);
 
   // 하단 버튼 영역 높이 계산
   const bottomButtonHeight = 16 + 52 + insets.bottom + 16; // paddingTop + 버튼높이 + safeArea + paddingBottom
   
   const handleEvaluation = () => {
     router.push('/(modals)/evaluate');
+  };
+
+  const handleAttendance = () => {
+    router.push('/(modals)/attendance-manage');
   };
 
   const handleApplication = () => {
@@ -170,6 +174,8 @@ const MeetingDetailScreen = () => {
       >
         {meeting.isEnded ? (
           <Button title='모임 평가하기' onPress={handleEvaluation} />
+        ) : meeting.isOngoing ? (
+          <Button title='출석 체크하기' onPress={handleAttendance} />
         ) : (
           <Button title='참가 신청하기' onPress={handleApplication} />
         )}
