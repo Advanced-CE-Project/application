@@ -29,6 +29,12 @@ const MissionTab = () => {
   const ongoingMissions = DUMMY_MISSIONS.filter((m) => m.status === 'ongoing');
   const completedMissions = DUMMY_MISSIONS.filter((m) => m.status === 'completed');
 
+  const onChangeDate = (_: any, selectedDate?: Date) => {
+    const currentDate = selectedDate || deadline;
+    setShowDatePicker(Platform.OS === 'ios');
+    setDeadline(currentDate);
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
       <ScrollView
@@ -122,7 +128,7 @@ const MissionTab = () => {
                 <Text style={{ color: '#777', marginTop: 4 }}>{mission.description}</Text>
               </View>
             ))
-          )}
+
         </View>
       </ScrollView>
 

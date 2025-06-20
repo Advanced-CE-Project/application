@@ -4,6 +4,7 @@ import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Button } from '@/components/ui/button';
 
+
 type Meeting = {
   title: string;
   date: string;
@@ -37,7 +38,6 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
     // 실제 메시지 전송 로직 대신 알림창 띄우기 예시
     Alert.alert('빠른 메시지', `"${message}" 메시지를 보냈습니다.`);
   }
-
   return (
     <>
       {/* 기본 정보 카드 */}
@@ -163,6 +163,7 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
             <Pressable
               key={index}
               onPress={() => setModalVisible(true)}
+
               style={{
                 width: 48,
                 height: 48,
@@ -175,6 +176,7 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
                 marginRight: 12,
                 marginBottom: 12,
               }}
+
             >
               <Feather name="user" size={22} color="#4A90E2" />
             </Pressable>
