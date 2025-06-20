@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { router, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, Modal, Pressable, Text, View } from 'react-native';
 
@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 type Meeting = {
   title: string;
   date: string;
-  location: string;
+  location: string | null;
   description: string;
   participants: { current: number; max: number };
 };
@@ -33,11 +33,19 @@ const commonStyle = {
 
 const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState<string | null>(null);
 
   const handleQuickMessage = (message: string) => {
     // 실제 메시지 전송 로직 대신 알림창 띄우기 예시
     Alert.alert('빠른 메시지', `"${message}" 메시지를 보냈습니다.`);
   };
+
+  const handleRecommendPlace = () => {
+    router.push('/(modals)/recommend');
+  };
+
+  const displayLocation = currentLocation || meeting.location;
+
   return (
     <>
       {/* 기본 정보 카드 */}
@@ -90,7 +98,7 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 12, color: '#666', marginBottom: 2 }}>장소</Text>
             <Text style={{ fontSize: 16, color: '#1a1a1a', fontWeight: '500' }}>
-              {meeting.location}
+              {displayLocation || '장소 미정'}
             </Text>
           </View>
         </View>
@@ -133,7 +141,14 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
         }}
       >
         <Feather name='map' size={32} color='#999' />
-        <Text style={{ color: '#999', marginTop: 8, fontSize: 14 }}>지도 위치</Text>
+        <Text style={{ color: '#999', marginTop: 8, fontSize: 14 }}>
+          {displayLocation ? displayLocation : (
+            <Pressable
+              onPress={handleRecommendPlace}>
+              <Text>장소 추천 받기</Text>
+            </Pressable>
+          )}
+        </Text>
       </View>
 
       {/* 설명 */}
