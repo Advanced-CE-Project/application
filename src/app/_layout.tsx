@@ -12,6 +12,8 @@ const Layout = () => {
         <Stack.Screen name='help' options={{ headerShown: false }} />
         <Stack.Screen name='terms-of-service' options={{ headerShown: false }} />
         <Stack.Screen name='privacy-policy' options={{ headerShown: false }} />
+        <Stack.Screen name='account-info' options={{ headerShown: false }} />
+        <Stack.Screen name='password-change' options={{ headerShown: false }} />
         <Stack.Screen
           name='settings'
           options={{

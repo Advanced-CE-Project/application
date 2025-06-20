@@ -55,11 +55,18 @@ export default function ModalsLayout() {
         options={{
           title: '출석 관리',
         }}
-        />
+      />
       <Stack.Screen
         name='contact'
         options={{
           title: '빠른 연락보내기',
+        }}
+      />
+      <Stack.Screen
+        name='delete-account'
+        options={{
+          title: '계정 삭제',
+          headerShown: false,
         }}
       />
     </Stack>

@@ -36,12 +36,11 @@ const useSettings = () => {
 
   // 네비게이션 액션들
   const navigateToPasswordChange = () => {
-    Alert.alert('비밀번호 변경', '비밀번호 변경 페이지로 이동합니다.');
-    // TODO: 실제 비밀번호 변경 페이지로 이동
+    router.push('/password-change');
   };
 
   const navigateToAccountInfo = () => {
-    Alert.alert('계정 정보', '계정 정보 페이지로 이동합니다.');
+    router.push('/account-info');
   };
 
   const navigateToPrivacyPolicy = () => {
@@ -75,21 +74,7 @@ const useSettings = () => {
   };
 
   const deleteAccount = () => {
-    Alert.alert(
-      '계정 삭제',
-      '계정을 삭제하면 모든 데이터가 영구적으로 삭제됩니다.\n정말 계속하시겠습니까?',
-      [
-        { text: '취소', style: 'cancel' },
-        {
-          text: '삭제',
-          style: 'destructive',
-          onPress: () => {
-            Alert.alert('계정 삭제', '계정 삭제 절차를 진행합니다.');
-            // TODO: 실제 계정 삭제 로직
-          },
-        },
-      ],
-    );
+    router.push('/(modals)/delete-account');
   };
 
   // 설정 섹션 데이터
@@ -126,15 +111,6 @@ const useSettings = () => {
           value: pushNotifications,
           onToggle: setPushNotifications,
         },
-        {
-          id: 'email-notifications',
-          title: '이메일 알림',
-          subtitle: '중요한 소식을 이메일로 받기',
-          icon: 'mail',
-          type: 'toggle',
-          value: emailNotifications,
-          onToggle: setEmailNotifications,
-        },
       ],
     },
     {
@@ -148,38 +124,6 @@ const useSettings = () => {
           type: 'toggle',
           value: locationServices,
           onToggle: setLocationServices,
-        },
-        {
-          id: 'profile-public',
-          title: '프로필 공개',
-          subtitle: '다른 사용자에게 프로필 표시',
-          icon: 'eye',
-          type: 'toggle',
-          value: profilePublic,
-          onToggle: setProfilePublic,
-        },
-      ],
-    },
-    {
-      title: '앱 설정',
-      items: [
-        {
-          id: 'dark-mode',
-          title: '다크 모드',
-          subtitle: '어두운 테마 사용',
-          icon: 'moon',
-          type: 'toggle',
-          value: darkMode,
-          onToggle: setDarkMode,
-        },
-        {
-          id: 'auto-backup',
-          title: '자동 백업',
-          subtitle: '데이터 자동 백업',
-          icon: 'upload-cloud',
-          type: 'toggle',
-          value: autoBackup,
-          onToggle: setAutoBackup,
         },
       ],
     },
