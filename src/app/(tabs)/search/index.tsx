@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -120,6 +120,15 @@ const SearchScreen = () => {
     openTimeFilter,
     navigateToMeetingDetail,
   } = useSearch();
+
+  const filteredResults = useMemo(() => {
+    if (selectedCategory === '전체') {
+      return SEARCH_RESULTS;
+    }
+    return SEARCH_RESULTS.filter(meeting =>
+      meeting.tags.includes(selectedCategory)
+    );
+  }, [selectedCategory]);
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -273,17 +282,25 @@ const SearchScreen = () => {
 
           {/* 검색 결과 */}
           <View style={{ gap: 16 }}>
-            {SEARCH_RESULTS.map((meeting) => (
-              <MeetingCard
-                key={meeting.id}
-                title={meeting.title}
-                date={meeting.date}
-                location={meeting.location}
-                tags={meeting.tags}
-                participants={meeting.participants}
-                onPress={() => navigateToMeetingDetail(meeting.id)}
-              />
-            ))}
+            {filteredResults.length > 0 ? (
+              filteredResults.map((meeting) => (
+                <MeetingCard
+                  key={meeting.id}
+                  title={meeting.title}
+                  date={meeting.date}
+                  location={meeting.location}
+                  tags={meeting.tags}
+                  participants={meeting.participants}
+                  onPress={() => navigateToMeetingDetail(meeting.id)}
+                />
+              ))
+            ) : (
+              <View style={{ alignItems: 'center', padding: 20 }}>
+                <Text style={{ color: '#999', fontSize: 16 }}>
+                  검색 결과가 없습니다.
+                </Text>
+              </View>
+            )}
           </View>
 
           <Spacer height={32} />

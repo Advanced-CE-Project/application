@@ -13,7 +13,8 @@ const MEETING_DETAILS = [
     id: '1',
     title: '주말 등산 모임',
     date: '4월 15일 (토) 오전 8시 - 오후 2시',
-    location: '북한산 국립공원 (3호선 구파발역)',
+    // location: '북한산 국립공원 (3호선 구파발역)',
+    location: null,
     description:
       '북한산 둘레길을 걸으며 힐링하는 모임입니다. 등산 초보자도 환영하며, 점심은 근처 맛집에서 먹을 예정입니다. 날씨가 좋을 경우 사진도 찍어요!',
     participants: { current: 5, max: 10 },

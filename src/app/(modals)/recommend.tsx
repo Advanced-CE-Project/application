@@ -1,6 +1,6 @@
 import { Feather, AntDesign } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable, ScrollView } from 'react-native';
 
 const RecommendScreen = () => {
