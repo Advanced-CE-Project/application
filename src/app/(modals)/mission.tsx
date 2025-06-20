@@ -1,11 +1,25 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable, Modal, TextInput, Platform, Switch } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import React, { useState } from 'react';
+import {
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  Switch,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const DUMMY_MISSIONS = [
-  { id: '1', title: '매일 10,000보 걷기', status: 'ongoing', description: '일주일 동안 하루 만보 걷기' },
+  {
+    id: '1',
+    title: '매일 10,000보 걷기',
+    status: 'ongoing',
+    description: '일주일 동안 하루 만보 걷기',
+  },
   { id: '2', title: '물 2L 마시기', status: 'completed', description: '매일 2리터 물 마시기' },
 ];
 const PROOF_METHODS = ['사진 업로드', '체크박스', '텍스트 입력'];
@@ -19,21 +33,14 @@ const MissionTab = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const onChangeDate = (_: any, selectedDate?: Date) => {
-    if (Platform.OS !== 'ios') setShowDatePicker(false);
-    if (selectedDate) {
-      setDeadline(selectedDate);
-    }
-  };
-  
-  const pendingMissions = DUMMY_MISSIONS.filter((m) => m.status === 'pending');
-  const ongoingMissions = DUMMY_MISSIONS.filter((m) => m.status === 'ongoing');
-  const completedMissions = DUMMY_MISSIONS.filter((m) => m.status === 'completed');
-
-  const onChangeDate = (_: any, selectedDate?: Date) => {
     const currentDate = selectedDate || deadline;
     setShowDatePicker(Platform.OS === 'ios');
     setDeadline(currentDate);
   };
+
+  const pendingMissions = DUMMY_MISSIONS.filter((m) => m.status === 'pending');
+  const ongoingMissions = DUMMY_MISSIONS.filter((m) => m.status === 'ongoing');
+  const completedMissions = DUMMY_MISSIONS.filter((m) => m.status === 'completed');
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -54,7 +61,7 @@ const MissionTab = () => {
               padding: 8,
             }}
           >
-            <Feather name="plus" size={22} color="#4A90E2" />
+            <Feather name='plus' size={22} color='#4A90E2' />
           </Pressable>
         </View>
 
@@ -76,7 +83,9 @@ const MissionTab = () => {
                   borderLeftColor: '#ffc107',
                 }}
               >
-                <Text style={{ fontSize: 15, fontWeight: '500', color: '#333' }}>{mission.title}</Text>
+                <Text style={{ fontSize: 15, fontWeight: '500', color: '#333' }}>
+                  {mission.title}
+                </Text>
                 <Text style={{ color: '#777', marginTop: 4 }}>{mission.description}</Text>
               </View>
             ))
@@ -99,7 +108,9 @@ const MissionTab = () => {
                   marginBottom: 12,
                 }}
               >
-                <Text style={{ fontSize: 16, fontWeight: '600', color: '#1a1a1a' }}>{mission.title}</Text>
+                <Text style={{ fontSize: 16, fontWeight: '600', color: '#1a1a1a' }}>
+                  {mission.title}
+                </Text>
                 <Text style={{ color: '#555', marginTop: 4 }}>{mission.description}</Text>
               </View>
             ))
@@ -124,16 +135,18 @@ const MissionTab = () => {
                   borderLeftColor: '#4caf50',
                 }}
               >
-                <Text style={{ fontSize: 15, fontWeight: '500', color: '#333' }}>{mission.title}</Text>
+                <Text style={{ fontSize: 15, fontWeight: '500', color: '#333' }}>
+                  {mission.title}
+                </Text>
                 <Text style={{ color: '#777', marginTop: 4 }}>{mission.description}</Text>
               </View>
             ))
-
+          )}
         </View>
       </ScrollView>
 
       {/* 미션 추가 모달 */}
-      <Modal visible={modalVisible} transparent animationType="slide">
+      <Modal visible={modalVisible} transparent animationType='slide'>
         <Pressable
           style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }}
           onPress={() => setModalVisible(false)}
@@ -163,13 +176,15 @@ const MissionTab = () => {
                 marginBottom: 24,
               }}
             />
-            <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 24, textAlign: 'center' }}>
+            <Text
+              style={{ fontSize: 18, fontWeight: '700', marginBottom: 24, textAlign: 'center' }}
+            >
               미션 생성하기
             </Text>
 
             {/* 미션 제목 */}
             <TextInput
-              placeholder="미션 제목"
+              placeholder='미션 제목'
               style={{
                 borderWidth: 1,
                 borderColor: '#e0e0e0',
@@ -183,7 +198,7 @@ const MissionTab = () => {
 
             {/* 미션 설명 */}
             <TextInput
-              placeholder="미션 설명"
+              placeholder='미션 설명'
               multiline
               style={{
                 borderWidth: 1,
@@ -216,8 +231,8 @@ const MissionTab = () => {
             {showDatePicker && (
               <DateTimePicker
                 value={deadline}
-                mode="date"
-                display="default"
+                mode='date'
+                display='default'
                 onChange={onChangeDate}
               />
             )}
@@ -237,7 +252,9 @@ const MissionTab = () => {
                       backgroundColor: isSelected ? '#4A90E2' : '#f0f4fa',
                     }}
                   >
-                    <Text style={{ color: isSelected ? '#fff' : '#333', fontSize: 14 }}>{method}</Text>
+                    <Text style={{ color: isSelected ? '#fff' : '#333', fontSize: 14 }}>
+                      {method}
+                    </Text>
                   </Pressable>
                 );
               })}
