@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, Pressable, Modal, Alert } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Button } from '@/components/ui/button';
+import React, { useState } from 'react';
+import { Alert, Modal, Pressable, Text, View } from 'react-native';
 
+import { Button } from '@/components/ui/button';
 
 type Meeting = {
   title: string;
@@ -37,7 +37,7 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
   const handleQuickMessage = (message: string) => {
     // 실제 메시지 전송 로직 대신 알림창 띄우기 예시
     Alert.alert('빠른 메시지', `"${message}" 메시지를 보냈습니다.`);
-  }
+  };
   return (
     <>
       {/* 기본 정보 카드 */}
@@ -62,7 +62,7 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
               marginRight: 12,
             }}
           >
-            <Feather name="calendar" size={20} color="#fff" />
+            <Feather name='calendar' size={20} color='#fff' />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 12, color: '#666', marginBottom: 2 }}>일시</Text>
@@ -85,7 +85,7 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
               marginRight: 12,
             }}
           >
-            <Feather name="map-pin" size={20} color="#fff" />
+            <Feather name='map-pin' size={20} color='#fff' />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 12, color: '#666', marginBottom: 2 }}>장소</Text>
@@ -108,7 +108,7 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
               marginRight: 12,
             }}
           >
-            <Feather name="users" size={20} color="#fff" />
+            <Feather name='users' size={20} color='#fff' />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 12, color: '#666', marginBottom: 2 }}>참여 인원</Text>
@@ -132,7 +132,7 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
           borderColor: '#e0e0e0',
         }}
       >
-        <Feather name="map" size={32} color="#999" />
+        <Feather name='map' size={32} color='#999' />
         <Text style={{ color: '#999', marginTop: 8, fontSize: 14 }}>지도 위치</Text>
       </View>
 
@@ -155,15 +155,16 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
         </Text>
       </View>
 
-      {/* 참가자 */ }
+      {/* 참가자 */}
       <View style={{ marginBottom: 24 }}>
-        <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 16, color: '#1a1a1a' }}>참가자</Text>
+        <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 16, color: '#1a1a1a' }}>
+          참가자
+        </Text>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
           {Array.from({ length: meeting.participants.current }).map((_, index) => (
             <Pressable
               key={index}
               onPress={() => setModalVisible(true)}
-
               style={{
                 width: 48,
                 height: 48,
@@ -176,16 +177,15 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
                 marginRight: 12,
                 marginBottom: 12,
               }}
-
             >
-              <Feather name="user" size={22} color="#4A90E2" />
+              <Feather name='user' size={22} color='#4A90E2' />
             </Pressable>
           ))}
         </View>
       </View>
 
       {/* 참가자 연락 모달 */}
-      <Modal visible={modalVisible} transparent animationType="slide">
+      <Modal visible={modalVisible} transparent animationType='slide'>
         <Pressable
           style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }}
           onPress={() => setModalVisible(false)}
@@ -219,18 +219,15 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
               빠른 메시지 보내기
             </Text>
             <View style={{ marginBottom: 32 }}>
-              {['어디세요?', '도착했어요!', '조금 늦을 것 같아요'].map((msg) => (
-                <View style={{ marginBottom: 12, paddingBottom: 3 }}>
-                  <Button 
-                    title={msg} 
-                    onPress={() => handleQuickMessage(msg)} 
-                /></View>
+              {['어디세요?', '도착했어요!', '조금 늦을 것 같아요'].map((msg, index) => (
+                <View key={index} style={{ marginBottom: 12, paddingBottom: 3 }}>
+                  <Button title={msg} onPress={() => handleQuickMessage(msg)} />
+                </View>
               ))}
             </View>
           </Pressable>
         </Pressable>
       </Modal>
-
     </>
   );
 };

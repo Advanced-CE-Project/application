@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, FlatList, Image } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useLocalSearchParams } from 'expo-router';
+import React from 'react';
+import { Image, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 const mockAttendanceList = [
@@ -32,36 +32,31 @@ const AttendanceManageScreen = () => {
         {/* 추후 QR 코드 컴포넌트 추가 예정 */}
       </View>
 
-      <Text style={{ fontWeight: '600', marginBottom: 12 }}>
-        참가자 출석 현황 (3명)
-      </Text>
+      <Text style={{ fontWeight: '600', marginBottom: 12 }}>참가자 출석 현황 (3명)</Text>
 
-      <FlatList
-        data={mockAttendanceList}
-        keyExtractor={(item) => item.name}
-        renderItem={({ item }) => (
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingVertical: 10,
-              borderBottomWidth: 1,
-              borderColor: '#E5E7EB',
-            }}
-          >
-            <Text style={{ fontSize: 15 }}>{item.name}</Text>
-            {item.status === '출석 완료' ? (
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={{ color: '#4A90E2', marginRight: 4 }}>출석 완료</Text>
-                <Ionicons name="checkmark-circle" size={18} color="#4A90E2" />
-              </View>
-            ) : (
-              <Text style={{ color: '#9CA3AF' }}>미출석</Text>
-            )}
-          </View>
-        )}
-      />
+      {mockAttendanceList.map((item) => (
+        <View
+          key={item.name}
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingVertical: 10,
+            borderBottomWidth: 1,
+            borderColor: '#E5E7EB',
+          }}
+        >
+          <Text style={{ fontSize: 15 }}>{item.name}</Text>
+          {item.status === '출석 완료' ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ color: '#4A90E2', marginRight: 4 }}>출석 완료</Text>
+              <Ionicons name='checkmark-circle' size={18} color='#4A90E2' />
+            </View>
+          ) : (
+            <Text style={{ color: '#9CA3AF' }}>미출석</Text>
+          )}
+        </View>
+      ))}
     </ScrollView>
   );
 };

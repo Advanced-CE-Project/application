@@ -9,7 +9,6 @@ const Layout = () => {
         <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
         <Stack.Screen name='(modals)' options={{ presentation: 'modal', headerShown: false }} />
         <Stack.Screen name='meeting' options={{ headerShown: false }} />
-        <Stack.Screen name='contact' options={{ headerShown: false }} />
         <Stack.Screen
           name='settings'
           options={{
