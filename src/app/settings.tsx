@@ -1,4 +1,5 @@
 import { Feather } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, Pressable, ScrollView, Switch, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -23,6 +24,7 @@ interface SettingSection {
 
 const useSettings = () => {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
 
   // 설정 상태들
   const [pushNotifications, setPushNotifications] = useState(true);
@@ -43,41 +45,19 @@ const useSettings = () => {
   };
 
   const navigateToPrivacyPolicy = () => {
-    Alert.alert('개인정보처리방침', '개인정보처리방침을 확인합니다.');
+    router.push('/privacy-policy');
   };
 
   const navigateToTermsOfService = () => {
-    Alert.alert('서비스 이용약관', '서비스 이용약관을 확인합니다.');
+    router.push('/terms-of-service');
   };
 
   const navigateToHelp = () => {
-    Alert.alert('도움말', '도움말 센터로 이동합니다.');
-  };
-
-  const navigateToContact = () => {
-    Alert.alert('문의하기', '고객센터에 문의합니다.');
+    router.push('/help');
   };
 
   const showAppInfo = () => {
     Alert.alert('앱 정보', 'BeMo v1.0.0\n© 2024 BeMo Team');
-  };
-
-  // 액션들
-  const clearCache = () => {
-    Alert.alert(
-      '캐시 삭제',
-      '앱 캐시를 삭제하시겠습니까?\n일부 데이터가 다시 로드될 수 있습니다.',
-      [
-        { text: '취소', style: 'cancel' },
-        {
-          text: '삭제',
-          style: 'destructive',
-          onPress: () => {
-            Alert.alert('완료', '캐시가 삭제되었습니다.');
-          },
-        },
-      ],
-    );
   };
 
   const logout = () => {
@@ -214,13 +194,6 @@ const useSettings = () => {
           onPress: navigateToHelp,
         },
         {
-          id: 'contact',
-          title: '문의하기',
-          icon: 'message-circle',
-          type: 'navigation',
-          onPress: navigateToContact,
-        },
-        {
           id: 'terms',
           title: '서비스 이용약관',
           icon: 'file-text',
@@ -247,14 +220,6 @@ const useSettings = () => {
     {
       title: '기타',
       items: [
-        {
-          id: 'clear-cache',
-          title: '캐시 삭제',
-          subtitle: '임시 파일 정리',
-          icon: 'trash-2',
-          type: 'action',
-          onPress: clearCache,
-        },
         {
           id: 'logout',
           title: '로그아웃',
