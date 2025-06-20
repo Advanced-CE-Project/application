@@ -1,6 +1,9 @@
-import React from 'react';
-import { View, Text, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Pressable, Modal, Alert } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { Button } from '@/components/ui/button';
+
 
 type Meeting = {
   title: string;
@@ -14,7 +17,27 @@ type InfoTabProps = {
   meeting: Meeting;
 };
 
+const commonStyle = {
+  backgroundColor: '#fff',
+  borderRadius: 12,
+  padding: 16,
+  borderWidth: 1,
+  borderColor: '#f0f0f0',
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 4,
+  elevation: 2,
+  marginBottom: 6,
+};
+
 const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleQuickMessage = (message: string) => {
+    // 실제 메시지 전송 로직 대신 알림창 띄우기 예시
+    Alert.alert('빠른 메시지', `"${message}" 메시지를 보냈습니다.`);
+  }
   return (
     <>
       {/* 기본 정보 카드 */}
@@ -132,15 +155,15 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
         </Text>
       </View>
 
-      {/* 참가자 */}
+      {/* 참가자 */ }
       <View style={{ marginBottom: 24 }}>
-        <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 16, color: '#1a1a1a' }}>
-          참가자 ({meeting.participants.current}/{meeting.participants.max}명)
-        </Text>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+        <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 16, color: '#1a1a1a' }}>참가자</Text>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
           {Array.from({ length: meeting.participants.current }).map((_, index) => (
             <Pressable
               key={index}
+              onPress={() => setModalVisible(true)}
+
               style={{
                 width: 48,
                 height: 48,
@@ -153,13 +176,61 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
                 marginRight: 12,
                 marginBottom: 12,
               }}
-              // onPress 등은 필요시 props로 전달해서 연결
+
             >
               <Feather name="user" size={22} color="#4A90E2" />
             </Pressable>
           ))}
         </View>
       </View>
+
+      {/* 참가자 연락 모달 */}
+      <Modal visible={modalVisible} transparent animationType="slide">
+        <Pressable
+          style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }}
+          onPress={() => setModalVisible(false)}
+        >
+          <Pressable
+            onPress={() => {}}
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: '#fff',
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+              paddingHorizontal: 24,
+              paddingTop: 32,
+              paddingBottom: 24,
+            }}
+          >
+            <View
+              style={{
+                width: 40,
+                height: 4,
+                backgroundColor: '#ccc',
+                borderRadius: 2,
+                alignSelf: 'center',
+                marginBottom: 24,
+              }}
+            />
+            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#374151', marginBottom: 12 }}>
+              빠른 메시지 보내기
+            </Text>
+            <View style={{ marginBottom: 32 }}>
+              {['어디세요?', '도착했어요!', '조금 늦을 것 같아요'].map((msg) => (
+                <View style={{ marginBottom: 12, paddingBottom: 3 }}>
+                  <Button 
+                    title={msg} 
+                    onPress={() => handleQuickMessage(msg)} 
+                /></View>
+              ))}
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
     </>
   );
 };

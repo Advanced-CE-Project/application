@@ -1,79 +1,117 @@
 import React, { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ScrollView, Text, View, TextInput, Pressable } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Rating } from 'react-native-ratings'; 
+import { Button } from '@/components/ui/button';
 
-const EVALUATION_TAGS = [
-  '분위기 메이커였다',
-  '시간 약속을 잘 지켰다',
-  '다시 만나고 싶다',
-  '배려심이 있다',
-  '활발하고 긍정적이다',
-  '조용하고 성실하다',
-];
+const mockParticipants = ['김참여', '이산악'];
+const keywordOptions = ['친절함', '적극적', '시간약속', '지식공유'];
 
-const EvaluationScreen = () => {
-  const insets = useSafeAreaInsets();
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+const EvaluateMeetingScreen = () => {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
+  const [rating, setRating] = useState(0);
+  const [feedback, setFeedback] = useState('');
+  const [selectedKeywords, setSelectedKeywords] = useState<{ [name: string]: string[] }>({});
 
-  const toggleTag = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
-    );
+  const toggleKeyword = (name: string, keyword: string) => {
+    setSelectedKeywords(prev => {
+      const current = prev[name] || [];
+      const exists = current.includes(keyword);
+      return {
+        ...prev,
+        [name]: exists
+          ? current.filter(k => k !== keyword)
+          : [...current, keyword],
+      };
+    });
+  };
+
+  const handleSubmit = () => {
+    console.log({ rating, feedback, selectedKeywords });
+    router.back();
   };
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <View
+    <ScrollView style={{ flex: 1, backgroundColor: '#fff', paddingTop: 12, paddingHorizontal: 20 }}>
+      {/* 별점 */}
+      <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 12 }}>모임은 어땠나요?</Text>
+      <Rating
+        startingValue={0}
+        imageSize={32}
+        onFinishRating={(val) => setRating(val)}
+        style={{ marginBottom: 12, alignSelf: 'flex-start' }}
+      />
+
+      {/* 피드백 */}
+      <Text style={{ fontSize: 16, fontWeight: '500', marginBottom: 12 }}>모임에 대한 피드백 (선택사항)</Text>
+      <TextInput
+        multiline
+        placeholder="모임에 대한 의견을 자유롭게 남겨주세요"
+        value={feedback}
+        onChangeText={setFeedback}
         style={{
-          paddingTop: insets.top + 16,
-          paddingHorizontal: 16,
-          paddingBottom: insets.bottom + 32,
+          borderWidth: 1,
+          borderColor: '#ccc',
+          borderRadius: 10,
+          padding: 12,
+          minHeight: 100,
+          marginBottom: 30,
+        }}
+      />
+
+      {/* 참가자 평가 */}
+      <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
+         함께한 참가자들에게 태그 평가를 남겨주세요!
+      </Text>
+
+    {mockParticipants.map(name => (
+      <View
+        key={name}
+        style={{
+          marginBottom: 20,
+          borderWidth: 1,
+          borderColor: '#E5E7EB',
+          borderRadius: 12,
+          padding: 16,
+          backgroundColor: '#F9FAFB',
         }}
       >
-        <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 24, color: '#333' }}>
-          참가자 평가
-        </Text>
-
-        <Text style={{ fontSize: 16, marginBottom: 12, color: '#333' }}>
-          해당 참가자는 어떤 사람이었나요?
-        </Text>
-
-        <View style={{ gap: 12, marginBottom: 32 }}>
-          {EVALUATION_TAGS.map((tag) => {
-            const isSelected = selectedTags.includes(tag);
+        <Text style={{ fontSize: 15, fontWeight: '500', marginBottom: 10 }}>{name}</Text>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+          {keywordOptions.map((kw) => {
+            const isSelected = selectedKeywords[name]?.includes(kw);
             return (
               <Pressable
-                key={tag}
-                onPress={() => toggleTag(tag)}
+                key={kw}
+                onPress={() => toggleKeyword(name, kw)}
                 style={{
-                  paddingVertical: 10,
-                  paddingHorizontal: 16,
-                  borderRadius: 12,
-                  backgroundColor: isSelected ? '#4A90E2' : '#f0f0f0',
+                  paddingHorizontal: 12,
+                  paddingVertical: 6,
+                  borderRadius: 20,
+                  backgroundColor: isSelected ? '#4F46E5' : '#E5E7EB',
+                  marginRight: 8,
+                  marginBottom: 8,
                 }}
               >
-                <Text style={{ color: isSelected ? '#fff' : '#333', fontSize: 15 }}>{tag}</Text>
+                <Text style={{ color: isSelected ? '#fff' : '#111827' }}>{kw}</Text>
               </Pressable>
             );
           })}
         </View>
-
-        <Pressable
-          onPress={() => {
-            // TODO: 평가 저장 로직
-          }}
-          style={{
-            backgroundColor: '#4A90E2',
-            paddingVertical: 14,
-            borderRadius: 12,
-            alignItems: 'center',
-          }}
-        >
-          <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>평가 제출하기</Text>
-        </Pressable>
       </View>
+    ))}
+
+      {/* 참가자 평가 끝 */}
+
+      {/* 모임 평가 완료 */}
+
+      {/* 제출 버튼 */}
+      <Button title="제출하기" onPress={handleSubmit}>
+        <Text style={{ color: 'white', fontWeight: '600', fontSize: 16 }}>제출하기</Text>
+      </Button>
     </ScrollView>
   );
 };
 
-export default EvaluationScreen;
+export default EvaluateMeetingScreen;
