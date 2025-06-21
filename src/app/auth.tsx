@@ -24,6 +24,7 @@ const AuthScreen = () => {
     const handleEmailLogin = () => {
         // 이메일 로그인 로직 추가
         console.log('이메일 로그인');
+        router.push('/email-signup');
     };
     
   return (
