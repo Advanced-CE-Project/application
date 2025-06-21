@@ -130,6 +130,13 @@ const SearchScreen = () => {
     );
   }, [selectedCategory]);
 
+  const handleCurrentLocationSearch = () => {
+    console.log('Searching for current location');
+    // 현재 위치 검색 로직 구현
+    // setSelectedLocation('현재 위치'); // 예시로 현재 위치로 설정 
+    // 위치가 유효하지 않을 때 경고 알림
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
       {/* 고정 헤더 */}
@@ -239,24 +246,6 @@ const SearchScreen = () => {
                 {selectedLocation}
               </Text>
             </Pressable>
-
-            <Pressable
-              onPress={openTimeFilter}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}
-            >
-              <Feather name='calendar' size={16} color='#4A90E2' style={{ marginRight: 4 }} />
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: '#4A90E2',
-                }}
-              >
-                {selectedTimeFilter}
-              </Text>
-            </Pressable>
           </View>
 
           {/* 지도 영역 */}
@@ -278,6 +267,24 @@ const SearchScreen = () => {
             >
               지도
             </Text>
+            <Pressable
+              onPress={handleCurrentLocationSearch}
+              style={{
+                position: 'absolute',
+                left: 12,
+                bottom: 12,
+                backgroundColor: '#fff',
+                padding: 8,
+                borderRadius: 20,
+                elevation: 3,
+                shadowColor: '#000',
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                shadowOffset: { width: 0, height: 2 },
+              }}
+            >
+              <Feather name="crosshair" size={20} color="#4A90E2" />
+            </Pressable>
           </View>
 
           {/* 검색 결과 */}
