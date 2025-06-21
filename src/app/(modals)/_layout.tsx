@@ -70,10 +70,9 @@ export default function ModalsLayout() {
         }}
       />
       <Stack.Screen
-        name='member-manage'
+        name='manage-applicants'
         options={{
           title: '신청자 관리',
-          headerShown: false,
         }}
       />
     </Stack>
