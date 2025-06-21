@@ -34,6 +34,7 @@ const MemberManageScreen = () => {
 
   const meeting = { ...INITIAL_MEETING, participants, applicants };
 
+  // 실제 상태와 임시 상태 비교해 변경 여부 확인
   const isModified =
     JSON.stringify(participants) !== JSON.stringify(draftParticipants) ||
     JSON.stringify(applicants) !== JSON.stringify(draftApplicants);
@@ -65,6 +66,13 @@ const MemberManageScreen = () => {
   const handleApplyChanges = () => {
     setParticipants(draftParticipants);
     setApplicants(draftApplicants);
+    // TODO: 실제 API 호출하여 서버에 변경사항 반영
+  };
+
+  // 취소 버튼 누르면 임시 상태를 실제 상태로 되돌림
+  const handleCancel = () => {
+    setDraftParticipants(participants);
+    setDraftApplicants(applicants);
   };
 
   return (
@@ -79,27 +87,31 @@ const MemberManageScreen = () => {
       {/* 수정/취소 버튼 */}
       <View style={{ flexDirection: 'row', gap: 12, marginBottom: 24 }}>
         <Pressable
-          style={{
+          disabled={!isModified}
+          onPress={isModified ? handleApplyChanges : undefined}
+          style={({ pressed }) => ({
             flex: 1,
             backgroundColor: isModified ? '#4A90E2' : '#eee',
             borderRadius: 8,
             paddingVertical: 12,
             alignItems: 'center',
-          }}
-          onPress={isModified ? handleApplyChanges : undefined}
+            opacity: pressed ? 0.7 : 1,
+          })}
         >
           <Text style={{ fontWeight: '500', color: isModified ? '#fff' : '#999' }}>수정</Text>
         </Pressable>
         <Pressable
-          style={{
+          onPress={handleCancel}
+          style={({ pressed }) => ({
             flex: 1,
             backgroundColor: '#eee',
             borderRadius: 8,
             paddingVertical: 12,
             alignItems: 'center',
-          }}
+            opacity: pressed ? 0.7 : 1,
+          })}
         >
-          <Text style={{ fontWeight: '500' }}>취소</Text>
+          <Text style={{ fontWeight: '500', color: '#333' }}>취소</Text>
         </Pressable>
       </View>
 
@@ -114,8 +126,7 @@ const MemberManageScreen = () => {
                 color: selectedTab === tab ? '#2563eb' : '#999',
               }}
             >
-              {tab} (
-              {tab === '참가자' ? draftParticipants.length : draftApplicants.length})
+              {tab} ({tab === '참가자' ? draftParticipants.length : draftApplicants.length})
             </Text>
           </Pressable>
         ))}
