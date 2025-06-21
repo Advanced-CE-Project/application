@@ -69,6 +69,13 @@ export default function ModalsLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name='member-manage'
+        options={{
+          title: '신청자 관리',
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }
