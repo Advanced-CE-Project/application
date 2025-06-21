@@ -1,15 +1,31 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, Image } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 const AuthScreen = () => {
+  const router = useRouter();
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    // 로그인 처리
+    router.push('/');
   };
 
+    const handleKakaoLogin = () => {
+        // 카카오 로그인 로직 추가
+        console.log('카카오 로그인');
+    };
+
+    const handleGoogleLogin = () => {
+        // 구글 로그인 로직 추가
+        console.log('구글 로그인');
+    };
+
+    const handleEmailLogin = () => {
+        // 이메일 로그인 로직 추가
+        console.log('이메일 로그인');
+    };
+    
   return (
     <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 24, backgroundColor: '#fff' }}>
       {/* 로고 */}
@@ -25,10 +41,10 @@ const AuthScreen = () => {
           borderColor: '#e0e0e0',
         }}
       />
-      
+
       {/* 로그인 폼 */}
       <TextInput
-        placeholder="아이디"
+        placeholder="이메일"
         value={id}
         onChangeText={setId}
         style={{
@@ -82,6 +98,7 @@ const AuthScreen = () => {
 
       {/* 소셜 로그인 */}
       <Pressable
+        onPress={() => {handleKakaoLogin()}}
         style={{
           backgroundColor: '#fee500',
           paddingVertical: 12,
@@ -93,6 +110,7 @@ const AuthScreen = () => {
         <Text style={{ color: '#000', fontWeight: '600' }}>카카오로 계속하기</Text>
       </Pressable>
       <Pressable
+        onPress={() => {handleGoogleLogin()}}
         style={{
           backgroundColor: '#ffffff',
           borderWidth: 1,
@@ -106,6 +124,7 @@ const AuthScreen = () => {
         <Text style={{ color: '#000', fontWeight: '600' }}>Google로 계속하기</Text>
       </Pressable>
       <Pressable
+        onPress={() => {handleEmailLogin()}}
         style={{
           backgroundColor: '#f0f4fa',
           paddingVertical: 12,
