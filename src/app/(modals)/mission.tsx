@@ -90,6 +90,13 @@ const MissionTab = () => {
   const [deadline, setDeadline] = useState(new Date());
   const [proofMethod, setProofMethod] = useState('사진 업로드');
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [proofModalVisible, setProofModalVisible] = useState(false);
+  const [selectedMission, setSelectedMission] = useState<any>(null);
+  
+  const openProofModal = (mission: any) => {
+  setSelectedMission(mission);
+  setProofModalVisible(true);
+};
 
   const onChangeDate = (_: any, selectedDate?: Date) => {
     const currentDate = selectedDate || deadline;
@@ -163,7 +170,8 @@ const MissionTab = () => {
             <Text style={{ color: '#888' }}>현재 진행 중인 미션이 없습니다.</Text>
           ) : (
             ongoingMissions.map((mission) => (
-              <View
+              <Pressable
+                onPress={() => openProofModal(mission)}
                 key={mission.id}
                 style={{
                   backgroundColor: '#e8f0fe',
@@ -186,7 +194,7 @@ const MissionTab = () => {
                 </View>
                 <Text style={{ color: '#555', marginBottom: 6 }}>{mission.description}</Text>
                 <MissionProgress progress={mission.progress} status={mission.status} />
-              </View>
+              </Pressable>
             ))
           )}
         </View>
@@ -198,7 +206,8 @@ const MissionTab = () => {
             <Text style={{ color: '#aaa' }}>아직 완료된 미션이 없습니다.</Text>
           ) : (
             completedMissions.map((mission) => (
-              <View
+              <Pressable
+                onPress={() => openProofModal(mission)}
                 key={mission.id}
                 style={{
                   backgroundColor: '#f9f9f9',
@@ -223,11 +232,49 @@ const MissionTab = () => {
                 </View>
                 <Text style={{ color: '#777', marginBottom: 6 }}>{mission.description}</Text>
                 <MissionProgress progress={mission.progress} status={mission.status} />
-              </View>
+              </Pressable>
             ))
           )}
         </View>
       </ScrollView>
+
+      {/* 인증 모달 */}
+      <Modal visible={proofModalVisible} transparent animationType="fade">
+        <Pressable
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.3)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          onPress={() => setProofModalVisible(false)}
+        >
+          <View
+            style={{
+              backgroundColor: '#fff',
+              padding: 24,
+              borderRadius: 12,
+              width: '80%',
+            }}
+          >
+            <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 16 }}>
+              인증 내역
+            </Text>
+            {selectedMission ? (
+              <View>
+                <Text style={{ fontWeight: '600', marginBottom: 8 }}>
+                  {selectedMission.title}
+                </Text>
+                <Text style={{ color: '#666' }}>
+                  이곳에 "{selectedMission.title}" 미션의 인증 내역을 표시합니다.
+                </Text>
+              </View>
+            ) : (
+              <Text>선택된 미션이 없습니다.</Text>
+            )}
+          </View>
+        </Pressable>
+      </Modal>
 
       {/* 미션 추가 모달 */}
       <Modal visible={modalVisible} transparent animationType='slide'>
