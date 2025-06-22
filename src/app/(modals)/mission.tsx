@@ -58,11 +58,7 @@ const MissionProgress = ({ progress = 0, status }: { progress: number; status: s
           height: '100%',
           width: `${progress}%`,
           backgroundColor:
-            status === 'ongoing'
-              ? '#4A90E2'
-              : status === 'completed'
-              ? '#4caf50'
-              : '#ffc107',
+            status === 'ongoing' ? '#4A90E2' : status === 'completed' ? '#4caf50' : '#ffc107',
           borderRadius: 3,
         }}
       />
@@ -92,11 +88,11 @@ const MissionTab = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [proofModalVisible, setProofModalVisible] = useState(false);
   const [selectedMission, setSelectedMission] = useState<any>(null);
-  
+
   const openProofModal = (mission: any) => {
-  setSelectedMission(mission);
-  setProofModalVisible(true);
-};
+    setSelectedMission(mission);
+    setProofModalVisible(true);
+  };
 
   const onChangeDate = (_: any, selectedDate?: Date) => {
     const currentDate = selectedDate || deadline;
@@ -154,7 +150,9 @@ const MissionTab = () => {
                   <Text style={{ fontSize: 15, fontWeight: '500', color: '#333' }}>
                     {mission.title}
                   </Text>
-                  <Text style={{ fontSize: 12, color: '#666' }}>{getStatusText(mission.status)}</Text>
+                  <Text style={{ fontSize: 12, color: '#666' }}>
+                    {getStatusText(mission.status)}
+                  </Text>
                 </View>
                 <Text style={{ color: '#777', marginBottom: 6 }}>{mission.description}</Text>
                 <MissionProgress progress={mission.progress} status={mission.status} />
@@ -190,7 +188,9 @@ const MissionTab = () => {
                   <Text style={{ fontSize: 15, fontWeight: '500', color: '#1a1a1a' }}>
                     {mission.title}
                   </Text>
-                  <Text style={{ fontSize: 12, color: '#4A90E2' }}>{getStatusText(mission.status)}</Text>
+                  <Text style={{ fontSize: 12, color: '#4A90E2' }}>
+                    {getStatusText(mission.status)}
+                  </Text>
                 </View>
                 <Text style={{ color: '#555', marginBottom: 6 }}>{mission.description}</Text>
                 <MissionProgress progress={mission.progress} status={mission.status} />
@@ -228,7 +228,9 @@ const MissionTab = () => {
                   <Text style={{ fontSize: 15, fontWeight: '500', color: '#333' }}>
                     {mission.title}
                   </Text>
-                  <Text style={{ fontSize: 12, color: '#4caf50' }}>{getStatusText(mission.status)}</Text>
+                  <Text style={{ fontSize: 12, color: '#4caf50' }}>
+                    {getStatusText(mission.status)}
+                  </Text>
                 </View>
                 <Text style={{ color: '#777', marginBottom: 6 }}>{mission.description}</Text>
                 <MissionProgress progress={mission.progress} status={mission.status} />
@@ -239,7 +241,7 @@ const MissionTab = () => {
       </ScrollView>
 
       {/* 인증 모달 */}
-      <Modal visible={proofModalVisible} transparent animationType="fade">
+      <Modal visible={proofModalVisible} transparent animationType='fade'>
         <Pressable
           style={{
             flex: 1,
@@ -257,14 +259,10 @@ const MissionTab = () => {
               width: '80%',
             }}
           >
-            <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 16 }}>
-              인증 내역
-            </Text>
+            <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 16 }}>인증 내역</Text>
             {selectedMission ? (
               <View>
-                <Text style={{ fontWeight: '600', marginBottom: 8 }}>
-                  {selectedMission.title}
-                </Text>
+                <Text style={{ fontWeight: '600', marginBottom: 8 }}>{selectedMission.title}</Text>
                 <Text style={{ color: '#666' }}>
                   이곳에 "{selectedMission.title}" 미션의 인증 내역을 표시합니다.
                 </Text>

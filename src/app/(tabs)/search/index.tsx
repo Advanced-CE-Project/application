@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -125,15 +125,13 @@ const SearchScreen = () => {
     if (selectedCategory === '전체') {
       return SEARCH_RESULTS;
     }
-    return SEARCH_RESULTS.filter(meeting =>
-      meeting.tags.includes(selectedCategory)
-    );
+    return SEARCH_RESULTS.filter((meeting) => meeting.tags.includes(selectedCategory));
   }, [selectedCategory]);
 
   const handleCurrentLocationSearch = () => {
     console.log('Searching for current location');
     // 현재 위치 검색 로직 구현
-    // setSelectedLocation('현재 위치'); // 예시로 현재 위치로 설정 
+    // setSelectedLocation('현재 위치'); // 예시로 현재 위치로 설정
     // 위치가 유효하지 않을 때 경고 알림
   };
 
@@ -283,7 +281,7 @@ const SearchScreen = () => {
                 shadowOffset: { width: 0, height: 2 },
               }}
             >
-              <Feather name="crosshair" size={20} color="#4A90E2" />
+              <Feather name='crosshair' size={20} color='#4A90E2' />
             </Pressable>
           </View>
 
@@ -303,9 +301,7 @@ const SearchScreen = () => {
               ))
             ) : (
               <View style={{ alignItems: 'center', padding: 20 }}>
-                <Text style={{ color: '#999', fontSize: 16 }}>
-                  검색 결과가 없습니다.
-                </Text>
+                <Text style={{ color: '#999', fontSize: 16 }}>검색 결과가 없습니다.</Text>
               </View>
             )}
           </View>

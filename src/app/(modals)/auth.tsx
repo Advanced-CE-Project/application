@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import React from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
@@ -105,6 +106,7 @@ const AuthScreen = () => {
 
             {/* 비밀번호 찾기 */}
             <Pressable
+              onPress={() => router.push('/password-forgot')}
               style={{
                 alignItems: 'center',
                 marginTop: 16,
@@ -113,7 +115,8 @@ const AuthScreen = () => {
               <Text
                 style={{
                   fontSize: 14,
-                  color: '#666',
+                  color: '#4A90E2',
+                  textDecorationLine: 'underline',
                 }}
               >
                 비밀번호를 잊으셨나요?

@@ -5,9 +5,9 @@ import React, { useState } from 'react';
 import { Dimensions, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import InfoTab from '@/app/info';
-import ResourcesTab from '@/app/(modals)/share';
 import MissionTab from '@/app/(modals)/mission';
+import ResourcesTab from '@/app/(modals)/share';
+import InfoTab from '@/app/info';
 import { Button } from '@/components/ui/button';
 
 const MEETING_DETAILS = [
@@ -41,7 +41,7 @@ const MeetingDetailScreen = () => {
 
   const handleAttendance = () => {
     router.push('/(modals)/attendance-manage');
-    // router.push('/(modals)/attendance-check'); 
+    // router.push('/(modals)/attendance-check');
   };
 
   const handleApplication = () => {
@@ -138,26 +138,26 @@ const MeetingDetailScreen = () => {
       </ScrollView>
 
       {true && true && (
-      <View
-        style={{
-          position: 'absolute',
-          bottom: bottomButtonHeight + 12,
-          right: 20,
-          backgroundColor: '#4A90E2',
-          paddingHorizontal: 16,
-          paddingVertical: 12,
-          borderRadius: 24,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
-          elevation: 4,
-        }}
-      >
-        <Pressable onPress={() => router.push('/(modals)/memberManage')}>
-          <Text style={{ color: '#fff', fontWeight: '600' }}>신청자 승인하기</Text>
-        </Pressable>
-      </View>
+        <View
+          style={{
+            position: 'absolute',
+            bottom: bottomButtonHeight + 12,
+            right: 20,
+            backgroundColor: '#4A90E2',
+            paddingHorizontal: 16,
+            paddingVertical: 12,
+            borderRadius: 24,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 4,
+          }}
+        >
+          <Pressable onPress={() => router.push('/(modals)/memberManage')}>
+            <Text style={{ color: '#fff', fontWeight: '600' }}>신청자 승인하기</Text>
+          </Pressable>
+        </View>
       )}
 
       {/* 하단 고정 버튼 */}

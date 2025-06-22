@@ -1,9 +1,10 @@
-import React from 'react';
-import { View, Text, Pressable } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Button } from '@/components/ui/button';
+import { useLocalSearchParams } from 'expo-router';
+import React from 'react';
+import { Pressable, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+
+import { Button } from '@/components/ui/button';
 
 const AttendanceCheckScreen = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -31,18 +32,21 @@ const AttendanceCheckScreen = () => {
           marginBottom: 24,
         }}
       >
-        <Ionicons name="qr-code-outline" size={48} color="#9CA3AF" />
+        <Ionicons name='qr-code-outline' size={48} color='#9CA3AF' />
         <Text style={{ fontSize: 16, fontWeight: '500', marginTop: 16, marginBottom: 8 }}>
           QR 코드 스캔
         </Text>
-        <Text style={{ color: '#6B7280', fontSize: 14, textAlign: 'center', paddingHorizontal: 20 }}>
+        <Text
+          style={{ color: '#6B7280', fontSize: 14, textAlign: 'center', paddingHorizontal: 20 }}
+        >
           모임 주최자가 제공한 QR 코드를 스캔하여 출석 체크를 완료하세요.
         </Text>
       </View>
 
-      
-      <Button title="QR 스캔" onPress={handleQrScan}/>
-      <Text style={{ textAlign: 'center', color: '#6B7280', fontSize: 14, paddingTop: 3 }}>문제가 있나요?</Text>
+      <Button title='QR 스캔' onPress={handleQrScan} />
+      <Text style={{ textAlign: 'center', color: '#6B7280', fontSize: 14, paddingTop: 3 }}>
+        문제가 있나요?
+      </Text>
     </ScrollView>
   );
 };

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, Pressable, ScrollView } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
 const currentUserId = 'user123';
 
@@ -157,7 +157,7 @@ const MemberManageScreen = () => {
                 marginRight: 12,
               }}
             >
-              <Feather name="user" size={18} color="#9ca3af" />
+              <Feather name='user' size={18} color='#9ca3af' />
             </View>
             <View>
               <Text style={{ fontWeight: '500' }}>{user.name}</Text>

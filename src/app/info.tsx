@@ -17,20 +17,6 @@ type InfoTabProps = {
   meeting: Meeting;
 };
 
-const commonStyle = {
-  backgroundColor: '#fff',
-  borderRadius: 12,
-  padding: 16,
-  borderWidth: 1,
-  borderColor: '#f0f0f0',
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.1,
-  shadowRadius: 4,
-  elevation: 2,
-  marginBottom: 6,
-};
-
 const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentLocation, setCurrentLocation] = useState<string | null>(null);
@@ -142,9 +128,10 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
       >
         <Feather name='map' size={32} color='#999' />
         <Text style={{ color: '#999', marginTop: 8, fontSize: 14 }}>
-          {displayLocation ? displayLocation : (
-            <Pressable
-              onPress={handleRecommendPlace}>
+          {displayLocation ? (
+            displayLocation
+          ) : (
+            <Pressable onPress={handleRecommendPlace}>
               <Text>장소 추천 받기</Text>
             </Pressable>
           )}

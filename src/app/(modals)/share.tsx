@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable, Modal, TextInput, Dimensions } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { Dimensions, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const DUMMY_FILES = [
@@ -21,22 +21,22 @@ const DUMMY_FILES = [
 ];
 
 // 배열 분할 유틸 함수
-const chunkArray = (arr: any[], size: number) => 
+const chunkArray = (arr: any[], size: number) =>
   Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
-    arr.slice(i * size, i * size + size)
+    arr.slice(i * size, i * size + size),
   );
 
 const SharedResourcesScreen = () => {
   const insets = useSafeAreaInsets();
   const [modalVisible, setModalVisible] = useState(false);
   const [photoViewPage, setPhotoViewPage] = useState<number | null>(null);
-  
+
   const screenWidth = Dimensions.get('window').width;
   const availableWidth = screenWidth - 40;
   const PHOTO_BOX_SIZE = (availableWidth - 8) / 3;
   const PHOTO_BOX_MARGIN = 8;
 
-  // 사진 더미 데이터 
+  // 사진 더미 데이터
   const photoDummyArray = Array.from({ length: 6 });
   const photoPages = chunkArray(photoDummyArray, Math.ceil(photoDummyArray.length / 3));
 
@@ -47,7 +47,7 @@ const SharedResourcesScreen = () => {
         {/* 헤더 영역 */}
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 24 }}>
           <Pressable onPress={() => setPhotoViewPage(null)}>
-            <Feather name="arrow-left" size={24} color="#4A90E2" />
+            <Feather name='arrow-left' size={24} color='#4A90E2' />
           </Pressable>
           <Text style={{ fontSize: 18, fontWeight: '700' }}>
             사진 {photoViewPage + 1}/{photoPages.length}
@@ -58,11 +58,11 @@ const SharedResourcesScreen = () => {
         {/* 사진 그리드 */}
         <View style={{ flex: 1 }}>
           {chunkArray(photoPages[photoViewPage], 3).map((row, rowIdx) => (
-            <View 
-              key={rowIdx} 
-              style={{ 
-                flexDirection: 'row', 
-                marginBottom: PHOTO_BOX_MARGIN 
+            <View
+              key={rowIdx}
+              style={{
+                flexDirection: 'row',
+                marginBottom: PHOTO_BOX_MARGIN,
               }}
             >
               {row.map((_, idx) => (
@@ -82,13 +82,15 @@ const SharedResourcesScreen = () => {
         </View>
 
         {/* 페이지네이션 컨트롤 */}
-        <View style={{ 
-          flexDirection: 'row', 
-          justifyContent: 'space-between', 
-          marginTop: 20 
-        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginTop: 20,
+          }}
+        >
           <Pressable
-            onPress={() => setPhotoViewPage(p => Math.max(0, (p || 0) - 1))}
+            onPress={() => setPhotoViewPage((p) => Math.max(0, (p || 0) - 1))}
             style={{
               padding: 12,
               backgroundColor: photoViewPage === 0 ? '#e0e0e0' : '#4A90E2',
@@ -98,9 +100,9 @@ const SharedResourcesScreen = () => {
           >
             <Text style={{ color: photoViewPage === 0 ? '#999' : '#fff' }}>이전</Text>
           </Pressable>
-          
+
           <Pressable
-            onPress={() => setPhotoViewPage(p => Math.min(photoPages.length - 1, (p || 0) + 1))}
+            onPress={() => setPhotoViewPage((p) => Math.min(photoPages.length - 1, (p || 0) + 1))}
             style={{
               padding: 12,
               backgroundColor: photoViewPage === photoPages.length - 1 ? '#e0e0e0' : '#4A90E2',
@@ -108,7 +110,9 @@ const SharedResourcesScreen = () => {
             }}
             disabled={photoViewPage === photoPages.length - 1}
           >
-            <Text style={{ color: photoViewPage === photoPages.length - 1 ? '#999' : '#fff' }}>다음</Text>
+            <Text style={{ color: photoViewPage === photoPages.length - 1 ? '#999' : '#fff' }}>
+              다음
+            </Text>
           </Pressable>
         </View>
       </View>
@@ -126,11 +130,13 @@ const SharedResourcesScreen = () => {
         }}
       >
         {/* 업로드 버튼 */}
-        <View style={{ 
-          flexDirection: 'row', 
-          justifyContent: 'flex-end', 
-          paddingVertical: 16 
-        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            paddingVertical: 16,
+          }}
+        >
           <Pressable
             onPress={() => setModalVisible(true)}
             style={{
@@ -139,23 +145,25 @@ const SharedResourcesScreen = () => {
               backgroundColor: '#f0f4fa',
             }}
           >
-            <Feather name="upload" size={22} color="#4A90E2" />
+            <Feather name='upload' size={22} color='#4A90E2' />
           </Pressable>
         </View>
 
         {/* 사진 섹션 */}
         <View style={{ marginBottom: 24 }}>
-          <View style={{ 
-            flexDirection: 'row', 
-            justifyContent: 'space-between', 
-            marginBottom: 16 
-          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginBottom: 16,
+            }}
+          >
             <Text style={{ fontSize: 16, fontWeight: '600' }}>사진</Text>
             <Pressable onPress={() => setPhotoViewPage(0)}>
               <Text style={{ color: '#4A90E2', fontSize: 14 }}>모두 보기</Text>
             </Pressable>
           </View>
-          
+
           <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
             {photoDummyArray.slice(0, 6).map((_, idx) => (
               <View
@@ -189,7 +197,9 @@ const SharedResourcesScreen = () => {
 
         {/* 파일 섹션 */}
         <View style={{ marginBottom: 24 }}>
-          <Text style={{ fontSize: 15, fontWeight: '600', color: '#1a1a1a', marginBottom: 12 }}>파일</Text>
+          <Text style={{ fontSize: 15, fontWeight: '600', color: '#1a1a1a', marginBottom: 12 }}>
+            파일
+          </Text>
           {DUMMY_FILES.length === 0 ? (
             <View style={{ alignItems: 'center', marginTop: 24 }}>
               <Text style={{ color: '#888', fontSize: 16 }}>공유된 파일이 없습니다.</Text>
@@ -207,15 +217,22 @@ const SharedResourcesScreen = () => {
                   marginBottom: 10,
                 }}
               >
-                <Feather name={file.icon as any} size={28} color="#4A90E2" style={{ marginRight: 14 }} />
+                <Feather
+                  name={file.icon as any}
+                  size={28}
+                  color='#4A90E2'
+                  style={{ marginRight: 14 }}
+                />
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 15, fontWeight: '500', color: '#222' }}>{file.name}</Text>
+                  <Text style={{ fontSize: 15, fontWeight: '500', color: '#222' }}>
+                    {file.name}
+                  </Text>
                   <Text style={{ fontSize: 12, color: '#888', marginTop: 2 }}>
                     {file.size} · {file.uploader} 업로드
                   </Text>
                 </View>
                 <Pressable>
-                  <Feather name="download" size={20} color="#4A90E2" />
+                  <Feather name='download' size={20} color='#4A90E2' />
                 </Pressable>
               </View>
             ))
@@ -224,7 +241,7 @@ const SharedResourcesScreen = () => {
       </ScrollView>
 
       {/* 자료 업로드 모달 */}
-      <Modal visible={modalVisible} transparent animationType="slide">
+      <Modal visible={modalVisible} transparent animationType='slide'>
         <Pressable
           style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }}
           onPress={() => setModalVisible(false)}
@@ -254,12 +271,14 @@ const SharedResourcesScreen = () => {
                 marginBottom: 24,
               }}
             />
-            <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 24, textAlign: 'center' }}>
+            <Text
+              style={{ fontSize: 18, fontWeight: '700', marginBottom: 24, textAlign: 'center' }}
+            >
               자료 업로드
             </Text>
 
             <TextInput
-              placeholder="자료 제목"
+              placeholder='자료 제목'
               style={{
                 borderWidth: 1,
                 borderColor: '#e0e0e0',
@@ -275,22 +294,22 @@ const SharedResourcesScreen = () => {
                 // 실제 파일 선택 로직 필요 (예: expo-document-picker 등)
                 console.log('파일 선택');
               }}
-                style={{
-                  borderWidth: 1,
-                  borderColor: '#e0e0e0',
-                  borderRadius: 8,
-                  padding: 12,
-                  marginBottom: 24,
-                  backgroundColor: '#f8f9fa',
-                  flexDirection: 'row',
-                }}
-              >
-                <Text style={{ fontSize: 16, color: '#333' }}>파일 선택</Text>
-              <Feather name="file-plus" size={20} color="#4A90E2" style={{ marginLeft: 3 }} />
-            </Pressable>  
-                      
+              style={{
+                borderWidth: 1,
+                borderColor: '#e0e0e0',
+                borderRadius: 8,
+                padding: 12,
+                marginBottom: 24,
+                backgroundColor: '#f8f9fa',
+                flexDirection: 'row',
+              }}
+            >
+              <Text style={{ fontSize: 16, color: '#333' }}>파일 선택</Text>
+              <Feather name='file-plus' size={20} color='#4A90E2' style={{ marginLeft: 3 }} />
+            </Pressable>
+
             <TextInput
-              placeholder="설명 (선택)"
+              placeholder='설명 (선택)'
               style={{
                 borderWidth: 1,
                 borderColor: '#e0e0e0',

@@ -1,7 +1,7 @@
-import { Feather, AntDesign } from '@expo/vector-icons';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { AntDesign, Feather } from '@expo/vector-icons';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
 const RecommendScreen = () => {
   const router = useRouter();
@@ -93,36 +93,34 @@ const RecommendScreen = () => {
 
         {/* 필터 옵션 */}
         {showFilterOptions && (
-            <View style={{ 
-                marginBottom: 16, 
-                position: 'absolute', 
-                right: 0, 
-                top: 30, 
-                backgroundColor: 'white', 
-                padding: 12, 
-                borderRadius: 8, 
-                shadowColor: '#000', 
-                shadowOffset: { width: 0, height: 2 }, 
-                shadowOpacity: 0.1, 
-                shadowRadius: 4,
-                zIndex: 2,
-            }}>
+          <View
+            style={{
+              marginBottom: 16,
+              position: 'absolute',
+              right: 0,
+              top: 30,
+              backgroundColor: 'white',
+              padding: 12,
+              borderRadius: 8,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              zIndex: 2,
+            }}
+          >
             <Pressable onPress={() => setSortBy('distance')} style={{ paddingVertical: 4 }}>
-                <Text style={{ color: sortBy === 'distance' ? '#2563EB' : '#374151' }}>
-                거리순
-                </Text>
+              <Text style={{ color: sortBy === 'distance' ? '#2563EB' : '#374151' }}>거리순</Text>
             </Pressable>
             <Pressable onPress={() => setSortBy('rating')} style={{ paddingVertical: 4 }}>
-                <Text style={{ color: sortBy === 'rating' ? '#2563EB' : '#374151' }}>
+              <Text style={{ color: sortBy === 'rating' ? '#2563EB' : '#374151' }}>
                 별점 높은 순
-                </Text>
+              </Text>
             </Pressable>
             <Pressable onPress={() => setSortBy('name')} style={{ paddingVertical: 4 }}>
-                <Text style={{ color: sortBy === 'name' ? '#2563EB' : '#374151' }}>
-                이름 순
-                </Text>
+              <Text style={{ color: sortBy === 'name' ? '#2563EB' : '#374151' }}>이름 순</Text>
             </Pressable>
-            </View>
+          </View>
         )}
       </View>
 
@@ -137,9 +135,7 @@ const RecommendScreen = () => {
           }}
         >
           <Text style={{ fontSize: 15, fontWeight: '500', marginBottom: 4 }}>{place.name}</Text>
-          <Text style={{ fontSize: 13, color: '#6B7280', marginBottom: 6 }}>
-            {place.address}
-          </Text>
+          <Text style={{ fontSize: 13, color: '#6B7280', marginBottom: 6 }}>{place.address}</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <AntDesign name='star' size={14} color='#F59E0B' />
             <Text style={{ marginLeft: 4, marginRight: 12, color: '#374151', fontSize: 13 }}>

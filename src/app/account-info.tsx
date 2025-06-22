@@ -317,8 +317,10 @@ const AccountInfoScreen = () => {
                 {
                   text: '로그아웃',
                   style: 'destructive',
-                  onPress: () => { router.replace('/auth'); }
-                }, 
+                  onPress: () => {
+                    router.replace('/auth');
+                  },
+                },
               ])
             }
             style={{

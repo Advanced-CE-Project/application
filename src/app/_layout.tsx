@@ -10,8 +10,7 @@ const Layout = () => {
         <Stack.Screen name='(modals)' options={{ presentation: 'modal', headerShown: false }} />
         <Stack.Screen name='meeting' options={{ headerShown: false }} />
         <Stack.Screen name='help' options={{ headerShown: false }} />
-        <Stack.Screen name='terms-of-service' options={{ headerShown: false }} />
-        <Stack.Screen name='privacy-policy' options={{ headerShown: false }} />
+        <Stack.Screen name='(terms)' options={{ headerShown: false }} />
         <Stack.Screen name='account-info' options={{ headerShown: false }} />
         <Stack.Screen name='password-change' options={{ headerShown: false }} />
         <Stack.Screen

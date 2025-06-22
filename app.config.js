@@ -14,12 +14,14 @@ export default {
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
+      bundleIdentifier: 'kr.ac.konkuk.bemo.app',
     },
     android: {
       adaptiveIcon: {
         foregroundImage: './src/assets/images/adaptive-icon.png',
         backgroundColor: '#ffffff',
       },
+      package: 'kr.ac.konkuk.bemo.app',
     },
     web: {
       bundler: 'metro',
@@ -42,7 +44,42 @@ export default {
         {
           locationAlwaysAndWhenInUsePermission:
             '$(PRODUCT_NAME)이(가) 위치 정보를 사용하도록 허용하시겠습니까?',
-          locationAlwaysPermission: '$(PRODUCT_NAME)이(가) 위치 정보를 사용하도록 허용하시겠습니까?',
+          locationAlwaysPermission:
+            '$(PRODUCT_NAME)이(가) 위치 정보를 사용하도록 허용하시겠습니까?',
+        },
+      ],
+      [
+        'expo-build-properties',
+        {
+          android: {
+            extraMavenRepos: [
+              'https://repository.map.naver.com/archive/maven',
+              'https://devrepo.kakao.com/nexus/content/groups/public/',
+              'https://devrepo.kakao.com/nexus/repository/kakaomap-releases/',
+            ],
+          },
+          ios: {},
+        },
+      ],
+      [
+        '@react-native-kakao/core',
+        {
+          nativeAppKey: '16c50ffe80a99f9dfdbe776c99c84150',
+          android: {
+            authCodeHandlerActivity: true,
+            followChannelHandlerActivity: true,
+            forwardKakaoLinkIntentFilterToMainActivity: true,
+          },
+          ios: {
+            handleKakaoOpenUrl: true,
+            naviApplicationQuerySchemes: true,
+          },
+        },
+      ],
+      [
+        '@react-native-google-signin/google-signin',
+        {
+          iosUrlScheme: 'com.googleusercontent.apps.472392046415-iim3qp0v1hlipc2f99vounb0o0m7q0ta',
         },
       ],
     ],
@@ -60,4 +97,4 @@ export default {
       LOG_LEVEL: process.env.LOG_LEVEL || 'info',
     },
   },
-}; 
+};

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { ScrollView, Text, View, TextInput, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Rating } from 'react-native-ratings'; 
+import React, { useState } from 'react';
+import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Rating } from 'react-native-ratings';
+
 import { Button } from '@/components/ui/button';
 
 const mockParticipants = ['김참여', '이산악'];
@@ -15,14 +16,12 @@ const EvaluateMeetingScreen = () => {
   const [selectedKeywords, setSelectedKeywords] = useState<{ [name: string]: string[] }>({});
 
   const toggleKeyword = (name: string, keyword: string) => {
-    setSelectedKeywords(prev => {
+    setSelectedKeywords((prev) => {
       const current = prev[name] || [];
       const exists = current.includes(keyword);
       return {
         ...prev,
-        [name]: exists
-          ? current.filter(k => k !== keyword)
-          : [...current, keyword],
+        [name]: exists ? current.filter((k) => k !== keyword) : [...current, keyword],
       };
     });
   };
@@ -46,10 +45,12 @@ const EvaluateMeetingScreen = () => {
       />
 
       {/* 피드백 */}
-      <Text style={{ fontSize: 16, fontWeight: '500', marginBottom: 12 }}>모임에 대한 피드백 (선택사항)</Text>
+      <Text style={{ fontSize: 16, fontWeight: '500', marginBottom: 12 }}>
+        모임에 대한 피드백 (선택사항)
+      </Text>
       <TextInput
         multiline
-        placeholder="모임에 대한 의견을 자유롭게 남겨주세요"
+        placeholder='모임에 대한 의견을 자유롭게 남겨주세요'
         value={feedback}
         onChangeText={setFeedback}
         style={{
@@ -64,52 +65,52 @@ const EvaluateMeetingScreen = () => {
 
       {/* 참가자 평가 */}
       <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 12 }}>
-         모임을 함께한 참가자를 태그로 평가해주세요!
+        모임을 함께한 참가자를 태그로 평가해주세요!
       </Text>
 
-    {mockParticipants.map(name => (
-      <View
-        key={name}
-        style={{
-          marginBottom: 20,
-          borderWidth: 1,
-          borderColor: '#E5E7EB',
-          borderRadius: 12,
-          padding: 16,
-          backgroundColor: '#F9FAFB',
-        }}
-      >
-        <Text style={{ fontSize: 15, fontWeight: '500', marginBottom: 10 }}>{name}</Text>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-          {keywordOptions.map((kw) => {
-            const isSelected = selectedKeywords[name]?.includes(kw);
-            return (
-              <Pressable
-                key={kw}
-                onPress={() => toggleKeyword(name, kw)}
-                style={{
-                  paddingHorizontal: 12,
-                  paddingVertical: 6,
-                  borderRadius: 20,
-                  backgroundColor: isSelected ? '#4F46E5' : '#E5E7EB',
-                  marginRight: 8,
-                  marginBottom: 8,
-                }}
-              >
-                <Text style={{ color: isSelected ? '#fff' : '#111827' }}>{kw}</Text>
-              </Pressable>
-            );
-          })}
+      {mockParticipants.map((name) => (
+        <View
+          key={name}
+          style={{
+            marginBottom: 20,
+            borderWidth: 1,
+            borderColor: '#E5E7EB',
+            borderRadius: 12,
+            padding: 16,
+            backgroundColor: '#F9FAFB',
+          }}
+        >
+          <Text style={{ fontSize: 15, fontWeight: '500', marginBottom: 10 }}>{name}</Text>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+            {keywordOptions.map((kw) => {
+              const isSelected = selectedKeywords[name]?.includes(kw);
+              return (
+                <Pressable
+                  key={kw}
+                  onPress={() => toggleKeyword(name, kw)}
+                  style={{
+                    paddingHorizontal: 12,
+                    paddingVertical: 6,
+                    borderRadius: 20,
+                    backgroundColor: isSelected ? '#4F46E5' : '#E5E7EB',
+                    marginRight: 8,
+                    marginBottom: 8,
+                  }}
+                >
+                  <Text style={{ color: isSelected ? '#fff' : '#111827' }}>{kw}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
-      </View>
-    ))}
+      ))}
 
       {/* 참가자 평가 끝 */}
 
       {/* 모임 평가 완료 */}
 
       {/* 제출 버튼 */}
-      <Button title="제출하기" onPress={handleSubmit}></Button>
+      <Button title='제출하기' onPress={handleSubmit}></Button>
     </ScrollView>
   );
 };
