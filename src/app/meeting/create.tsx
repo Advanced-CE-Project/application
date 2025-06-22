@@ -1,82 +1,24 @@
-import { Feather } from '@expo/vector-icons';
+import React from 'react';
+import { View, Text, Pressable, ScrollView, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Slider from '@react-native-community/slider';
-import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
-import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-export const useCreateMeetingForm = () => {
-  const insets = useSafeAreaInsets();
-
-  const [title, setTitle] = useState('');
-  const [date, setDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [participantCount, setParticipantCount] = useState(5);
-  const [description, setDescription] = useState('');
-
-  const handleDateChange = (event: any, selectedDate?: Date) => {
-    if (event.type === 'set' && selectedDate) {
-      setDate(
-        (prev) =>
-          new Date(
-            selectedDate.getFullYear(),
-            selectedDate.getMonth(),
-            selectedDate.getDate(),
-            prev.getHours(),
-            prev.getMinutes(),
-          ),
-      );
-    }
-  };
-
-  const handleTimeChange = (event: any, selectedTime?: Date) => {
-    if (selectedTime) {
-      setDate(
-        (prev) =>
-          new Date(
-            prev.getFullYear(),
-            prev.getMonth(),
-            prev.getDate(),
-            selectedTime.getHours(),
-            selectedTime.getMinutes(),
-          ),
-      );
-    }
-    setShowTimePicker(false);
-  };
-
-  return {
-    insets,
-    title,
-    setTitle,
-    date,
-    setDate,
-    showDatePicker,
-    setShowDatePicker,
-    showTimePicker,
-    setShowTimePicker,
-    participantCount,
-    setParticipantCount,
-    description,
-    setDescription,
-    handleDateChange,
-    handleTimeChange,
-  };
-};
+import { useCreateMeetingForm } from '@/hooks/screens/use-create-club';
 
 const CreateMeetingScreen = () => {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+
   const {
-    insets,
     title,
     setTitle,
     date,
-    setDate,
     showDatePicker,
     setShowDatePicker,
     showTimePicker,
@@ -94,35 +36,12 @@ const CreateMeetingScreen = () => {
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{
-          paddingHorizontal: 20,
-          paddingTop: 20,
-          paddingBottom: insets.bottom + 20,
+          paddingHorizontal: 24,
+          paddingTop: 40,
+          paddingBottom: insets.bottom + 24,
         }}
         showsVerticalScrollIndicator={false}
       >
-        {/* 헤더 섹션 */}
-        <View style={{ marginBottom: 32 }}>
-          <Text
-            style={{
-              fontSize: 28,
-              fontWeight: 'bold',
-              color: '#1a1a1a',
-              marginBottom: 8,
-            }}
-          >
-            새 모임 만들기
-          </Text>
-          <Text
-            style={{
-              fontSize: 16,
-              color: '#666',
-              lineHeight: 22,
-            }}
-          >
-            멋진 모임을 만들어 사람들과 함께하세요
-          </Text>
-        </View>
-
         {/* 모임명 섹션 */}
         <View
           style={{
@@ -144,14 +63,14 @@ const CreateMeetingScreen = () => {
                 marginRight: 10,
               }}
             >
-              <Feather name='edit-3' size={16} color='#fff' />
+              <Feather name="edit-3" size={16} color="#fff" />
             </View>
             <Text style={{ fontSize: 18, fontWeight: '600', color: '#1a1a1a' }}>모임명</Text>
           </View>
           <Input
             value={title}
             onChangeText={setTitle}
-            placeholder='모임의 이름을 입력하세요'
+            placeholder="모임의 이름을 입력하세요"
             style={{
               backgroundColor: '#fff',
               borderColor: '#e0e0e0',
@@ -185,7 +104,7 @@ const CreateMeetingScreen = () => {
                 marginRight: 10,
               }}
             >
-              <Feather name='calendar' size={16} color='#fff' />
+              <Feather name="calendar" size={16} color="#fff" />
             </View>
             <Text style={{ fontSize: 18, fontWeight: '600', color: '#1a1a1a' }}>날짜 및 시간</Text>
           </View>
@@ -211,7 +130,7 @@ const CreateMeetingScreen = () => {
                   day: 'numeric',
                 })}
               </Text>
-              <Feather name='chevron-down' size={20} color='#666' />
+              <Feather name="chevron-down" size={20} color="#666" />
             </Pressable>
 
             <Pressable
@@ -234,7 +153,7 @@ const CreateMeetingScreen = () => {
                   hour12: true,
                 })}
               </Text>
-              <Feather name='chevron-down' size={20} color='#666' />
+              <Feather name="chevron-down" size={20} color="#666" />
             </Pressable>
           </View>
         </View>
@@ -260,7 +179,7 @@ const CreateMeetingScreen = () => {
                 marginRight: 10,
               }}
             >
-              <Feather name='users' size={16} color='#fff' />
+              <Feather name="users" size={16} color="#fff" />
             </View>
             <Text style={{ fontSize: 18, fontWeight: '600', color: '#1a1a1a' }}>모집 인원</Text>
           </View>
@@ -299,9 +218,9 @@ const CreateMeetingScreen = () => {
               step={1}
               value={participantCount}
               onValueChange={setParticipantCount}
-              minimumTrackTintColor='#4A90E2'
-              maximumTrackTintColor='#e0e0e0'
-              thumbTintColor='#4A90E2'
+              minimumTrackTintColor="#4A90E2"
+              maximumTrackTintColor="#e0e0e0"
+              thumbTintColor="#4A90E2"
             />
             <View
               style={{
@@ -338,14 +257,14 @@ const CreateMeetingScreen = () => {
                 marginRight: 10,
               }}
             >
-              <Feather name='file-text' size={16} color='#fff' />
+              <Feather name="file-text" size={16} color="#fff" />
             </View>
             <Text style={{ fontSize: 18, fontWeight: '600', color: '#1a1a1a' }}>모임 설명</Text>
           </View>
           <Input
             value={description}
             onChangeText={setDescription}
-            placeholder='모임에 대한 설명을 입력하세요&#10;예: 등산 초보자도 환영합니다!'
+            placeholder={'모임에 대한 설명을 입력하세요\n예: 등산 초보자도 환영합니다!'}
             multiline
             numberOfLines={4}
             style={{
@@ -363,65 +282,33 @@ const CreateMeetingScreen = () => {
           />
         </View>
 
-        {/* 생성 완료 버튼 */}
+        {/* 모임 생성 버튼 */}
         <Button
-          title='모임 생성하기'
+          title="모임 생성하기"
           onPress={() => {
-            // TODO: DB 연동 로직 추가 예정
-            console.log({
-              title,
-              date,
-              participantCount,
-              description,
-            });
+            console.log({ title, date, participantCount, description });
             navigation.goBack();
           }}
         />
       </ScrollView>
 
+      {/* 날짜 선택기 */}
       {showDatePicker && (
         <DateTimePicker
           value={date}
-          mode='date'
+          mode="date"
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          onChange={(event, selectedDate) => {
-            if (event.type === 'set' && selectedDate) {
-              setDate(
-                (prev) =>
-                  new Date(
-                    selectedDate.getFullYear(),
-                    selectedDate.getMonth(),
-                    selectedDate.getDate(),
-                    prev.getHours(),
-                    prev.getMinutes(),
-                  ),
-              );
-            }
-            setShowDatePicker(Platform.OS === 'ios');
-          }}
+          onChange={handleDateChange}
         />
       )}
 
+      {/* 시간 선택기 */}
       {showTimePicker && (
         <DateTimePicker
           value={date}
-          mode='time'
+          mode="time"
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          onChange={(event, selectedTime) => {
-            if (event.type === 'set' && selectedTime) {
-              setDate(
-                (prev) =>
-                  new Date(
-                    prev.getFullYear(),
-                    prev.getMonth(),
-                    prev.getDate(),
-                    selectedTime.getHours(),
-                    selectedTime.getMinutes(),
-                  ),
-              );
-            }
-            setShowTimePicker(Platform.OS === 'ios');
-          }}
+          onChange={handleTimeChange}
         />
       )}
     </View>
