@@ -1,11 +1,10 @@
 import { Feather } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import React from 'react';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useEmailSignup } from '@/hooks/screens/use-email-signup';
 
 interface CheckboxProps {
   checked: boolean;
@@ -58,62 +57,17 @@ function CustomCheckbox({ checked, onPress, label, required = false }: CheckboxP
 }
 
 export default function SignUpScreen() {
-  const router = useRouter();
-  const insets = useSafeAreaInsets();
-
-  const [formData, setFormData] = useState({
-    nickname: '',
-    email: '',
-    password: '',
-    detailAddress: '',
-  });
-
-  const [agreements, setAgreements] = useState({
-    agreeTerms: false,
-    agreePrivacy: false,
-    agreeLocation: false,
-    agreeMarketing: false,
-  });
-
-  const updateFormData = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const updateAgreement = (field: string) => {
-    setAgreements((prev) => ({ ...prev, [field]: !prev[field as keyof typeof prev] }));
-  };
-
-  const handleSubmit = () => {
-    const { nickname, email, password, detailAddress } = formData;
-    const { agreeTerms, agreePrivacy, agreeLocation } = agreements;
-
-    if (!nickname || !email || !password || !detailAddress) {
-      Alert.alert('입력 오류', '필수 항목을 모두 입력해주세요.');
-      return;
-    }
-
-    if (!agreeTerms || !agreePrivacy || !agreeLocation) {
-      Alert.alert('동의 필요', '필수 약관에 모두 동의해주세요.');
-      return;
-    }
-
-    // 회원가입 처리 로직
-    Alert.alert('회원가입 완료', '환영합니다!', [
-      {
-        text: '확인',
-        onPress: () => router.back(),
-      },
-    ]);
-  };
-
-  const allRequiredFieldsFilled =
-    formData.nickname &&
-    formData.email &&
-    formData.password &&
-    formData.detailAddress &&
-    agreements.agreeTerms &&
-    agreements.agreePrivacy &&
-    agreements.agreeLocation;
+  const {
+    isLoading,
+    insets,
+    formData,
+    agreements,
+    allRequiredFieldsFilled,
+    updateFormData,
+    updateAgreement,
+    navigateToLogin,
+    handleSubmit,
+  } = useEmailSignup();
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -172,6 +126,7 @@ export default function SignUpScreen() {
           {/* 입력 폼 */}
           <View style={{ marginBottom: 32 }}>
             <Input
+              disabled={isLoading}
               label='닉네임'
               placeholder='닉네임을 입력하세요'
               value={formData.nickname}
@@ -180,6 +135,7 @@ export default function SignUpScreen() {
             />
 
             <Input
+              disabled={isLoading}
               label='이메일'
               placeholder='example@email.com'
               value={formData.email}
@@ -190,19 +146,12 @@ export default function SignUpScreen() {
             />
 
             <Input
+              disabled={isLoading}
               label='비밀번호'
               placeholder='비밀번호를 입력하세요'
               value={formData.password}
               onChangeText={(text) => updateFormData('password', text)}
               secureTextEntry
-              containerStyle={{ marginBottom: 16 }}
-            />
-
-            <Input
-              label='주소'
-              placeholder='상세 주소를 입력하세요'
-              value={formData.detailAddress}
-              onChangeText={(text) => updateFormData('detailAddress', text)}
               containerStyle={{ marginBottom: 24 }}
             />
           </View>
@@ -269,7 +218,11 @@ export default function SignUpScreen() {
 
           {/* 회원가입 버튼 */}
           <View style={{ marginTop: 'auto' }}>
-            <Button title='가입하기' onPress={handleSubmit} disabled={!allRequiredFieldsFilled} />
+            <Button
+              title={isLoading ? '가입중...' : '가입하기'}
+              onPress={handleSubmit}
+              disabled={!allRequiredFieldsFilled || isLoading}
+            />
 
             {/* 로그인 링크 */}
             <View
@@ -281,7 +234,7 @@ export default function SignUpScreen() {
               <Text style={{ fontSize: 14, color: '#666', marginBottom: 8 }}>
                 이미 계정이 있으신가요?
               </Text>
-              <Pressable onPress={() => router.back()}>
+              <Pressable onPress={navigateToLogin}>
                 <Text
                   style={{
                     fontSize: 16,

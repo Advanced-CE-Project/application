@@ -43,7 +43,12 @@ export const useAuth = () => {
 
   const handleGoogleLogin = () => {};
 
-  const handleEmailSignup = () => {};
+  const handleEmailSignup = () => {
+    router.back(); // 현재 로그인 모달 닫기
+    setTimeout(() => {
+      router.push('/(modals)/email-signup'); // 회원가입 모달 열기
+    }, 100); // 짧은 지연으로 모달 전환이 자연스럽게 되도록
+  };
 
   useEffect(() => {
     if (me) {
