@@ -1,35 +1,50 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, Image } from 'react-native';
+import { View, Text, TextInput, Pressable, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import { login } from '@/services/auth'; 
 
 const AuthScreen = () => {
   const router = useRouter();
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    router.push('/');
+  const handleLogin = async () => {
+    if (!id || !password) {
+      Alert.alert('입력 오류', '이메일과 비밀번호를 모두 입력해주세요.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await login({ email: id, password });
+      // 로그인 성공 처리 (예: 토큰 저장, 홈으로 이동)
+      console.log('로그인 성공:', response);
+      Alert.alert('로그인 성공', `${response.message}`);
+      router.push('/');
+    } catch (error: any) {
+      console.error('로그인 실패:', error?.response?.data || error);
+      Alert.alert('로그인 실패', error?.response?.data?.message || '서버 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-    const handleKakaoLogin = () => {
-        // 카카오 로그인 로직 추가
-        console.log('카카오 로그인');
-    };
+  const handleKakaoLogin = () => {
+    console.log('카카오 로그인');
+  };
 
-    const handleGoogleLogin = () => {
-        // 구글 로그인 로직 추가
-        console.log('구글 로그인');
-    };
+  const handleGoogleLogin = () => {
+    console.log('구글 로그인');
+  };
 
-    const handleEmailLogin = () => {
-        // 이메일 로그인 로직 추가
-        console.log('이메일 로그인');
-        router.push('/email-signup');
-    };
-    
+  const handleEmailLogin = () => {
+    router.push('/email-signup');
+  };
+
   return (
     <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 24, backgroundColor: '#fff' }}>
-      {/* 로고 */}
+      {/* 로고 자리 */}
       <View
         style={{
           height: 180,
@@ -48,6 +63,8 @@ const AuthScreen = () => {
         placeholder="이메일"
         value={id}
         onChangeText={setId}
+        autoCapitalize="none"
+        keyboardType="email-address"
         style={{
           borderWidth: 1,
           borderColor: '#ddd',
@@ -73,15 +90,18 @@ const AuthScreen = () => {
       />
       <Pressable
         onPress={handleLogin}
+        disabled={loading}
         style={{
-          backgroundColor: '#4A90E2',
+          backgroundColor: loading ? '#A0C4E2' : '#4A90E2',
           paddingVertical: 14,
           borderRadius: 8,
           alignItems: 'center',
           marginBottom: 24,
         }}
       >
-        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>로그인</Text>
+        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>
+          {loading ? '로그인 중...' : '로그인'}
+        </Text>
       </Pressable>
 
       {/* 구분선 */}
@@ -99,7 +119,7 @@ const AuthScreen = () => {
 
       {/* 소셜 로그인 */}
       <Pressable
-        onPress={() => {handleKakaoLogin()}}
+        onPress={handleKakaoLogin}
         style={{
           backgroundColor: '#fee500',
           paddingVertical: 12,
@@ -111,7 +131,7 @@ const AuthScreen = () => {
         <Text style={{ color: '#000', fontWeight: '600' }}>카카오로 계속하기</Text>
       </Pressable>
       <Pressable
-        onPress={() => {handleGoogleLogin()}}
+        onPress={handleGoogleLogin}
         style={{
           backgroundColor: '#ffffff',
           borderWidth: 1,
@@ -125,7 +145,7 @@ const AuthScreen = () => {
         <Text style={{ color: '#000', fontWeight: '600' }}>Google로 계속하기</Text>
       </Pressable>
       <Pressable
-        onPress={() => {handleEmailLogin()}}
+        onPress={handleEmailLogin}
         style={{
           backgroundColor: '#f0f4fa',
           paddingVertical: 12,
