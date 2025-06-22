@@ -154,7 +154,7 @@ const MeetingDetailScreen = () => {
             elevation: 4,
           }}
         >
-          <Pressable onPress={() => router.push('/(modals)/memberManage')}>
+          <Pressable onPress={() => router.push('/(modals)/manage-applicants')}>
             <Text style={{ color: '#fff', fontWeight: '600' }}>신청자 승인하기</Text>
           </Pressable>
         </View>
