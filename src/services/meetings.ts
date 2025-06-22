@@ -2,11 +2,6 @@ import config from '@/config';
 
 import apiClient from './apiClient';
 
-// 미팅 관련 API 클라이언트
-const meetingsClient = apiClient.create({
-  baseURL: `${config.API_BASE_URL}/meetings`,
-});
-
 // 미팅 관련 타입 정의
 export interface MapMeetingsParams {
   northEastLat: number;
@@ -35,21 +30,21 @@ export interface CreateRatingRequest {
 
 // 미팅 API 함수들
 export const getMapMeetings = async (params: MapMeetingsParams) => {
-  const response = await meetingsClient.get('/map', { params });
+  const response = await apiClient.get('/meetings/map', { params });
   return response.data;
 };
 
 export const getNearbyMeetings = async (params: NearbyMeetingsParams) => {
-  const response = await meetingsClient.get('/nearby', { params });
+  const response = await apiClient.get('/meetings/nearby', { params });
   return response.data;
 };
 
 export const createRating = async (clubId: string, data: CreateRatingRequest) => {
-  const response = await meetingsClient.post(`/${clubId}/ratings`, data);
+  const response = await apiClient.post(`/meetings/${clubId}/ratings`, data);
   return response.data;
 };
 
 export const getClubRatings = async (clubId: string) => {
-  const response = await meetingsClient.get(`/${clubId}/ratings`);
+  const response = await apiClient.get(`/meetings/${clubId}/ratings`);
   return response.data;
 };

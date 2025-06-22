@@ -2,11 +2,6 @@ import config from '@/config';
 
 import apiClient from './apiClient';
 
-// 위치 관련 API 클라이언트
-const locationsClient = apiClient.create({
-  baseURL: `${config.API_BASE_URL}/locations`,
-});
-
 // 위치 관련 타입 정의
 export interface LocationPoint {
   latitude: number;
@@ -32,11 +27,11 @@ export interface RecommendParams {
 
 // 위치 API 함수들
 export const calculateMidpoint = async (data: MidpointRequest) => {
-  const response = await locationsClient.post('/midpoint', data);
+  const response = await apiClient.post('/locations/midpoint', data);
   return response.data;
 };
 
 export const getRecommendations = async (params: RecommendParams) => {
-  const response = await locationsClient.get('/recommend', { params });
+  const response = await apiClient.get('/locations/recommend', { params });
   return response.data;
 };

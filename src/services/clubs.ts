@@ -2,11 +2,6 @@ import config from '@/config';
 
 import apiClient from './apiClient';
 
-// 모임 관련 API 클라이언트
-const clubsClient = apiClient.create({
-  baseURL: `${config.API_BASE_URL}/clubs`,
-});
-
 // 모임 관련 타입 정의
 export interface CreateClubRequest {
   name: string;
@@ -35,41 +30,41 @@ export interface ApproveParticipantRequest {
 
 // 모임 API 함수들
 export const getClubs = async () => {
-  const response = await clubsClient.get('');
+  const response = await apiClient.get('/clubs');
   return response.data;
 };
 
 export const getMyClubs = async () => {
-  const response = await clubsClient.get('/my');
+  const response = await apiClient.get('/clubs/my');
   return response.data;
 };
 
 export const getClubById = async (id: string) => {
-  const response = await clubsClient.get(`/${id}`);
+  const response = await apiClient.get(`/clubs/${id}`);
   return response.data;
 };
 
 export const createClub = async (data: CreateClubRequest) => {
-  const response = await clubsClient.post('', data);
+  const response = await apiClient.post('/clubs', data);
   return response.data;
 };
 
 export const updateClub = async (id: string, data: UpdateClubRequest) => {
-  const response = await clubsClient.put(`/${id}`, data);
+  const response = await apiClient.put(`/clubs/${id}`, data);
   return response.data;
 };
 
 export const deleteClub = async (id: string) => {
-  const response = await clubsClient.delete(`/${id}`);
+  const response = await apiClient.delete(`/clubs/${id}`);
   return response.data;
 };
 
 export const joinClub = async (id: string) => {
-  const response = await clubsClient.post(`/${id}/join`);
+  const response = await apiClient.post(`/clubs/${id}/join`);
   return response.data;
 };
 
 export const approveParticipant = async (id: string, data: ApproveParticipantRequest) => {
-  const response = await clubsClient.post(`/${id}/approve`, data);
+  const response = await apiClient.post(`/clubs/${id}/approve`, data);
   return response.data;
 };
