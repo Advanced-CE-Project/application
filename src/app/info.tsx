@@ -1,9 +1,10 @@
 import { Feather } from '@expo/vector-icons';
-import { router, useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { Alert, Modal, Pressable, Text, View } from 'react-native';
+import React from 'react';
+import { Modal, Pressable, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
+
+import { useMeetingInfo } from '@/hooks/screens/use-info';
 
 type Meeting = {
   title: string;
@@ -17,117 +18,48 @@ type InfoTabProps = {
   meeting: Meeting;
 };
 
-const commonStyle = {
-  backgroundColor: '#fff',
-  borderRadius: 12,
-  padding: 16,
-  borderWidth: 1,
-  borderColor: '#f0f0f0',
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.1,
-  shadowRadius: 4,
-  elevation: 2,
-  marginBottom: 6,
-};
-
 const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState<string | null>(null);
-
-  const handleQuickMessage = (message: string) => {
-    // 실제 메시지 전송 로직 대신 알림창 띄우기 예시
-    Alert.alert('빠른 메시지', `"${message}" 메시지를 보냈습니다.`);
-  };
-
-  const handleRecommendPlace = () => {
-    router.push('/(modals)/recommend');
-  };
-
-  const displayLocation = currentLocation || meeting.location;
+  const {
+    modalVisible,
+    setModalVisible,
+    currentLocation,
+    setCurrentLocation,
+    handleQuickMessage,
+    handleRecommendPlace,
+    displayLocation,
+  } = useMeetingInfo(meeting);
 
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: '#fff' }}>
       {/* 기본 정보 카드 */}
       <View
         style={{
           backgroundColor: '#f8f9fa',
           borderRadius: 16,
-          padding: 20,
           marginBottom: 24,
         }}
       >
         {/* 날짜 */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-          <View
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 20,
-              backgroundColor: '#4A90E2',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginRight: 12,
-            }}
-          >
-            <Feather name='calendar' size={20} color='#fff' />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 12, color: '#666', marginBottom: 2 }}>일시</Text>
-            <Text style={{ fontSize: 16, color: '#1a1a1a', fontWeight: '500' }}>
-              {meeting.date}
-            </Text>
-          </View>
-        </View>
+        <InfoRow icon="calendar" color="#4A90E2" label="일시" value={meeting.date} />
 
         {/* 장소 */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-          <View
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 20,
-              backgroundColor: '#34c759',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginRight: 12,
-            }}
-          >
-            <Feather name='map-pin' size={20} color='#fff' />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 12, color: '#666', marginBottom: 2 }}>장소</Text>
-            <Text style={{ fontSize: 16, color: '#1a1a1a', fontWeight: '500' }}>
-              {displayLocation || '장소 미정'}
-            </Text>
-          </View>
-        </View>
+        <InfoRow
+          icon="map-pin"
+          color="#34c759"
+          label="장소"
+          value={displayLocation || '장소 미정'}
+        />
 
-        {/* 인원 */}
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <View
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 20,
-              backgroundColor: '#ff9500',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginRight: 12,
-            }}
-          >
-            <Feather name='users' size={20} color='#fff' />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 12, color: '#666', marginBottom: 2 }}>참여 인원</Text>
-            <Text style={{ fontSize: 16, color: '#1a1a1a', fontWeight: '500' }}>
-              {meeting.participants.current}/{meeting.participants.max}명 참여 중
-            </Text>
-          </View>
-        </View>
+        {/* 참여 인원 */}
+        <InfoRow
+          icon="users"
+          color="#ff9500"
+          label="참여 인원"
+          value={`${meeting.participants.current}/${meeting.participants.max}명 참여 중`}
+        />
       </View>
 
-      {/* 지도 (예시: 실제 지도 연동 X, 아이콘 및 텍스트만) */}
+      {/* 지도 대체 박스 */}
       <View
         style={{
           height: 180,
@@ -140,18 +72,19 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
           borderColor: '#e0e0e0',
         }}
       >
-        <Feather name='map' size={32} color='#999' />
+        <Feather name="map" size={32} color="#999" />
         <Text style={{ color: '#999', marginTop: 8, fontSize: 14 }}>
-          {displayLocation ? displayLocation : (
-            <Pressable
-              onPress={handleRecommendPlace}>
-              <Text>장소 추천 받기</Text>
+          {displayLocation ? (
+            displayLocation
+          ) : (
+            <Pressable onPress={handleRecommendPlace}>
+              <Text style={{ color: '#4A90E2', fontWeight: '600' }}>장소 추천 받기</Text>
             </Pressable>
           )}
         </Text>
       </View>
 
-      {/* 설명 */}
+      {/* 모임 설명 */}
       <View style={{ marginBottom: 24 }}>
         <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 12, color: '#1a1a1a' }}>
           모임 설명
@@ -170,7 +103,7 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
         </Text>
       </View>
 
-      {/* 참가자 */}
+      {/* 참가자 목록 */}
       <View style={{ marginBottom: 24 }}>
         <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 16, color: '#1a1a1a' }}>
           참가자
@@ -193,14 +126,14 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
                 marginBottom: 12,
               }}
             >
-              <Feather name='user' size={22} color='#4A90E2' />
+              <Feather name="user" size={22} color="#4A90E2" />
             </Pressable>
           ))}
         </View>
       </View>
 
-      {/* 참가자 연락 모달 */}
-      <Modal visible={modalVisible} transparent animationType='slide'>
+      {/* 메시지 모달 */}
+      <Modal visible={modalVisible} transparent animationType="slide">
         <Pressable
           style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }}
           onPress={() => setModalVisible(false)}
@@ -243,8 +176,41 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
           </Pressable>
         </Pressable>
       </Modal>
-    </>
+    </View>
   );
 };
+
+// 재사용 가능한 정보 섹션 컴포넌트
+const InfoRow = ({
+  icon,
+  color,
+  label,
+  value,
+}: {
+  icon: keyof typeof Feather.glyphMap;
+  color: string;
+  label: string;
+  value: string;
+}) => (
+  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+    <View
+      style={{
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: color,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 12,
+      }}
+    >
+      <Feather name={icon} size={20} color="#fff" />
+    </View>
+    <View style={{ flex: 1 }}>
+      <Text style={{ fontSize: 12, color: '#666', marginBottom: 2 }}>{label}</Text>
+      <Text style={{ fontSize: 16, color: '#1a1a1a', fontWeight: '500' }}>{value}</Text>
+    </View>
+  </View>
+);
 
 export default InfoTab;
