@@ -4,9 +4,16 @@ import { Text, TextInput, TextInputProps, TextStyle, View, ViewStyle } from 'rea
 export interface InputProps extends TextInputProps {
   label?: string;
   containerStyle?: ViewStyle;
+  disabled?: boolean;
 }
 
-export const Input: React.FC<InputProps> = ({ label, containerStyle, style, ...props }) => (
+export const Input: React.FC<InputProps> = ({
+  label,
+  containerStyle,
+  style,
+  disabled,
+  ...props
+}) => (
   <View style={containerStyle}>
     {label && (
       <Text
@@ -34,6 +41,7 @@ export const Input: React.FC<InputProps> = ({ label, containerStyle, style, ...p
         style,
       ]}
       {...props}
+      editable={!disabled || props?.editable}
     />
   </View>
 );

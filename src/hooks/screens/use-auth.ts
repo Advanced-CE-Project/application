@@ -1,15 +1,18 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import useMe from '@/hooks/use-me';
+import { setAccessToken, setRefreshToken } from '@/lib/auth';
 import services from '@/services';
 
 export const useAuth = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { me, refetchMe } = useMe();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -18,12 +21,10 @@ export const useAuth = () => {
 
   const loginMutation = useMutation({
     mutationFn: () => services.auth.login(formData),
-    onSuccess: () => {
-      router.back();
-    },
-    onError: (error: any) => {
-      Alert.alert('로그인 실패', error?.response?.data?.message || '로그인 실패');
-      console.error(error);
+    onSuccess: async (response) => {
+      setAccessToken(response.accessToken);
+      setRefreshToken(response.refreshToken);
+      refetchMe();
     },
   });
 
@@ -38,25 +39,20 @@ export const useAuth = () => {
     loginMutation.mutate();
   };
 
-  const handleKakaoLogin = () => {
-    // 카카오 로그인 로직 추가
-    console.log('카카오 로그인');
-    router.back(); // 모달 닫기
-  };
+  const handleKakaoLogin = () => {};
 
-  const handleGoogleLogin = () => {
-    // 구글 로그인 로직 추가
-    console.log('구글 로그인');
-    router.back(); // 모달 닫기
-  };
+  const handleGoogleLogin = () => {};
 
-  const handleEmailSignup = () => {
-    // 이메일 회원가입으로 이동
-    console.log('이메일 회원가입');
-    router.push('/(modals)/email-signup');
-  };
+  const handleEmailSignup = () => {};
+
+  useEffect(() => {
+    if (me) {
+      router.back();
+    }
+  }, [me]);
 
   return {
+    isLoading: loginMutation.isPending,
     insets,
     formData,
     errorMessage,

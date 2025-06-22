@@ -3,7 +3,6 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Spacer } from '@/components/ui/spacer';
 import { useAuth } from '@/hooks/screens/use-auth';
 
 const AuthScreen = () => {
@@ -16,6 +15,7 @@ const AuthScreen = () => {
     handleKakaoLogin,
     handleGoogleLogin,
     handleEmailSignup,
+    isLoading,
   } = useAuth();
 
   return (
@@ -73,6 +73,7 @@ const AuthScreen = () => {
           {/* 로그인 폼 */}
           <View style={{ marginBottom: 32 }}>
             <Input
+              disabled={isLoading}
               label='이메일'
               placeholder='이메일을 입력하세요'
               value={formData.email}
@@ -83,6 +84,7 @@ const AuthScreen = () => {
             />
 
             <Input
+              disabled={isLoading}
               label='비밀번호'
               placeholder='비밀번호를 입력하세요'
               value={formData.password}
@@ -96,9 +98,9 @@ const AuthScreen = () => {
             )}
 
             <Button
-              title='로그인'
+              title={isLoading ? '로그인 중...' : '로그인'}
               onPress={handleLogin}
-              disabled={!formData.email || !formData.password}
+              disabled={!formData.email || !formData.password || isLoading}
             />
 
             {/* 비밀번호 찾기 */}

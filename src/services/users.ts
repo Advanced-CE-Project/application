@@ -2,11 +2,6 @@ import config from '@/config';
 
 import apiClient from './apiClient';
 
-// 사용자 관련 API 클라이언트
-const usersClient = apiClient.create({
-  baseURL: `${config.API_BASE_URL}/users`,
-});
-
 // 사용자 관련 타입 정의
 export interface UpdateUserRequest {
   nickname?: string;
@@ -33,46 +28,46 @@ export interface UpdateLocationRequest {
 
 // 사용자 API 함수들
 export const getMe = async () => {
-  const response = await usersClient.get('/me');
+  const response = await apiClient.get('/users/me');
   return response.data;
 };
 
 export const updateMe = async (data: UpdateUserRequest) => {
-  const response = await usersClient.put('/me', data);
+  const response = await apiClient.put('/users/me', data);
   return response.data;
 };
 
 export const deleteMe = async () => {
-  const response = await usersClient.delete('/me');
+  const response = await apiClient.delete('/users/me');
   return response.data;
 };
 
 export const getMyNotifications = async () => {
-  const response = await usersClient.get('/notifications');
+  const response = await apiClient.get('/users/notifications');
   return response.data;
 };
 
 export const getMyPreferences = async () => {
-  const response = await usersClient.get('/preferences');
+  const response = await apiClient.get('/users/preferences');
   return response.data;
 };
 
 export const resetPassword = async (data: ResetPasswordRequest): Promise<ResetPasswordResponse> => {
-  const response = await usersClient.put('/password/reset', data);
+  const response = await apiClient.put('/users/password/reset', data);
   return response.data;
 };
 
 export const updateLocation = async (data: UpdateLocationRequest) => {
-  const response = await usersClient.put('/location', data);
+  const response = await apiClient.put('/users/location', data);
   return response.data;
 };
 
 export const getUserRatings = async (userId: string) => {
-  const response = await usersClient.get(`/${userId}/ratings`);
+  const response = await apiClient.get(`/users/${userId}/ratings`);
   return response.data;
 };
 
 export const getUserTrustScore = async (userId: string) => {
-  const response = await usersClient.get(`/${userId}/trust-score`);
+  const response = await apiClient.get(`/users/${userId}/trust-score`);
   return response.data;
 };
