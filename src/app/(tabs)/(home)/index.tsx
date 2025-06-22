@@ -37,8 +37,6 @@ interface Club {
   updatedAt: string;
 }
 
-
-
 const useHome = () => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -213,7 +211,7 @@ const HomeScreen = () => {
                 <MeetingCard
                   key={meeting.id}
                   title={meeting.name}
-                  date={meeting.createdAt}
+                  date={formatShortKoreanDateTime(meeting.startDateTime)}
                   location={meeting.location.name}
                   tags={meeting.tags.map(tag => tag.name)}
                   onPress={() => navigateToMeetingDetail(meeting.id)}
