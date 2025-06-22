@@ -295,7 +295,7 @@ const CreateMeetingScreen = () => {
             <Slider
               style={{ width: '100%', height: 40 }}
               minimumValue={1}
-              maximumValue={100}
+              maximumValue={15}
               step={1}
               value={participantCount}
               onValueChange={setParticipantCount}
@@ -312,7 +312,7 @@ const CreateMeetingScreen = () => {
               }}
             >
               <Text style={{ fontSize: 12, color: '#999' }}>1명</Text>
-              <Text style={{ fontSize: 12, color: '#999' }}>100명</Text>
+              <Text style={{ fontSize: 12, color: '#999' }}>15명</Text>
             </View>
           </View>
         </View>
