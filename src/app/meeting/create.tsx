@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, Pressable, ScrollView, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Pressable, ScrollView, Platform, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Slider from '@react-native-community/slider';
 import { Feather } from '@expo/vector-icons';
@@ -10,6 +10,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 import { useCreateMeetingForm } from '@/hooks/screens/use-create-club';
+
+// API 함수 import
+import { createClub, getMyClubs } from '@/services/clubs';
 
 const CreateMeetingScreen = () => {
   const navigation = useNavigation();
@@ -30,6 +33,41 @@ const CreateMeetingScreen = () => {
     handleDateChange,
     handleTimeChange,
   } = useCreateMeetingForm();
+
+  // 로딩 상태 (필요 시 추가)
+  const [loading, setLoading] = useState(false);
+
+  const handleCreateClub = async () => {
+    if (!title) {
+      Alert.alert('오류', '모임명을 입력해주세요.');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const startDateTime = date.toISOString();
+
+      const created = await createClub({
+        name: title,
+        description,
+        maxParticipants: participantCount,
+        startDateTime,
+      });
+
+      Alert.alert('성공', '모임이 성공적으로 생성되었습니다.');
+
+      const myClubs = await getMyClubs();
+      console.log('내 모임 목록:', myClubs);
+
+      navigation.goBack();
+    } catch (error) {
+      console.error(error);
+      Alert.alert('오류', '모임 생성 중 문제가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -284,11 +322,9 @@ const CreateMeetingScreen = () => {
 
         {/* 모임 생성 버튼 */}
         <Button
-          title="모임 생성하기"
-          onPress={() => {
-            console.log({ title, date, participantCount, description });
-            navigation.goBack();
-          }}
+          title={loading ? '생성 중...' : '모임 생성하기'}
+          disabled={loading}
+          onPress={handleCreateClub}
         />
       </ScrollView>
 
