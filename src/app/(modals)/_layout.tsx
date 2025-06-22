@@ -27,6 +27,18 @@ export default function ModalsLayout() {
       }}
     >
       <Stack.Screen
+        name='auth'
+        options={{
+          title: '로그인',
+        }}
+      />
+      <Stack.Screen
+        name='email-signup'
+        options={{
+          title: '회원가입',
+        }}
+      />
+      <Stack.Screen
         name='share'
         options={{
           title: '공유하기',

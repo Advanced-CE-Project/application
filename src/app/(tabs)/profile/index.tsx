@@ -32,6 +32,7 @@ const AVAILABLE_TAGS = [
 
 const useProfile = () => {
   const insets = useSafeAreaInsets();
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // 기본적으로 로그인되지 않은 상태로 표시
   const [nickname, setNickname] = useState(DUMMY_USER.nickname);
   const [bio, setBio] = useState(DUMMY_USER.bio);
   const [selectedTags, setSelectedTags] = useState<string[]>(DUMMY_USER.interests);
@@ -60,9 +61,19 @@ const useProfile = () => {
     router.push('/settings');
   };
 
+  const navigateToLogin = () => {
+    console.log('Navigate to login called'); // 디버깅용 로그
+    router.push('/(modals)/auth');
+  };
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+  };
+
   return {
     insets,
     user: DUMMY_USER,
+    isLoggedIn,
     nickname,
     setNickname,
     bio,
@@ -71,13 +82,127 @@ const useProfile = () => {
     toggleTag,
     addNewTag,
     navigateToSettings,
+    navigateToLogin,
+    handleLoginSuccess,
   };
+};
+
+const LoginRequiredScreen = ({ onLoginPress }: { onLoginPress: () => void }) => {
+  const insets = useSafeAreaInsets();
+
+  return (
+    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+      {/* 고정 헤더 */}
+      <View
+        style={{
+          paddingHorizontal: 16,
+          paddingTop: insets.top + 16,
+          paddingBottom: 16,
+          backgroundColor: '#fff',
+          borderBottomWidth: 1,
+          borderBottomColor: '#f0f0f0',
+        }}
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 24,
+              fontWeight: '600',
+              color: '#333',
+            }}
+          >
+            프로필
+          </Text>
+          <View style={{ width: 24 }} />
+        </View>
+      </View>
+
+      {/* 로그인 필요 컨텐츠 */}
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingHorizontal: 32,
+        }}
+      >
+        <View
+          style={{
+            width: 100,
+            height: 100,
+            borderRadius: 50,
+            backgroundColor: '#f0f0f0',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: 24,
+          }}
+        >
+          <Feather name='user' size={40} color='#ccc' />
+        </View>
+
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: '600',
+            color: '#333',
+            marginBottom: 8,
+            textAlign: 'center',
+          }}
+        >
+          로그인이 필요합니다
+        </Text>
+
+        <Text
+          style={{
+            fontSize: 16,
+            color: '#666',
+            textAlign: 'center',
+            lineHeight: 22,
+            marginBottom: 32,
+          }}
+        >
+          프로필을 확인하고 수정하려면{'\n'}로그인을 해주세요
+        </Text>
+
+        <Pressable
+          onPress={() => {
+            console.log('Login button pressed'); // 디버깅용 로그
+            onLoginPress();
+          }}
+          style={{
+            backgroundColor: '#4A90E2',
+            paddingVertical: 16,
+            paddingHorizontal: 48,
+            borderRadius: 12,
+            alignItems: 'center',
+          }}
+        >
+          <Text
+            style={{
+              color: '#fff',
+              fontWeight: '600',
+              fontSize: 16,
+            }}
+          >
+            로그인하기
+          </Text>
+        </Pressable>
+      </View>
+    </View>
+  );
 };
 
 const ProfileScreen = () => {
   const {
     insets,
     user,
+    isLoggedIn,
     nickname,
     setNickname,
     bio,
@@ -86,7 +211,13 @@ const ProfileScreen = () => {
     toggleTag,
     addNewTag,
     navigateToSettings,
+    navigateToLogin,
+    handleLoginSuccess,
   } = useProfile();
+
+  if (!isLoggedIn) {
+    return <LoginRequiredScreen onLoginPress={navigateToLogin} />;
+  }
 
   const onSave = () => {
     Alert.alert('저장 완료', '프로필이 성공적으로 저장되었습니다.');

@@ -66,7 +66,8 @@ const useSettings = () => {
         text: '로그아웃',
         style: 'destructive',
         onPress: () => {
-          router.push('/auth');
+          // 로그아웃 처리 로직
+          Alert.alert('로그아웃 완료', '로그아웃되었습니다.');
         },
       },
     ]);
