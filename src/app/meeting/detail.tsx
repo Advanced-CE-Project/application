@@ -10,6 +10,7 @@ import ResourcesTab from '@/app/(modals)/share';
 import MissionTab from '@/app/(modals)/mission';
 import { Button } from '@/components/ui/button';
 import { getClubById } from '@/services/clubs';
+import { formatShortKoreanDateTime } from '@/lib/date';
 
 interface ClubDetail {
   id: string;
@@ -80,7 +81,6 @@ const MeetingDetailScreen = () => {
       try {
         if(!id) return;
         const { club } = await getClubById(id);
-        console.log("CLUB:",club);
         setClub(club);
       } catch (error) {
         console.error('모임 정보 불러오기 실패:', error);
@@ -191,7 +191,7 @@ const MeetingDetailScreen = () => {
           <InfoTab
             meeting={{
               title: club.name,
-              date: club.startDateTime,
+              date: formatShortKoreanDateTime(club.startDateTime),
               location: club.location?.name ?? null,
               description: club.description,
               participants: {
@@ -225,7 +225,7 @@ const MeetingDetailScreen = () => {
         }}
       >
         <Pressable onPress={() => router.push('/(modals)/manage-applicants')}>
-          <Text style={{ color: '#fff', fontWeight: '600' }}>신청자 승인하기</Text>
+          <Text style={{ color: '#fff', fontWeight: '600' }}></Text>
         </Pressable>
       </View>
 
