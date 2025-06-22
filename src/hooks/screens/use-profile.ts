@@ -28,7 +28,7 @@ const AVAILABLE_TAGS = [
 
 export const useProfile = () => {
   const insets = useSafeAreaInsets();
-  const { me } = useMe();
+  const { me, isMeFetching } = useMe();
 
   const [nickname, setNickname] = useState<string>(me?.nickname ?? '');
   const [bio, setBio] = useState<string>(me?.bio ?? '');
@@ -62,6 +62,14 @@ export const useProfile = () => {
     console.log('Navigate to login called'); // 디버깅용 로그
     router.push('/(modals)/auth');
   };
+
+  React.useEffect(() => {
+    if (me && !isMeFetching) {
+      setNickname(me.nickname ?? '');
+      setBio(me.bio ?? '');
+      setSelectedTags(me.interests ?? []);
+    }
+  }, [me, isMeFetching]);
 
   return {
     insets,
