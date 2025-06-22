@@ -35,11 +35,13 @@ const EvaluateMeetingScreen = () => {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: '#fff', paddingTop: 12, paddingHorizontal: 20 }}>
       {/* 별점 */}
-      <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 12 }}>모임은 어땠나요?</Text>
+      <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 12 }}>
+        모임에 대한 만족도를 남겨주세요!
+      </Text>
       <Rating
         startingValue={0}
         imageSize={32}
-        onFinishRating={(val) => setRating(val)}
+        onFinishRating={(val: number) => setRating(val)}
         style={{ marginBottom: 12, alignSelf: 'flex-start' }}
       />
 
@@ -61,8 +63,8 @@ const EvaluateMeetingScreen = () => {
       />
 
       {/* 참가자 평가 */}
-      <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
-         함께한 참가자들에게 태그 평가를 남겨주세요!
+      <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 12 }}>
+         모임을 함께한 참가자를 태그로 평가해주세요!
       </Text>
 
     {mockParticipants.map(name => (
@@ -107,9 +109,7 @@ const EvaluateMeetingScreen = () => {
       {/* 모임 평가 완료 */}
 
       {/* 제출 버튼 */}
-      <Button title="제출하기" onPress={handleSubmit}>
-        <Text style={{ color: 'white', fontWeight: '600', fontSize: 16 }}>제출하기</Text>
-      </Button>
+      <Button title="제출하기" onPress={handleSubmit}></Button>
     </ScrollView>
   );
 };

@@ -19,10 +19,69 @@ const DUMMY_MISSIONS = [
     title: '매일 10,000보 걷기',
     status: 'ongoing',
     description: '일주일 동안 하루 만보 걷기',
+    progress: 40,
   },
-  { id: '2', title: '물 2L 마시기', status: 'completed', description: '매일 2리터 물 마시기' },
+  {
+    id: '2',
+    title: '물 2L 마시기',
+    status: 'completed',
+    description: '매일 2리터 물 마시기',
+    progress: 100,
+  },
+  {
+    id: '3',
+    title: '영양제 챙겨 먹기',
+    status: 'pending',
+    description: '매일 아침 영양제 복용',
+    progress: 0,
+  },
 ];
+
 const PROOF_METHODS = ['사진 업로드', '체크박스', '텍스트 입력'];
+
+const MissionProgress = ({ progress = 0, status }: { progress: number; status: string }) => (
+  <View style={{ marginTop: 8 }}>
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
+      <Text style={{ fontSize: 12, color: '#666' }}>진행률</Text>
+      <Text style={{ fontSize: 12, color: '#666', fontWeight: '500' }}>{progress}%</Text>
+    </View>
+    <View
+      style={{
+        height: 6,
+        backgroundColor: '#e0e0e0',
+        borderRadius: 3,
+        overflow: 'hidden',
+      }}
+    >
+      <View
+        style={{
+          height: '100%',
+          width: `${progress}%`,
+          backgroundColor:
+            status === 'ongoing'
+              ? '#4A90E2'
+              : status === 'completed'
+              ? '#4caf50'
+              : '#ffc107',
+          borderRadius: 3,
+        }}
+      />
+    </View>
+  </View>
+);
+
+const getStatusText = (status: string) => {
+  switch (status) {
+    case 'ongoing':
+      return '진행 중';
+    case 'completed':
+      return '완료';
+    case 'pending':
+      return '대기 중';
+    default:
+      return '알 수 없음';
+  }
+};
 
 const MissionTab = () => {
   const insets = useSafeAreaInsets();
@@ -31,6 +90,13 @@ const MissionTab = () => {
   const [deadline, setDeadline] = useState(new Date());
   const [proofMethod, setProofMethod] = useState('사진 업로드');
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [proofModalVisible, setProofModalVisible] = useState(false);
+  const [selectedMission, setSelectedMission] = useState<any>(null);
+  
+  const openProofModal = (mission: any) => {
+  setSelectedMission(mission);
+  setProofModalVisible(true);
+};
 
   const onChangeDate = (_: any, selectedDate?: Date) => {
     const currentDate = selectedDate || deadline;
@@ -51,21 +117,16 @@ const MissionTab = () => {
           paddingBottom: insets.bottom + 32,
         }}
       >
-        {/* 상단 제목 */}
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end', paddingVertical: 16 }}>
           <Pressable
             onPress={() => setModalVisible(true)}
-            style={{
-              backgroundColor: '#f0f4fa',
-              borderRadius: 20,
-              padding: 8,
-            }}
+            style={{ backgroundColor: '#f0f4fa', borderRadius: 20, padding: 8 }}
           >
             <Feather name='plus' size={22} color='#4A90E2' />
           </Pressable>
         </View>
 
-        {/* 진행 예정 미션 */}
+        {/* 진행 예정 */}
         <View style={{ marginBottom: 24 }}>
           <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 12 }}>진행 예정</Text>
           {pendingMissions.length === 0 ? (
@@ -83,23 +144,34 @@ const MissionTab = () => {
                   borderLeftColor: '#ffc107',
                 }}
               >
-                <Text style={{ fontSize: 15, fontWeight: '500', color: '#333' }}>
-                  {mission.title}
-                </Text>
-                <Text style={{ color: '#777', marginTop: 4 }}>{mission.description}</Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginBottom: 6,
+                  }}
+                >
+                  <Text style={{ fontSize: 15, fontWeight: '500', color: '#333' }}>
+                    {mission.title}
+                  </Text>
+                  <Text style={{ fontSize: 12, color: '#666' }}>{getStatusText(mission.status)}</Text>
+                </View>
+                <Text style={{ color: '#777', marginBottom: 6 }}>{mission.description}</Text>
+                <MissionProgress progress={mission.progress} status={mission.status} />
               </View>
             ))
           )}
         </View>
 
-        {/* 진행 중인 미션 */}
+        {/* 진행 중 */}
         <View style={{ marginBottom: 24 }}>
           <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 12 }}>진행 중</Text>
           {ongoingMissions.length === 0 ? (
             <Text style={{ color: '#888' }}>현재 진행 중인 미션이 없습니다.</Text>
           ) : (
             ongoingMissions.map((mission) => (
-              <View
+              <Pressable
+                onPress={() => openProofModal(mission)}
                 key={mission.id}
                 style={{
                   backgroundColor: '#e8f0fe',
@@ -108,23 +180,34 @@ const MissionTab = () => {
                   marginBottom: 12,
                 }}
               >
-                <Text style={{ fontSize: 16, fontWeight: '600', color: '#1a1a1a' }}>
-                  {mission.title}
-                </Text>
-                <Text style={{ color: '#555', marginTop: 4 }}>{mission.description}</Text>
-              </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginBottom: 6,
+                  }}
+                >
+                  <Text style={{ fontSize: 15, fontWeight: '500', color: '#1a1a1a' }}>
+                    {mission.title}
+                  </Text>
+                  <Text style={{ fontSize: 12, color: '#4A90E2' }}>{getStatusText(mission.status)}</Text>
+                </View>
+                <Text style={{ color: '#555', marginBottom: 6 }}>{mission.description}</Text>
+                <MissionProgress progress={mission.progress} status={mission.status} />
+              </Pressable>
             ))
           )}
         </View>
 
-        {/* 완료된 미션 */}
+        {/* 완료 */}
         <View>
           <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 12 }}>완료</Text>
           {completedMissions.length === 0 ? (
             <Text style={{ color: '#aaa' }}>아직 완료된 미션이 없습니다.</Text>
           ) : (
             completedMissions.map((mission) => (
-              <View
+              <Pressable
+                onPress={() => openProofModal(mission)}
                 key={mission.id}
                 style={{
                   backgroundColor: '#f9f9f9',
@@ -135,15 +218,63 @@ const MissionTab = () => {
                   borderLeftColor: '#4caf50',
                 }}
               >
-                <Text style={{ fontSize: 15, fontWeight: '500', color: '#333' }}>
-                  {mission.title}
-                </Text>
-                <Text style={{ color: '#777', marginTop: 4 }}>{mission.description}</Text>
-              </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginBottom: 6,
+                  }}
+                >
+                  <Text style={{ fontSize: 15, fontWeight: '500', color: '#333' }}>
+                    {mission.title}
+                  </Text>
+                  <Text style={{ fontSize: 12, color: '#4caf50' }}>{getStatusText(mission.status)}</Text>
+                </View>
+                <Text style={{ color: '#777', marginBottom: 6 }}>{mission.description}</Text>
+                <MissionProgress progress={mission.progress} status={mission.status} />
+              </Pressable>
             ))
           )}
         </View>
       </ScrollView>
+
+      {/* 인증 모달 */}
+      <Modal visible={proofModalVisible} transparent animationType="fade">
+        <Pressable
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.3)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          onPress={() => setProofModalVisible(false)}
+        >
+          <View
+            style={{
+              backgroundColor: '#fff',
+              padding: 24,
+              borderRadius: 12,
+              width: '80%',
+            }}
+          >
+            <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 16 }}>
+              인증 내역
+            </Text>
+            {selectedMission ? (
+              <View>
+                <Text style={{ fontWeight: '600', marginBottom: 8 }}>
+                  {selectedMission.title}
+                </Text>
+                <Text style={{ color: '#666' }}>
+                  이곳에 "{selectedMission.title}" 미션의 인증 내역을 표시합니다.
+                </Text>
+              </View>
+            ) : (
+              <Text>선택된 미션이 없습니다.</Text>
+            )}
+          </View>
+        </Pressable>
+      </Modal>
 
       {/* 미션 추가 모달 */}
       <Modal visible={modalVisible} transparent animationType='slide'>

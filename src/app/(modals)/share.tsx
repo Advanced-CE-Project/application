@@ -284,7 +284,8 @@ const SharedResourcesScreen = () => {
                   backgroundColor: '#f8f9fa',
                   flexDirection: 'row',
                 }}
-              >파일 선택 
+              >
+                <Text style={{ fontSize: 16, color: '#333' }}>파일 선택</Text>
               <Feather name="file-plus" size={20} color="#4A90E2" style={{ marginLeft: 3 }} />
             </Pressable>  
                       

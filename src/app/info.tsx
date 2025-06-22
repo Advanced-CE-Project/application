@@ -230,8 +230,8 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
                 marginBottom: 24,
               }}
             />
-            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#374151', marginBottom: 12 }}>
-              빠른 메시지 보내기
+            <Text style={{ fontSize: 18, fontWeight: '600', color: '#374151', marginBottom: 18 }}>
+              간편 메시지 보내기
             </Text>
             <View style={{ marginBottom: 32 }}>
               {['어디세요?', '도착했어요!', '조금 늦을 것 같아요'].map((msg, index) => (
