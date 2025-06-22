@@ -12,7 +12,17 @@ type Meeting = {
   location: string | null;
   description: string;
   participants: { current: number; max: number };
+  members: ClubMember[]
 };
+
+interface ClubMember {
+  userId: string;
+  status: 'APPROVED' | 'PENDING' | 'REJECTED';
+  user: {
+    nickname: string;
+    profileImage: string | null;
+  };
+}
 
 type InfoTabProps = {
   meeting: Meeting;

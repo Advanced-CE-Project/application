@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dimensions, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -9,31 +9,86 @@ import InfoTab from '@/app/info';
 import ResourcesTab from '@/app/(modals)/share';
 import MissionTab from '@/app/(modals)/mission';
 import { Button } from '@/components/ui/button';
+import { getClubById } from '@/services/clubs';
 
-const MEETING_DETAILS = [
-  {
-    id: '1',
-    title: '주말 등산 모임',
-    date: '4월 15일 (토) 오전 8시 - 오후 2시',
-    location: '북한산 국립공원 (3호선 구파발역)',
-    description:
-      '북한산 둘레길을 걸으며 힐링하는 모임입니다. 등산 초보자도 환영하며, 점심은 근처 맛집에서 먹을 예정입니다. 날씨가 좋을 경우 사진도 찍어요!',
-    participants: { current: 5, max: 10 },
-    isEnded: false,
-    isOngoing: true,
-  },
-];
+interface ClubDetail {
+  id: string;
+  name: string;
+  description: string;
+  imageUrl: string | null;
+  maxParticipants: number;
+  ownerId: string;
+  locationId: string;
+  startDateTime: string;
+  endDateTime: string;
+  createdAt: string;
+  updatedAt: string;
+  location: ClubLocation;
+  owner: ClubOwner;
+  tags: ClubTag[];
+  members: ClubMember[];
+}
+
+interface ClubLocation {
+  id: string;
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  placeType: string;
+  rating: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface ClubOwner {
+  id: string;
+  nickname: string;
+  profileImage: string | null;
+}
+
+interface ClubTag {
+  id: string;
+  name: string;
+  createdAt: string;
+}
+
+interface ClubMember {
+  userId: string;
+  status: 'APPROVED' | 'PENDING' | 'REJECTED';
+  user: {
+    nickname: string;
+    profileImage: string | null;
+  };
+}
 
 const TABS = ['정보', '자료', '미션'];
 
 const MeetingDetailScreen = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-
+  const { id } = useLocalSearchParams<{ id: string }>();
+  
   const [selectedTab, setSelectedTab] = useState<'정보' | '자료' | '미션'>('정보');
-
+  const [club, setClub] = useState<ClubDetail | null>(null);
+   
   // 하단 버튼 영역 높이 계산
   const bottomButtonHeight = 16 + 52 + insets.bottom + 16; // paddingTop + 버튼높이 + safeArea + paddingBottom
+
+  useEffect(() => {
+    const fetchClub = async () => {
+      try {
+        if(!id) return;
+        const { club } = await getClubById(id);
+        console.log("CLUB:",club);
+        setClub(club);
+      } catch (error) {
+        console.error('모임 정보 불러오기 실패:', error);
+      }
+    };
+
+    fetchClub();
+  }, [id]);
 
   const handleEvaluation = () => {
     router.push('/(modals)/evaluate');
@@ -49,9 +104,7 @@ const MeetingDetailScreen = () => {
     // 추후 알고리즘 추가
   };
 
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const meeting = MEETING_DETAILS.find((m) => m.id === (id ?? '1'));
-  if (!meeting)
+  if (!club)
     return (
       <View
         style={{
@@ -67,6 +120,10 @@ const MeetingDetailScreen = () => {
         </Text>
       </View>
     );
+
+  const now = new Date();
+  const isEnded = new Date(club.endDateTime) < now;
+  const isOngoing = new Date(club.startDateTime) <= now && now <= new Date(club.endDateTime);
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -88,7 +145,7 @@ const MeetingDetailScreen = () => {
             color: '#1a1a1a',
           }}
         >
-          {meeting.title}
+          {club.name}
         </Text>
 
         {/* 탭 메뉴 */}
@@ -130,14 +187,27 @@ const MeetingDetailScreen = () => {
 
         {/* 탭 콘텐츠 */}
         {/* 정보 탭 내용 */}
-        {selectedTab === '정보' && <InfoTab meeting={meeting} />}
+        {selectedTab === '정보' && (
+          <InfoTab
+            meeting={{
+              title: club.name,
+              date: club.startDateTime,
+              location: club.location?.name ?? null,
+              description: club.description,
+              participants: {
+                current: club.members.length,
+                max: club.maxParticipants,
+              },
+              members: club.members,
+            }}
+          />
+        )}       
         {/* 자료 탭 내용 */}
         {selectedTab === '자료' && <ResourcesTab />}
         {/* 미션 탭 내용 */}
         {selectedTab === '미션' && <MissionTab />}
       </ScrollView>
 
-      {true && true && (
       <View
         style={{
           position: 'absolute',
@@ -154,11 +224,10 @@ const MeetingDetailScreen = () => {
           elevation: 4,
         }}
       >
-        <Pressable onPress={() => router.push('/(modals)/memberManage')}>
+        <Pressable onPress={() => router.push('/(modals)/manage-applicants')}>
           <Text style={{ color: '#fff', fontWeight: '600' }}>신청자 승인하기</Text>
         </Pressable>
       </View>
-      )}
 
       {/* 하단 고정 버튼 */}
       <View
@@ -180,9 +249,9 @@ const MeetingDetailScreen = () => {
           elevation: 10,
         }}
       >
-        {meeting.isEnded ? (
+        {isEnded ? (
           <Button title='모임 평가하기' onPress={handleEvaluation} />
-        ) : meeting.isOngoing ? (
+        ) : isOngoing ? (
           <Button title='출석 체크하기' onPress={handleAttendance} />
         ) : (
           <Button title='참가 신청하기' onPress={handleApplication} />
