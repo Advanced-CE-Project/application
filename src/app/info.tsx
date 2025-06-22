@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import React from 'react';
-import { Modal, Pressable, Text, View } from 'react-native';
+import { Modal, Pressable, Text, View, Image } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 
@@ -119,26 +119,35 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
           참가자
         </Text>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-          {Array.from({ length: meeting.participants.current }).map((_, index) => (
-            <Pressable
-              key={index}
-              onPress={() => setModalVisible(true)}
-              style={{
-                width: 48,
-                height: 48,
-                borderRadius: 24,
-                backgroundColor: '#e0e0e0',
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderWidth: 2,
-                borderColor: '#4A90E2',
-                marginRight: 12,
-                marginBottom: 12,
-              }}
-            >
-              <Feather name="user" size={22} color="#4A90E2" />
-            </Pressable>
-          ))}
+          {meeting.members.map((member, index) => (
+      <Pressable
+        key={member.userId}
+        onPress={() => setModalVisible(true)}
+        style={{
+          width: 48,
+          height: 48,
+          borderRadius: 24,
+          backgroundColor: '#e0e0e0',
+          justifyContent: 'center',
+          alignItems: 'center',
+          borderWidth: 2,
+          borderColor: '#4A90E2',
+          marginRight: 12,
+          marginBottom: 12,
+          overflow: 'hidden',
+        }}
+      >
+        {member.user.profileImage ? (
+          <Image
+            source={{ uri: member.user.profileImage }}
+            style={{ width: '100%', height: '100%' }}
+            resizeMode="cover"
+          />
+        ) : (
+          <Feather name="user" size={22} color="#4A90E2" />
+        )}
+      </Pressable>
+    ))}
         </View>
       </View>
 
