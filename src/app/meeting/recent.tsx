@@ -1,38 +1,63 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MeetingCard } from '@/components/ui/meeting-card';
+import { getClubRecentlyJoined } from '@/services/clubs';
+import { formatShortKoreanDateTime } from '@/lib/date';
 
-const RECENT_MEETINGS = [
-  {
-    id: '1',
-    title: '주말 등산 모임',
-    date: '4월 15일 (토) 오전 8시',
-    location: '북한산 국립공원',
-    tags: ['등산'],
-  },
-  {
-    id: '2',
-    title: '영어 스터디',
-    date: '4월 18일 (화) 오후 7시',
-    location: '강남 스터디카페',
-    tags: ['스터디'],
-  },
-  {
-    id: '5',
-    title: '맛집 탐방 번개',
-    date: '4월 20일 (목) 오후 6시',
-    location: '홍대입구역 근처',
-    tags: ['식사', '친목'],
-  },
-];
+
+interface Club {
+  id: string;
+  name: string;
+  description: string;
+  tags: {
+    id: string;
+    name: string;
+    createdAt: string;
+  }[];
+  location: {
+    id: string;
+    name: string;
+    address: string;
+    latitude: number;
+    longitude: number;
+    placeType: string;
+    rating: number;
+    createdAt: string;
+    updatedAt: string;
+  };
+  startDateTime: string;
+  endDateTime: string;
+  maxParticipants: number;
+  createdAt: string;
+  updatedAt: string;
+}
 
 const useRecentMeetings = () => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+
+  const [recentClubs, setRecentClubs] = useState<Club[]>([]);
+  const [loading, setLoading] = useState(true);
+
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const recent = await getClubRecentlyJoined();
+          setRecentClubs(recent.clubs);
+        } catch (error) {
+          console.error('최근 참여 모임 불러오기 실패:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchData();
+    }, []);
 
   const navigateToMeetingDetail = (meetingId: string) => {
     // 모임 상세 페이지로 이동
@@ -42,11 +67,13 @@ const useRecentMeetings = () => {
   return {
     insets,
     navigateToMeetingDetail,
+    recentClubs,
+    loading
   };
 };
 
 const RecentMeetingsScreen = () => {
-  const { insets, navigateToMeetingDetail } = useRecentMeetings();
+  const { insets, navigateToMeetingDetail, recentClubs, loading } = useRecentMeetings();
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -83,9 +110,9 @@ const RecentMeetingsScreen = () => {
         </View>
 
         {/* 최근 모임 리스트 */}
-        {RECENT_MEETINGS.length > 0 ? (
+        {recentClubs.length > 0 ? (
           <View style={{ gap: 16 }}>
-            {RECENT_MEETINGS.map((meeting, index) => (
+            {recentClubs.map((meeting, index) => (
               <View
                 key={meeting.id}
                 style={{
@@ -102,10 +129,10 @@ const RecentMeetingsScreen = () => {
                 }}
               >
                 <MeetingCard
-                  title={meeting.title}
-                  date={meeting.date}
-                  location={meeting.location}
-                  tags={meeting.tags}
+                  title={meeting.name}
+                  date={formatShortKoreanDateTime(meeting.startDateTime)}
+                  location={meeting.location.name}
+                  tags={meeting.tags.map(tag => tag.name)}
                   onPress={() => navigateToMeetingDetail(meeting.id)}
                   style={{
                     shadowColor: 'transparent',
