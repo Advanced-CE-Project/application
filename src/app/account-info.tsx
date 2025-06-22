@@ -317,8 +317,8 @@ const AccountInfoScreen = () => {
                 {
                   text: '로그아웃',
                   style: 'destructive',
-                  onPress: () => Alert.alert('로그아웃', '로그아웃되었습니다.'),
-                },
+                  onPress: () => { router.replace('/auth'); }
+                }, 
               ])
             }
             style={{
