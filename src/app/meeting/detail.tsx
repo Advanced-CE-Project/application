@@ -1,56 +1,31 @@
-import { Feather } from '@expo/vector-icons';
-import { useLocalSearchParams } from 'expo-router';
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { Dimensions, Pressable, ScrollView, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import React from 'react';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import MissionTab from '@/app/(modals)/mission';
 import ResourcesTab from '@/app/(modals)/share';
 import InfoTab from '@/app/info';
 import { Button } from '@/components/ui/button';
-
-const MEETING_DETAILS = [
-  {
-    id: '1',
-    title: '주말 등산 모임',
-    date: '4월 15일 (토) 오전 8시 - 오후 2시',
-    location: '북한산 국립공원 (3호선 구파발역)',
-    description:
-      '북한산 둘레길을 걸으며 힐링하는 모임입니다. 등산 초보자도 환영하며, 점심은 근처 맛집에서 먹을 예정입니다. 날씨가 좋을 경우 사진도 찍어요!',
-    participants: { current: 5, max: 10 },
-    isEnded: false,
-    isOngoing: true,
-  },
-];
-
-const TABS = ['정보', '자료', '미션'];
+import { TABS, useMeetingDetail } from '@/hooks/screens/use-meeting-detail';
+import { formatShortKoreanDateTime } from '@/lib/dayjs';
 
 const MeetingDetailScreen = () => {
-  const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const {
+    router,
+    insets,
+    club,
+    isEnded,
+    isOngoing,
+    isLoading,
+    error,
+    bottomButtonHeight,
+    selectedTab,
+    setSelectedTab,
+    handleEvaluation,
+    handleAttendance,
+    handleApplication,
+  } = useMeetingDetail();
 
-  const [selectedTab, setSelectedTab] = useState<'정보' | '자료' | '미션'>('정보');
-
-  // 하단 버튼 영역 높이 계산
-  const bottomButtonHeight = 16 + 52 + insets.bottom + 16; // paddingTop + 버튼높이 + safeArea + paddingBottom
-
-  const handleEvaluation = () => {
-    router.push('/(modals)/evaluate');
-  };
-
-  const handleAttendance = () => {
-    router.push('/(modals)/attendance-manage');
-  };
-
-  const handleApplication = () => {
-    console.log('참가 신청받기');
-    // 추후 알고리즘 추가
-  };
-
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const meeting = MEETING_DETAILS.find((m) => m.id === (id ?? '1'));
-  if (!meeting)
+  if (!club)
     return (
       <View
         style={{
@@ -87,7 +62,7 @@ const MeetingDetailScreen = () => {
             color: '#1a1a1a',
           }}
         >
-          {meeting.title}
+          {club.name}
         </Text>
 
         {/* 탭 메뉴 */}
@@ -129,35 +104,47 @@ const MeetingDetailScreen = () => {
 
         {/* 탭 콘텐츠 */}
         {/* 정보 탭 내용 */}
-        {selectedTab === '정보' && <InfoTab meeting={meeting} />}
+        {selectedTab === '정보' && (
+          <InfoTab
+            meeting={{
+              title: club.name,
+              date: formatShortKoreanDateTime(club.startDateTime),
+              location: club.location?.name ?? null,
+              description: club.description,
+              participants: {
+                current: club.members.length,
+                max: club.maxParticipants,
+              },
+              members: club.members,
+            }}
+          />
+        )}
         {/* 자료 탭 내용 */}
         {selectedTab === '자료' && <ResourcesTab />}
         {/* 미션 탭 내용 */}
         {selectedTab === '미션' && <MissionTab />}
       </ScrollView>
 
-      {true && true && (
-        <View
-          style={{
-            position: 'absolute',
-            bottom: bottomButtonHeight + 12,
-            right: 20,
-            backgroundColor: '#4A90E2',
-            paddingHorizontal: 16,
-            paddingVertical: 12,
-            borderRadius: 24,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.1,
-            shadowRadius: 4,
-            elevation: 4,
-          }}
-        >
-          <Pressable onPress={() => router.push('/(modals)/manage-applicants')}>
-            <Text style={{ color: '#fff', fontWeight: '600' }}>신청자 승인하기</Text>
-          </Pressable>
-        </View>
-      )}
+      <View
+        style={{
+          position: 'absolute',
+          bottom: bottomButtonHeight + 12,
+          right: 20,
+          backgroundColor: '#4A90E2',
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+          borderRadius: 24,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          elevation: 4,
+        }}
+      >
+        <Pressable onPress={() => router.push('/(modals)/manage-applicants')}>
+          <Text style={{ color: '#fff', fontWeight: '600' }}></Text>
+        </Pressable>
+      </View>
 
       {/* 하단 고정 버튼 */}
       <View
@@ -179,9 +166,9 @@ const MeetingDetailScreen = () => {
           elevation: 10,
         }}
       >
-        {meeting.isEnded ? (
+        {isEnded ? (
           <Button title='모임 평가하기' onPress={handleEvaluation} />
-        ) : meeting.isOngoing ? (
+        ) : isOngoing ? (
           <Button title='출석 체크하기' onPress={handleAttendance} />
         ) : (
           <Button title='참가 신청하기' onPress={handleApplication} />

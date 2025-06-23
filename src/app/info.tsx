@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import React from 'react';
-import { Modal, Pressable, Text, View } from 'react-native';
+import { Image, Modal, Pressable, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { useMeetingInfo } from '@/hooks/screens/use-info';
@@ -11,7 +11,17 @@ type Meeting = {
   location: string | null;
   description: string;
   participants: { current: number; max: number };
+  members: ClubMember[];
 };
+
+interface ClubMember {
+  userId: string;
+  status: 'APPROVED' | 'PENDING' | 'REJECTED';
+  user: {
+    nickname: string;
+    profileImage: string | null;
+  };
+}
 
 type InfoTabProps = {
   meeting: Meeting;
@@ -69,6 +79,7 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
           backgroundColor: '#f8f9fa',
           borderRadius: 16,
           marginBottom: 24,
+          padding: 24,
         }}
       >
         {/* 날짜 */}
@@ -141,9 +152,9 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
           참가자
         </Text>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-          {Array.from({ length: meeting.participants.current }).map((_, index) => (
+          {meeting.members.map((member, index) => (
             <Pressable
-              key={index}
+              key={member.userId}
               onPress={() => setModalVisible(true)}
               style={{
                 width: 48,
@@ -156,9 +167,18 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
                 borderColor: '#4A90E2',
                 marginRight: 12,
                 marginBottom: 12,
+                overflow: 'hidden',
               }}
             >
-              <Feather name='user' size={22} color='#4A90E2' />
+              {member.user.profileImage ? (
+                <Image
+                  source={{ uri: member.user.profileImage }}
+                  style={{ width: '100%', height: '100%' }}
+                  resizeMode='cover'
+                />
+              ) : (
+                <Feather name='user' size={22} color='#4A90E2' />
+              )}
             </Pressable>
           ))}
         </View>
