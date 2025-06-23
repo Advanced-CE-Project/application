@@ -38,6 +38,14 @@ export interface ForgotPasswordResponse {
   resetToken?: string;
 }
 
+export interface SocialKakaoLoginRequest {
+  kakaoAccessToken: string;
+}
+
+export interface SocialGoogleLoginRequest {
+  idToken: string;
+}
+
 // 인증 API 함수들
 export const login = async (data: LoginRequest): Promise<LoginResponse> => {
   const response = await apiClient.post('/auth/login', data);
@@ -53,6 +61,16 @@ export const forgotPassword = async (
   data: ForgotPasswordRequest,
 ): Promise<ForgotPasswordResponse> => {
   const response = await apiClient.post('/auth/password/forgot', data);
+  return response.data;
+};
+
+export const socialKakaoLogin = async (data: SocialKakaoLoginRequest): Promise<LoginResponse> => {
+  const response = await apiClient.post('/auth/kakao', data);
+  return response.data;
+};
+
+export const socialGoogleLogin = async (data: SocialGoogleLoginRequest): Promise<LoginResponse> => {
+  const response = await apiClient.post('/auth/google', data);
   return response.data;
 };
 
