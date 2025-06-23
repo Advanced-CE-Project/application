@@ -1,49 +1,15 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { Alert, Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import React from 'react';
+import { Alert, Image, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-interface UserInfo {
-  nickname: string;
-  email: string;
-  phone: string;
-  profileImage?: string;
-  joinDate: string;
-}
+import { useMe } from '@/hooks';
 
 const AccountInfoScreen = () => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-
-  // 임시 사용자 데이터
-  const [userInfo, setUserInfo] = useState<UserInfo>({
-    nickname: '김모임',
-    email: 'user@bemo.app',
-    phone: '010-1234-5678',
-    profileImage: undefined,
-    joinDate: '2024.01.15',
-  });
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedNickname, setEditedNickname] = useState(userInfo.nickname);
-  const [editedPhone, setEditedPhone] = useState(userInfo.phone);
-
-  const handleSave = () => {
-    setUserInfo({
-      ...userInfo,
-      nickname: editedNickname,
-      phone: editedPhone,
-    });
-    setIsEditing(false);
-    Alert.alert('저장 완료', '계정 정보가 성공적으로 업데이트되었습니다.');
-  };
-
-  const handleCancel = () => {
-    setEditedNickname(userInfo.nickname);
-    setEditedPhone(userInfo.phone);
-    setIsEditing(false);
-  };
+  const { me } = useMe();
 
   const handleProfileImageChange = () => {
     Alert.alert('프로필 사진 변경', '프로필 사진을 변경하시겠습니까?', [
@@ -55,81 +21,15 @@ const AccountInfoScreen = () => {
     ]);
   };
 
-  const renderInfoRow = (
-    label: string,
-    value: string,
-    editable: boolean = false,
-    onChangeText?: (text: string) => void,
-  ) => (
+  const renderInfoRow = (label: string, value: string) => (
     <View style={{ marginBottom: 20 }}>
       <Text style={{ fontSize: 14, color: '#666', marginBottom: 6 }}>{label}</Text>
-      {isEditing && editable ? (
-        <TextInput
-          value={value}
-          onChangeText={onChangeText}
-          style={{
-            fontSize: 16,
-            color: '#333',
-            borderBottomWidth: 1,
-            borderBottomColor: '#4A90E2',
-            paddingVertical: 8,
-            fontWeight: '500',
-          }}
-          autoCapitalize='none'
-          autoCorrect={false}
-        />
-      ) : (
-        <Text style={{ fontSize: 16, color: '#333', fontWeight: '500' }}>{value}</Text>
-      )}
+      <Text style={{ fontSize: 16, color: '#333', fontWeight: '500' }}>{value}</Text>
     </View>
   );
 
   return (
     <View style={{ flex: 1, backgroundColor: '#f8f9fa' }}>
-      {/* 헤더 */}
-      <View
-        style={{
-          paddingTop: insets.top,
-          paddingHorizontal: 16,
-          paddingBottom: 16,
-          backgroundColor: '#fff',
-          borderBottomWidth: 1,
-          borderBottomColor: '#f0f0f0',
-        }}
-      >
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Pressable onPress={() => router.back()}>
-            <Feather name='arrow-left' size={24} color='#333' />
-          </Pressable>
-          <Text
-            style={{
-              fontSize: 18,
-              fontWeight: '600',
-              color: '#333',
-            }}
-          >
-            계정 정보
-          </Text>
-          <Pressable onPress={isEditing ? handleSave : () => setIsEditing(true)}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: '600',
-                color: '#4A90E2',
-              }}
-            >
-              {isEditing ? '저장' : '편집'}
-            </Text>
-          </Pressable>
-        </View>
-      </View>
-
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
@@ -157,9 +57,9 @@ const AccountInfoScreen = () => {
                 borderColor: '#4A90E2',
               }}
             >
-              {userInfo.profileImage ? (
+              {me?.profileImage ? (
                 <Image
-                  source={{ uri: userInfo.profileImage }}
+                  source={{ uri: me?.profileImage }}
                   style={{ width: 94, height: 94, borderRadius: 47 }}
                 />
               ) : (
@@ -193,7 +93,7 @@ const AccountInfoScreen = () => {
               marginBottom: 4,
             }}
           >
-            {userInfo.nickname}
+            {me?.nickname || ''}
           </Text>
           <Text
             style={{
@@ -201,7 +101,7 @@ const AccountInfoScreen = () => {
               color: '#666',
             }}
           >
-            {userInfo.email}
+            {me?.email || ''}
           </Text>
         </View>
 
@@ -231,26 +131,9 @@ const AccountInfoScreen = () => {
             기본 정보
           </Text>
 
-          {renderInfoRow('닉네임', editedNickname, true, setEditedNickname)}
-          {renderInfoRow('이메일', userInfo.email)}
-          {renderInfoRow('전화번호', editedPhone, true, setEditedPhone)}
-          {renderInfoRow('가입일', userInfo.joinDate)}
-
-          {isEditing && (
-            <Pressable
-              onPress={handleCancel}
-              style={{
-                marginTop: 10,
-                padding: 12,
-                borderRadius: 8,
-                borderWidth: 1,
-                borderColor: '#ddd',
-                alignItems: 'center',
-              }}
-            >
-              <Text style={{ color: '#666', fontWeight: '500' }}>취소</Text>
-            </Pressable>
-          )}
+          {renderInfoRow('닉네임', me?.nickname || '')}
+          {renderInfoRow('이메일', me?.email || '')}
+          {renderInfoRow('가입일', me?.createdAt || '')}
         </View>
 
         {/* 계정 관리 */}
