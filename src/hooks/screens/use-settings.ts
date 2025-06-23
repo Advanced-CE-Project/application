@@ -1,11 +1,13 @@
 import { Feather } from '@expo/vector-icons';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, Pressable, ScrollView, Switch, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import useMe from '@/hooks/use-me';
 import { removeTokens } from '@/lib/auth';
+import services from '@/services';
 
 // 설정 섹션 타입 정의
 export interface SettingItem {
@@ -30,13 +32,40 @@ export const useSettings = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
 
+  const { me } = useMe();
+
   // 설정 상태들
-  const [pushNotifications, setPushNotifications] = useState(true);
-  const [emailNotifications, setEmailNotifications] = useState(false);
-  const [locationServices, setLocationServices] = useState(true);
-  const [profilePublic, setProfilePublic] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
-  const [autoBackup, setAutoBackup] = useState(true);
+  const [pushNotifications, setPushNotifications] = useState(false);
+  const [locationServices, setLocationServices] = useState(false);
+
+  const userSettingsQuery = useQuery({
+    enabled: !!me,
+    queryKey: ['user-settings'],
+    queryFn: services.users.getUserSettings,
+  });
+
+  const updateUserSettingsMutation = useMutation({
+    mutationFn: () =>
+      services.users.updateUserSettings({
+        notificationEnabled: pushNotifications,
+        locationEnabled: locationServices,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-settings'] });
+      userSettingsQuery.refetch();
+    },
+  });
+
+  console.log(`userSettingsQuery:`, userSettingsQuery.data);
+
+  const handleToggle = (key: 'notificationEnabled' | 'locationEnabled', value: boolean) => {
+    if (key === 'notificationEnabled') {
+      setPushNotifications(value);
+    } else if (key === 'locationEnabled') {
+      setLocationServices(value);
+    }
+    updateUserSettingsMutation.mutate();
+  };
 
   // 네비게이션 액션들
   const navigateToPasswordChange = () => {
@@ -114,7 +143,7 @@ export const useSettings = () => {
           icon: 'bell',
           type: 'toggle',
           value: pushNotifications,
-          onToggle: setPushNotifications,
+          onToggle: (value) => handleToggle('notificationEnabled', value),
         },
       ],
     },
@@ -128,7 +157,7 @@ export const useSettings = () => {
           icon: 'map-pin',
           type: 'toggle',
           value: locationServices,
-          onToggle: setLocationServices,
+          onToggle: (value) => handleToggle('locationEnabled', value),
         },
       ],
     },
@@ -188,6 +217,13 @@ export const useSettings = () => {
       ],
     },
   ];
+
+  React.useEffect(() => {
+    if (userSettingsQuery.data) {
+      setPushNotifications(userSettingsQuery.data.notificationEnabled);
+      setLocationServices(userSettingsQuery.data.locationEnabled);
+    }
+  }, [userSettingsQuery.data]);
 
   return {
     insets,

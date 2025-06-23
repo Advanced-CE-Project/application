@@ -26,6 +26,11 @@ export interface UpdateLocationRequest {
   address?: string;
 }
 
+export interface UpdateUserSettingsRequest {
+  notificationEnabled: boolean;
+  locationEnabled: boolean;
+}
+
 // 사용자 API 함수들
 export const getMe = async () => {
   const response = await apiClient.get('/users/me');
@@ -69,5 +74,15 @@ export const getUserRatings = async (userId: string) => {
 
 export const getUserTrustScore = async (userId: string) => {
   const response = await apiClient.get(`/users/${userId}/trust-score`);
+  return response.data;
+};
+
+export const getUserSettings = async () => {
+  const response = await apiClient.get('/users/settings');
+  return response.data;
+};
+
+export const updateUserSettings = async (data: UpdateUserSettingsRequest) => {
+  const response = await apiClient.put('/users/settings', data);
   return response.data;
 };
