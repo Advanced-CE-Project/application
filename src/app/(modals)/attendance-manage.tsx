@@ -34,6 +34,7 @@ const AttendanceManageScreen = () => {
     queryKey: ['qr-code', id],
     queryFn: () => services.attendance.generateQRCode(id!),
     enabled: !!id,
+    refetchOnWindowFocus: true, // 화면 포커스 시 자동 갱신
   });
 
   // 출석 현황 조회
@@ -41,9 +42,9 @@ const AttendanceManageScreen = () => {
     queryKey: ['attendance', id],
     queryFn: () => services.attendance.getAttendanceRecord(id!),
     enabled: !!id,
+    refetchOnWindowFocus: true, // 화면 포커스 시 자동 갱신
+    refetchInterval: 1000 * 5, // 5초마다 갱신
   });
-
-  console.log('Attendance manage - Meeting ID:', id);
 
   if (clubLoading || qrLoading || attendanceLoading) {
     return (

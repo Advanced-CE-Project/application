@@ -119,6 +119,9 @@ interface TabContentProps {
 }
 
 const TabContent: React.FC<TabContentProps> = ({ selectedTab, club }) => {
+  // 승인된 멤버만 필터링
+  const approvedMembers = club.members?.filter((member: any) => member.status === 'APPROVED') || [];
+
   switch (selectedTab) {
     case '정보':
       return (
@@ -129,10 +132,10 @@ const TabContent: React.FC<TabContentProps> = ({ selectedTab, club }) => {
             location: club.location?.name ?? null,
             description: club.description,
             participants: {
-              current: club.members?.length ?? 0,
+              current: approvedMembers.length,
               max: club?.maxParticipants ?? 1,
             },
-            members: club.members,
+            members: approvedMembers,
           }}
         />
       );
@@ -157,6 +160,7 @@ interface ActionButtonProps {
   isJoining: boolean;
   isStarting: boolean;
   isEnding: boolean;
+  isEvaluationCompleted: boolean;
   onEvaluation: () => void;
   onAttendanceManage: () => void;
   onAttendanceCheck: () => void;
@@ -177,6 +181,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   isJoining,
   isStarting,
   isEnding,
+  isEvaluationCompleted,
   onEvaluation,
   onAttendanceManage,
   onAttendanceCheck,
@@ -234,11 +239,15 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   // 참가 승인된 사용자
   if (isApproved) {
     if (isEnded) {
-      return hasAttended ? (
-        <Button title='모임 평가하기' onPress={onEvaluation} icon='⭐' />
-      ) : (
-        <Button title='모임 종료됨' disabled />
-      );
+      if (!hasAttended) {
+        return <Button title='모임 종료됨' disabled />;
+      }
+
+      if (isEvaluationCompleted) {
+        return <Button title='평가 완료됨' disabled icon='✅' />;
+      }
+
+      return <Button title='모임 평가하기' onPress={onEvaluation} icon='⭐' />;
     }
 
     if (isStarted && !isEnded) {
@@ -289,6 +298,7 @@ const MeetingDetailScreen: React.FC = () => {
     isApproved,
     isPending,
     hasAttended,
+    isEvaluationCompleted,
     isJoining,
     isStarting,
     isEnding,
@@ -351,6 +361,7 @@ const MeetingDetailScreen: React.FC = () => {
           isJoining={isJoining}
           isStarting={isStarting}
           isEnding={isEnding}
+          isEvaluationCompleted={isEvaluationCompleted}
           onEvaluation={handleEvaluation}
           onAttendanceManage={handleAttendanceManage}
           onAttendanceCheck={handleAttendanceCheck}

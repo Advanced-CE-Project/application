@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -20,25 +20,38 @@ const { width, height } = Dimensions.get('window');
 const QRScanModal: React.FC = () => {
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const [permission, requestPermission] = useCameraPermissions();
   const [isScanning, setIsScanning] = useState(true);
+  const [isProcessed, setIsProcessed] = useState(false); // 중복 처리 방지
 
   const verifyQRMutation = useMutation({
     mutationFn: services.attendance.verifyQR,
     onSuccess: (data: { message: string }) => {
+      // 중복 처리 방지
+      if (isProcessed) return;
+      setIsProcessed(true);
+
+      // 출석 관련 쿼리들 무효화
+      if (id) {
+        queryClient.invalidateQueries({ queryKey: ['meeting', id] }); // 특정 모임 디테일 페이지 무효화
+        queryClient.invalidateQueries({ queryKey: ['attendance', id] }); // 특정 모임 출석 현황 무효화
+      }
+      queryClient.invalidateQueries({ queryKey: ['club'] });
+      queryClient.invalidateQueries({ queryKey: ['attendance'] });
+
+      // Alert 한 번만 표시하고 모달 닫기
       Alert.alert('출석 완료', data.message, [
         {
           text: '확인',
           onPress: () => {
-            // 출석 관련 쿼리들 무효화
-            queryClient.invalidateQueries({ queryKey: ['club'] });
-            queryClient.invalidateQueries({ queryKey: ['attendance'] });
             router.back();
           },
         },
       ]);
     },
     onError: (error: any) => {
+      setIsProcessed(false); // 에러 시 재시도 가능하도록 리셋
       const errorMessage =
         error.response?.data?.message || error.message || '출석 처리 중 오류가 발생했습니다.';
       Alert.alert('출석 실패', errorMessage, [
@@ -48,7 +61,9 @@ const QRScanModal: React.FC = () => {
         },
         {
           text: '취소',
-          onPress: () => router.back(),
+          onPress: () => {
+            router.back();
+          },
           style: 'cancel',
         },
       ]);
@@ -62,7 +77,7 @@ const QRScanModal: React.FC = () => {
   }, [permission, requestPermission]);
 
   const handleBarCodeScanned = ({ data }: { data: string }) => {
-    if (!isScanning || verifyQRMutation.isPending) return;
+    if (!isScanning || verifyQRMutation.isPending || isProcessed) return;
 
     setIsScanning(false);
     verifyQRMutation.mutate({ qrData: data });

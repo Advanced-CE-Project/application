@@ -1,40 +1,71 @@
 import { Feather } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import React from 'react';
+import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { Rating } from 'react-native-ratings';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Button } from '@/components/ui/button';
 import { Spacer } from '@/components/ui/spacer';
+import { useEvaluate } from '@/hooks/screens';
+import { useMe } from '@/hooks/use-me';
 
-const mockParticipants = ['김참여', '이산악'];
-const keywordOptions = ['친절함', '적극적', '시간약속', '지식공유'];
+const keywordOptions = ['친절함', '적극적', '시간약속', '지식공유', '매너좋음', '소통잘함'];
 
 const EvaluateMeetingScreen = () => {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { me } = useMe();
 
-  const [rating, setRating] = useState(0);
-  const [feedback, setFeedback] = useState('');
-  const [selectedKeywords, setSelectedKeywords] = useState<{ [name: string]: string[] }>({});
+  const {
+    club,
+    evaluationTargets,
+    isLoading,
+    overallRating,
+    feedback,
+    selectedKeywords,
+    setOverallRating,
+    setFeedback,
+    toggleKeyword,
+    setParticipantRating,
+    handleSubmit,
+    isSubmitting,
+  } = useEvaluate();
 
-  const toggleKeyword = (name: string, keyword: string) => {
-    setSelectedKeywords((prev) => {
-      const current = prev[name] || [];
-      const exists = current.includes(keyword);
-      return {
-        ...prev,
-        [name]: exists ? current.filter((k) => k !== keyword) : [...current, keyword],
-      };
-    });
-  };
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#f8f9fa',
+        }}
+      >
+        <ActivityIndicator size='large' color='#4A90E2' />
+        <Text style={{ marginTop: 16, fontSize: 16, color: '#666' }}>
+          모임 정보를 불러오는 중...
+        </Text>
+      </View>
+    );
+  }
 
-  const handleSubmit = () => {
-    console.log({ rating, feedback, selectedKeywords });
-    router.back();
-  };
+  if (!club) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#f8f9fa',
+        }}
+      >
+        <Text style={{ fontSize: 16, color: '#666' }}>모임 정보를 찾을 수 없습니다.</Text>
+      </View>
+    );
+  }
+
+  // 현재 사용자를 제외한 참가자들 (모임 생성자 포함)
+  const participantsToEvaluate = evaluationTargets.filter(
+    (member: any) => member.userId !== me?.id,
+  );
 
   return (
     <View style={{ flex: 1, backgroundColor: '#f8f9fa' }}>
@@ -59,7 +90,7 @@ const EvaluateMeetingScreen = () => {
               marginBottom: 8,
             }}
           >
-            모임 평가하기
+            {club.name} 평가하기
           </Text>
           <Text
             style={{
@@ -129,11 +160,12 @@ const EvaluateMeetingScreen = () => {
             </Text>
 
             <Rating
-              startingValue={0}
+              startingValue={5}
               imageSize={28}
-              onFinishRating={(val: number) => setRating(val)}
+              onFinishRating={(val: number) => setOverallRating(val)}
               style={{ alignSelf: 'flex-start' }}
               tintColor='#fff'
+              ratingBackgroundColor='#f0f0f0'
             />
           </View>
 
@@ -266,82 +298,106 @@ const EvaluateMeetingScreen = () => {
               함께한 참가자들에게 태그를 달아주세요
             </Text>
 
-            {mockParticipants.map((name, index) => (
-              <View
-                key={name}
-                style={{
-                  marginBottom: index === mockParticipants.length - 1 ? 0 : 20,
-                  padding: 16,
-                  backgroundColor: '#f8f9fa',
-                  borderRadius: 8,
-                  borderWidth: 1,
-                  borderColor: '#f0f0f0',
-                }}
-              >
+            {participantsToEvaluate.length === 0 ? (
+              <View style={{ padding: 20, alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#999' }}>평가할 참가자가 없습니다.</Text>
+              </View>
+            ) : (
+              participantsToEvaluate.map((member: any, index: number) => (
                 <View
+                  key={member.userId}
                   style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    marginBottom: 12,
+                    marginBottom: index === participantsToEvaluate.length - 1 ? 0 : 20,
+                    padding: 16,
+                    backgroundColor: '#f8f9fa',
+                    borderRadius: 8,
+                    borderWidth: 1,
+                    borderColor: '#f0f0f0',
                   }}
                 >
                   <View
                     style={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: 12,
-                      backgroundColor: '#4A90E2',
+                      flexDirection: 'row',
                       alignItems: 'center',
-                      justifyContent: 'center',
-                      marginRight: 8,
+                      marginBottom: 12,
                     }}
                   >
-                    <Feather name='user' size={12} color='#fff' />
+                    <View
+                      style={{
+                        width: 24,
+                        height: 24,
+                        borderRadius: 12,
+                        backgroundColor: '#4A90E2',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginRight: 8,
+                      }}
+                    >
+                      <Feather name='user' size={12} color='#fff' />
+                    </View>
+                    <Text
+                      style={{
+                        fontSize: 15,
+                        fontWeight: '500',
+                        color: '#333',
+                      }}
+                    >
+                      {member.user?.nickname || '참가자'}
+                    </Text>
                   </View>
-                  <Text
-                    style={{
-                      fontSize: 15,
-                      fontWeight: '500',
-                      color: '#333',
-                    }}
-                  >
-                    {name}
-                  </Text>
-                </View>
 
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                  {keywordOptions.map((kw) => {
-                    const isSelected = selectedKeywords[name]?.includes(kw);
-                    return (
-                      <Pressable
-                        key={kw}
-                        onPress={() => toggleKeyword(name, kw)}
-                        style={{
-                          paddingHorizontal: 12,
-                          paddingVertical: 6,
-                          borderRadius: 16,
-                          backgroundColor: isSelected ? '#4A90E2' : '#fff',
-                          borderWidth: 1,
-                          borderColor: isSelected ? '#4A90E2' : '#e9ecef',
-                          marginRight: 8,
-                          marginBottom: 8,
-                        }}
-                      >
-                        <Text
+                  {/* 개별 평점 */}
+                  <View style={{ marginBottom: 12 }}>
+                    <Text style={{ fontSize: 14, color: '#666', marginBottom: 8 }}>
+                      이 참가자를 평가해주세요
+                    </Text>
+                    <Rating
+                      startingValue={5}
+                      imageSize={20}
+                      onFinishRating={(rating: number) => {
+                        setParticipantRating(member.userId, rating);
+                      }}
+                      style={{ alignSelf: 'flex-start' }}
+                      tintColor='#f8f9fa'
+                      ratingBackgroundColor='#f0f0f0'
+                      showRating={false}
+                    />
+                  </View>
+
+                  <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                    {keywordOptions.map((kw) => {
+                      const isSelected = selectedKeywords[member.userId]?.includes(kw);
+                      return (
+                        <Pressable
+                          key={kw}
+                          onPress={() => toggleKeyword(member.userId, kw)}
                           style={{
-                            fontSize: 12,
-                            fontWeight: '500',
-                            color: isSelected ? '#fff' : '#666',
+                            paddingHorizontal: 12,
+                            paddingVertical: 6,
+                            borderRadius: 16,
+                            backgroundColor: isSelected ? '#4A90E2' : '#fff',
+                            borderWidth: 1,
+                            borderColor: isSelected ? '#4A90E2' : '#e9ecef',
+                            marginRight: 8,
+                            marginBottom: 8,
                           }}
                         >
-                          {kw}
-                        </Text>
-                      </Pressable>
-                    );
-                  })}
+                          <Text
+                            style={{
+                              fontSize: 12,
+                              fontWeight: '500',
+                              color: isSelected ? '#fff' : '#666',
+                            }}
+                          >
+                            {kw}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
                 </View>
-              </View>
-            ))}
+              ))
+            )}
           </View>
 
           <Spacer height={32} />
@@ -371,23 +427,27 @@ const EvaluateMeetingScreen = () => {
         <Pressable
           onPress={handleSubmit}
           style={{
-            backgroundColor: rating > 0 ? '#4A90E2' : '#ccc',
+            backgroundColor: overallRating > 0 && !isSubmitting ? '#4A90E2' : '#ccc',
             borderRadius: 12,
             paddingVertical: 16,
             alignItems: 'center',
             justifyContent: 'center',
           }}
-          disabled={rating === 0}
+          disabled={overallRating === 0 || isSubmitting}
         >
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: '600',
-              color: '#fff',
-            }}
-          >
-            평가 완료하기
-          </Text>
+          {isSubmitting ? (
+            <ActivityIndicator size='small' color='#fff' />
+          ) : (
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: '600',
+                color: '#fff',
+              }}
+            >
+              평가 완료하기
+            </Text>
+          )}
         </Pressable>
       </View>
     </View>

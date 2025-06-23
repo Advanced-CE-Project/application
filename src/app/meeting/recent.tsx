@@ -1,199 +1,252 @@
 import { Feather } from '@expo/vector-icons';
+import { useQuery } from '@tanstack/react-query';
+import { Stack } from 'expo-router';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 import { MeetingCard } from '@/components/ui/meeting-card';
+import { MeetingCardSkeleton } from '@/components/ui/skeleton';
 import { formatShortKoreanDateTime } from '@/lib/dayjs';
-import { getClubRecentlyJoined } from '@/services/clubs';
+import services from '@/services';
+import type { ClubItem } from '@/types/models/club';
 
-interface Club {
-  id: string;
-  name: string;
-  description: string;
-  tags: {
-    id: string;
-    name: string;
-    createdAt: string;
-  }[];
-  location: {
-    id: string;
-    name: string;
-    address: string;
-    latitude: number;
-    longitude: number;
-    placeType: string;
-    rating: number;
-    createdAt: string;
-    updatedAt: string;
+interface RecentClubsResponse {
+  clubs: ClubItem[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
   };
-  startDateTime: string;
-  endDateTime: string;
-  maxParticipants: number;
-  createdAt: string;
-  updatedAt: string;
 }
 
-const useRecentMeetings = () => {
-  const insets = useSafeAreaInsets();
+const RecentMeetingsScreen: React.FC = () => {
   const router = useRouter();
+  const [page, setPage] = useState(1);
+  const [allClubs, setAllClubs] = useState<ClubItem[]>([]);
 
-  const [recentClubs, setRecentClubs] = useState<Club[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading, isFetching, refetch, error } = useQuery({
+    queryKey: ['recentClubs', page],
+    queryFn: () => services.clubs.getRecentClubs(page, 10),
+    placeholderData: (previousData: any) => previousData,
+  }) as {
+    data: RecentClubsResponse | undefined;
+    isLoading: boolean;
+    isFetching: boolean;
+    refetch: () => void;
+    error: any;
+  };
 
+  // 데이터가 변경될 때마다 allClubs 업데이트
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const recent = await getClubRecentlyJoined();
-        setRecentClubs(recent.clubs);
-      } catch (error) {
-        console.error('최근 참여 모임 불러오기 실패:', error);
-      } finally {
-        setLoading(false);
+    if (data) {
+      if (page === 1) {
+        setAllClubs(data.clubs);
+      } else {
+        setAllClubs((prev) => [...prev, ...data.clubs]);
       }
-    };
-
-    fetchData();
-  }, []);
+    }
+  }, [data, page]);
 
   const navigateToMeetingDetail = (meetingId: string) => {
-    // 모임 상세 페이지로 이동
     router.push(`/meeting/detail?id=${meetingId}`);
   };
 
-  return {
-    insets,
-    navigateToMeetingDetail,
-    recentClubs,
-    loading,
+  const handleRefresh = () => {
+    setPage(1);
+    setAllClubs([]);
+    refetch();
   };
-};
 
-const RecentMeetingsScreen = () => {
-  const { insets, navigateToMeetingDetail, recentClubs, loading } = useRecentMeetings();
+  const handleLoadMore = () => {
+    if (data?.pagination.hasNext && !isFetching) {
+      setPage((prev) => prev + 1);
+    }
+  };
 
-  return (
-    <View style={{ flex: 1, backgroundColor: '#fff' }}>
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{
-          paddingHorizontal: 20,
-          paddingTop: 20,
-          paddingBottom: insets.bottom + 20,
+  const renderMeetingCard = ({ item }: { item: ClubItem }) => (
+    <View style={{ marginBottom: 16 }}>
+      <MeetingCard
+        title={item.name}
+        date={formatShortKoreanDateTime(item.startDateTime)}
+        location={item?.location?.name || '장소 미정'}
+        tags={item.tags.map((tag: any) => tag.name)}
+        onPress={() => navigateToMeetingDetail(item.id)}
+        participants={{
+          current: item.currentParticipants,
+          max: item.maxParticipants,
         }}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* 헤더 섹션 */}
-        <View style={{ marginBottom: 24 }}>
-          <Text
-            style={{
-              fontSize: 28,
-              fontWeight: 'bold',
-              color: '#1a1a1a',
-              marginBottom: 8,
-            }}
-          >
-            최근 모임
-          </Text>
-          <Text
-            style={{
-              fontSize: 16,
-              color: '#666',
-              lineHeight: 22,
-            }}
-          >
-            참여했던 모임들을 확인해보세요
-          </Text>
-        </View>
-
-        {/* 최근 모임 리스트 */}
-        {recentClubs.length > 0 ? (
-          <View style={{ gap: 16 }}>
-            {recentClubs.map((meeting, index) => (
-              <View
-                key={meeting.id}
-                style={{
-                  backgroundColor: '#fff',
-                  borderRadius: 16,
-                  padding: 20,
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.08,
-                  shadowRadius: 12,
-                  elevation: 4,
-                  borderWidth: 1,
-                  borderColor: '#f0f0f0',
-                }}
-              >
-                <MeetingCard
-                  title={meeting.name}
-                  date={formatShortKoreanDateTime(meeting.startDateTime)}
-                  location={meeting?.location?.name || ''}
-                  tags={meeting.tags.map((tag) => tag.name)}
-                  onPress={() => navigateToMeetingDetail(meeting.id)}
-                  style={{
-                    shadowColor: 'transparent',
-                    elevation: 0,
-                    borderWidth: 0,
-                    backgroundColor: 'transparent',
-                    padding: 0,
-                    margin: 0,
-                  }}
-                />
-              </View>
-            ))}
-          </View>
-        ) : (
-          // 빈 상태 UI
-          <View
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              paddingVertical: 80,
-              backgroundColor: '#f8f9fa',
-              borderRadius: 16,
-              marginTop: 40,
-            }}
-          >
-            <View
-              style={{
-                width: 80,
-                height: 80,
-                borderRadius: 40,
-                backgroundColor: '#e0e0e0',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginBottom: 20,
-              }}
-            >
-              <Feather name='calendar' size={36} color='#999' />
-            </View>
-            <Text
-              style={{
-                fontSize: 18,
-                fontWeight: '600',
-                color: '#1a1a1a',
-                marginBottom: 8,
-              }}
-            >
-              최근 모임이 없습니다
-            </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                color: '#666',
-                textAlign: 'center',
-                paddingHorizontal: 20,
-              }}
-            >
-              새로운 모임에 참여해보세요
-            </Text>
-          </View>
-        )}
-      </ScrollView>
+        isStarted={item.isStarted}
+        isEnded={item.isEnded}
+      />
     </View>
   );
+
+  const renderFooter = () => {
+    if (!data?.pagination.hasNext) return null;
+
+    return (
+      <View style={styles.footerContainer}>
+        {isFetching ? (
+          <ActivityIndicator size='small' color='#4A90E2' />
+        ) : (
+          <Pressable onPress={handleLoadMore} style={styles.loadMoreButton}>
+            <Text style={styles.loadMoreText}>더 보기</Text>
+          </Pressable>
+        )}
+      </View>
+    );
+  };
+
+  const renderEmptyComponent = () => {
+    if (isLoading) {
+      return (
+        <View>
+          {Array.from({ length: 5 }, (_, index) => (
+            <View key={`skeleton-${index}`} style={{ marginBottom: 16 }}>
+              <MeetingCardSkeleton />
+            </View>
+          ))}
+        </View>
+      );
+    }
+
+    return (
+      <View style={styles.emptyContainer}>
+        <Feather name='calendar' size={48} color='#ccc' />
+        <Text style={styles.emptyTitle}>최근 모임이 없습니다</Text>
+        <Text style={styles.emptyDescription}>새로운 모임을 찾아보거나 직접 만들어보세요!</Text>
+      </View>
+    );
+  };
+
+  if (error) {
+    return (
+      <>
+        <Stack.Screen options={{ title: '최근 모임' }} />
+        <View style={styles.errorFullContainer}>
+          <Feather name='alert-circle' size={48} color='#ff4444' />
+          <Text style={styles.errorTitle}>모임을 불러올 수 없습니다</Text>
+          <Text style={styles.errorMessage}>
+            {error?.message || '네트워크 오류가 발생했습니다'}
+          </Text>
+          <Pressable onPress={handleRefresh} style={styles.retryButton}>
+            <Text style={styles.retryText}>다시 시도</Text>
+          </Pressable>
+        </View>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Stack.Screen options={{ title: '최근 모임' }} />
+      <View style={styles.container}>
+        <FlatList
+          data={allClubs}
+          renderItem={renderMeetingCard}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContainer}
+          refreshControl={
+            <RefreshControl refreshing={isLoading && page === 1} onRefresh={handleRefresh} />
+          }
+          ListEmptyComponent={renderEmptyComponent}
+          ListFooterComponent={renderFooter}
+          showsVerticalScrollIndicator={false}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.3}
+        />
+      </View>
+    </>
+  );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  listContainer: {
+    padding: 16,
+    flexGrow: 1,
+  },
+  footerContainer: {
+    paddingVertical: 20,
+    alignItems: 'center',
+  },
+  loadMoreButton: {
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    backgroundColor: '#4A90E2',
+    borderRadius: 8,
+  },
+  loadMoreText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 100,
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#666',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptyDescription: {
+    fontSize: 14,
+    color: '#999',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  errorFullContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 32,
+  },
+  errorTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  errorMessage: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 20,
+  },
+  retryButton: {
+    backgroundColor: '#4A90E2',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  retryText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+});
 
 export default RecentMeetingsScreen;

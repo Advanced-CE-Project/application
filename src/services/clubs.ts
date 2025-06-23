@@ -52,6 +52,11 @@ export const getMyClubs = async () => {
   return response.data;
 };
 
+export const getMyParticipatedClubs = async () => {
+  const response = await apiClient.get('/clubs/my-participated');
+  return response.data;
+};
+
 export const getClubById = async (id: string) => {
   const response = await apiClient.get(`/clubs/${id}`);
   return response.data;
@@ -64,6 +69,13 @@ export const getClubByInterest = async () => {
 
 export const getClubRecentlyJoined = async () => {
   const response = await apiClient.get('/clubs/recent-joined');
+  return response.data;
+};
+
+export const getRecentClubs = async (page: number = 1, limit: number = 10) => {
+  const response = await apiClient.get('/clubs/recent', {
+    params: { page: page.toString(), limit: limit.toString() },
+  });
   return response.data;
 };
 

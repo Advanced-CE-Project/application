@@ -3,6 +3,13 @@ import config from '@/config';
 import apiClient from './apiClient';
 
 // 평가 관련 타입 정의
+export interface CreateRatingRequest {
+  receiverId: string;
+  score: number;
+  comment?: string;
+  tags?: string[];
+}
+
 export interface UpdateRatingRequest {
   score?: number | null;
   comment?: string | null;

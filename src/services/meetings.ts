@@ -48,3 +48,8 @@ export const getClubRatings = async (clubId: string) => {
   const response = await apiClient.get(`/meetings/${clubId}/ratings`);
   return response.data;
 };
+
+export const getUserEvaluationStatus = async (clubId: string) => {
+  const response = await apiClient.get(`/meetings/${clubId}/evaluation-status`);
+  return response.data;
+};

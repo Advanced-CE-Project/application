@@ -229,39 +229,62 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
       {/* 참가자 목록 */}
       <View style={{ marginBottom: 24 }}>
         <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 16, color: '#1a1a1a' }}>
-          참가자
+          참가자 ({meeting.participants.current}명)
         </Text>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-          {meeting.members.map((member, index) => (
-            <Pressable
-              key={member.userId}
-              onPress={() => setModalVisible(true)}
+        {meeting.members.length > 0 ? (
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+            {meeting.members.map((member, index) => (
+              <Pressable
+                key={member.userId}
+                onPress={() => setModalVisible(true)}
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 24,
+                  backgroundColor: '#e0e0e0',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderWidth: 2,
+                  borderColor: '#4A90E2',
+                  marginRight: 12,
+                  marginBottom: 12,
+                  overflow: 'hidden',
+                }}
+              >
+                {member.user.profileImage ? (
+                  <Image
+                    source={{ uri: member.user.profileImage }}
+                    style={{ width: '100%', height: '100%' }}
+                    resizeMode='cover'
+                  />
+                ) : (
+                  <Feather name='user' size={22} color='#4A90E2' />
+                )}
+              </Pressable>
+            ))}
+          </View>
+        ) : (
+          <View
+            style={{
+              backgroundColor: '#f8f9fa',
+              padding: 20,
+              borderRadius: 12,
+              alignItems: 'center',
+            }}
+          >
+            <Feather name='users' size={24} color='#999' />
+            <Text
               style={{
-                width: 48,
-                height: 48,
-                borderRadius: 24,
-                backgroundColor: '#e0e0e0',
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderWidth: 2,
-                borderColor: '#4A90E2',
-                marginRight: 12,
-                marginBottom: 12,
-                overflow: 'hidden',
+                color: '#999',
+                fontSize: 14,
+                marginTop: 8,
+                textAlign: 'center',
               }}
             >
-              {member.user.profileImage ? (
-                <Image
-                  source={{ uri: member.user.profileImage }}
-                  style={{ width: '100%', height: '100%' }}
-                  resizeMode='cover'
-                />
-              ) : (
-                <Feather name='user' size={22} color='#4A90E2' />
-              )}
-            </Pressable>
-          ))}
-        </View>
+              아직 승인된 참가자가 없습니다
+            </Text>
+          </View>
+        )}
       </View>
 
       {/* 메시지 모달 */}

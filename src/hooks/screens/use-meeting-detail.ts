@@ -32,6 +32,7 @@ interface MeetingState {
   isApproved: boolean;
   isPending: boolean;
   hasAttended: boolean;
+  isEvaluationCompleted: boolean;
 }
 
 export const useMeetingDetail = () => {
@@ -52,6 +53,16 @@ export const useMeetingDetail = () => {
       memberStatus: null,
       attendanceStatus: null,
     },
+    refetchOnWindowFocus: true, // 화면 포커스 시 자동 갱신 (출석 상태 업데이트 반영)
+    refetchInterval: 1000 * 5, // 5초마다 갱신
+  });
+
+  // 평가 상태 조회
+  const { data: evaluationStatus } = useQuery({
+    queryKey: ['evaluationStatus', id],
+    queryFn: () => services.meetings.getUserEvaluationStatus(id!),
+    enabled: !!id && !!data?.club?.isEnded, // 모임이 종료된 경우에만 조회
+    refetchInterval: 1000 * 5, // 5초마다 갱신
   });
 
   // 참가 신청 mutation
@@ -83,8 +94,19 @@ export const useMeetingDetail = () => {
         {
           text: '확인',
           onPress: () => {
+            // 현재 모임 디테일 무효화
             queryClient.invalidateQueries({
               queryKey: ['meeting', id],
+            });
+            // 클럽 목록들 무효화
+            queryClient.invalidateQueries({
+              queryKey: ['clubs'], // 내 클럽 목록, 검색 결과 등 모든 클럽 관련 쿼리
+            });
+            queryClient.invalidateQueries({
+              queryKey: ['recommendedClubs'], // 홈 - 추천 모임
+            });
+            queryClient.invalidateQueries({
+              queryKey: ['recentClubs'], // 홈 - 최근 모임
             });
           },
         },
@@ -104,8 +126,19 @@ export const useMeetingDetail = () => {
         {
           text: '확인',
           onPress: () => {
+            // 현재 모임 디테일 무효화
             queryClient.invalidateQueries({
               queryKey: ['meeting', id],
+            });
+            // 클럽 목록들 무효화
+            queryClient.invalidateQueries({
+              queryKey: ['clubs'], // 내 클럽 목록, 검색 결과 등 모든 클럽 관련 쿼리
+            });
+            queryClient.invalidateQueries({
+              queryKey: ['recommendedClubs'], // 홈 - 추천 모임
+            });
+            queryClient.invalidateQueries({
+              queryKey: ['recentClubs'], // 홈 - 최근 모임
             });
           },
         },
@@ -132,6 +165,7 @@ export const useMeetingDetail = () => {
     const isApproved = data?.memberStatus === 'APPROVED';
     const isPending = data?.memberStatus === 'PENDING';
     const hasAttended = data?.attendanceStatus === 'PRESENT';
+    const isEvaluationCompleted = evaluationStatus?.isEvaluationCompleted ?? false;
 
     return {
       isEnded,
@@ -141,8 +175,15 @@ export const useMeetingDetail = () => {
       isApproved,
       isPending,
       hasAttended,
+      isEvaluationCompleted,
     };
-  }, [data?.club, data?.memberStatus, data?.attendanceStatus, me?.id]);
+  }, [
+    data?.club,
+    data?.memberStatus,
+    data?.attendanceStatus,
+    me?.id,
+    evaluationStatus?.isEvaluationCompleted,
+  ]);
 
   // 하단 버튼 영역 높이 계산
   const bottomButtonHeight = React.useMemo(
@@ -152,8 +193,15 @@ export const useMeetingDetail = () => {
 
   // 이벤트 핸들러들
   const handleEvaluation = React.useCallback(() => {
-    router.push('/(modals)/evaluate');
-  }, [router]);
+    if (!id) return;
+
+    if (meetingState.isEvaluationCompleted) {
+      Alert.alert('알림', '이미 평가를 완료하셨습니다.');
+      return;
+    }
+
+    router.push(`/(modals)/evaluate?id=${id}`);
+  }, [router, id, meetingState.isEvaluationCompleted]);
 
   const handleAttendance = React.useCallback(() => {
     router.push('/(modals)/attendance-check');
@@ -166,8 +214,10 @@ export const useMeetingDetail = () => {
   }, [meetingState.isOwner, id, router]);
 
   const handleAttendanceCheck = React.useCallback(() => {
-    router.push('/(modals)/qr-scan');
-  }, [router]);
+    if (id) {
+      router.push(`/(modals)/qr-scan?id=${id}`);
+    }
+  }, [router, id]);
 
   const handleApplication = React.useCallback(() => {
     if (id && !joinClubMutation.isPending) {
@@ -224,6 +274,9 @@ export const useMeetingDetail = () => {
     ...meetingState,
     memberStatus: data?.memberStatus,
     attendanceStatus: data?.attendanceStatus,
+
+    // 평가 상태
+    evaluationStatus,
 
     // UI 상태
     selectedTab,
