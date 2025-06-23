@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useDebounce } from '@uidotdev/usehooks';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import services from '@/services';
@@ -18,6 +18,11 @@ export const useSearch = () => {
   const [searchText, setSearchText] = useState('');
   const [selectedTag, setSelectedTag] = useState<string>('ALL');
 
+  const [mapRegion, setMapRegion] = useState({
+    latitude: 37.5665, // 서울 시청 좌표
+    longitude: 126.978,
+  });
+
   const debouncedSearchText = useDebounce(searchText, 500);
 
   const tagsQuery = useQuery<Tag[]>({
@@ -27,18 +32,15 @@ export const useSearch = () => {
   });
 
   const clubsQuery = useQuery<ClubItem[]>({
-    queryKey: ['clubs', debouncedSearchText, selectedTag],
+    queryKey: ['clubs', debouncedSearchText, selectedTag, mapRegion],
     queryFn: () =>
       services.clubs.getClubs({
         search: debouncedSearchText,
         tagId: selectedTag === 'ALL' ? null : selectedTag,
+        latitude: mapRegion.latitude,
+        longitude: mapRegion.longitude,
       }),
     initialData: [],
-  });
-
-  const [mapRegion, setMapRegion] = useState({
-    latitude: 37.5665, // 서울 시청 좌표
-    longitude: 126.978,
   });
 
   const goBack = () => {
@@ -78,6 +80,15 @@ export const useSearch = () => {
       });
     }
   };
+
+  useEffect(() => {
+    if (location?.coords) {
+      setMapRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+    }
+  }, [location?.coords]);
 
   return {
     insets,

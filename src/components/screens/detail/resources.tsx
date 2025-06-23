@@ -292,7 +292,6 @@ const SharedResourcesScreen = () => {
             <Pressable
               onPress={() => {
                 // 실제 파일 선택 로직 필요 (예: expo-document-picker 등)
-                console.log('파일 선택');
               }}
               style={{
                 borderWidth: 1,
