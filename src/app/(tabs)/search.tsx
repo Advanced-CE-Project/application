@@ -4,6 +4,7 @@ import React, { useMemo } from 'react';
 import { Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { MeetingCard } from '@/components/ui/meeting-card';
+import { MeetingCardSkeleton } from '@/components/ui/skeleton';
 import { Spacer } from '@/components/ui/spacer';
 import { Tag } from '@/components/ui/tag';
 import { useSearch } from '@/hooks/screens/use-search';
@@ -11,32 +12,6 @@ import { formatShortKoreanDateTime } from '@/lib/dayjs';
 
 // 카테고리 데이터
 const CATEGORIES = ['전체', '운동', '스터디', '친목', '음식', '여행'];
-
-// 검색 결과 더미 데이터
-const SEARCH_RESULTS = [
-  {
-    id: '1',
-    title: '테니스 초보 모임',
-    date: '4/20 (목)',
-    location: '강남 테니스장',
-    tags: ['운동'],
-    participants: {
-      current: 4,
-      max: 8,
-    },
-  },
-  {
-    id: '2',
-    title: '헬스장 같이 가요',
-    date: '4/22 (토)',
-    location: '사서동 피트니스',
-    tags: ['운동'],
-    participants: {
-      current: 3,
-      max: 6,
-    },
-  },
-];
 
 const SearchScreen = () => {
   const {
@@ -56,13 +31,6 @@ const SearchScreen = () => {
     handleCurrentLocationSearch,
     handleMapClick,
   } = useSearch();
-
-  const filteredResults = useMemo(() => {
-    if (selectedCategory === '전체') {
-      return SEARCH_RESULTS;
-    }
-    return SEARCH_RESULTS.filter((meeting) => meeting.tags.includes(selectedCategory));
-  }, [selectedCategory]);
 
   // 지도 컴포넌트 렌더링 (플랫폼별 분기)
   const renderMap = () => {
@@ -210,7 +178,14 @@ const SearchScreen = () => {
 
           {/* 검색 결과 */}
           <View style={{ gap: 16 }}>
-            {clubs.length > 0 ? (
+            {isFetching ? (
+              // 로딩 상태 스켈레톤 UI
+              <>
+                {Array.from({ length: 3 }, (_, index) => (
+                  <MeetingCardSkeleton key={`skeleton-search-${index}`} />
+                ))}
+              </>
+            ) : clubs.length > 0 ? (
               clubs.map((meeting) => (
                 <MeetingCard
                   key={meeting.id}
