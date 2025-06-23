@@ -56,8 +56,6 @@ export const useSettings = () => {
     },
   });
 
-  console.log(`userSettingsQuery:`, userSettingsQuery.data);
-
   const handleToggle = (key: 'notificationEnabled' | 'locationEnabled', value: boolean) => {
     if (key === 'notificationEnabled') {
       setPushNotifications(value);

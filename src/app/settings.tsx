@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import React from 'react';
 import { Pressable, ScrollView, Switch, Text, View } from 'react-native';
 
-import { type SettingItem, type SettingSection, useSettings } from '@/hooks/screens/use-settings';
+import { type SettingItem, useSettings } from '@/hooks/screens/use-settings';
 
 const SettingsScreen = () => {
   const { insets, settingSections } = useSettings();

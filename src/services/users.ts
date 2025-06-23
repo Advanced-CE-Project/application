@@ -87,3 +87,8 @@ export const updateUserSettings = async (data: UpdateUserSettingsRequest) => {
   const response = await apiClient.put('/users/settings', data);
   return response.data;
 };
+
+export const deleteAccount = async () => {
+  const response = await apiClient.delete('/users/me');
+  return response.data;
+};

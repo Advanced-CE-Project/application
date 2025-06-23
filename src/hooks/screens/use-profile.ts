@@ -20,7 +20,7 @@ const AVAILABLE_TAGS = [
 
 export const useProfile = () => {
   const insets = useSafeAreaInsets();
-  const { me, isMeFetching } = useMe();
+  const { me, isMeFetching } = useMe({ enabled: true });
 
   const [nickname, setNickname] = useState<string>(me?.nickname ?? '');
   const [bio, setBio] = useState<string>(me?.bio ?? '');

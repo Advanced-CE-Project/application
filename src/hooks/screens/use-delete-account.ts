@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import useMe from '@/hooks/use-me';
+import { removeTokens } from '@/lib/auth';
 import services from '@/services';
 
 export const CONFIRM_TEXT = '계정 삭제';
@@ -35,10 +37,11 @@ export const useDeleteAccount = () => {
   const isConfirmValid = confirmText === CONFIRM_TEXT;
 
   const deleteAccountMutation = useMutation({
-    mutationFn: () => Promise.resolve(),
-    onSuccess: () => {
+    mutationFn: services.users.deleteAccount,
+    onSuccess: async () => {
       Alert.alert('계정 삭제 완료', '계정이 성공적으로 삭제되었습니다.');
-      queryClient.invalidateQueries({ queryKey: ['users/me'] });
+      removeTokens();
+      queryClient.clear();
       router.dismissAll();
     },
     onError: () => {
