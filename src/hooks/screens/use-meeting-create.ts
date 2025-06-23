@@ -15,6 +15,11 @@ interface FormData {
   showTimePicker: boolean;
   participantCount: number;
   description: string;
+  address: string;
+  roadAddress: string;
+  jibunAddress: string;
+  zonecode: string;
+  showAddressSearch: boolean;
 }
 
 export const useMeetingCreate = () => {
@@ -30,7 +35,14 @@ export const useMeetingCreate = () => {
     showTimePicker: false,
     participantCount: 5,
     description: '',
+    address: '',
+    roadAddress: '',
+    jibunAddress: '',
+    zonecode: '',
+    showAddressSearch: false,
   });
+
+  console.log(`formData:`, formData);
 
   const createClubMutation = useMutation({
     mutationFn: createClub,
@@ -129,6 +141,35 @@ export const useMeetingCreate = () => {
     return null;
   };
 
+  // 주소 검색 관련 함수들
+  const openAddressSearch = () => {
+    setFormData({ ...formData, showAddressSearch: true });
+  };
+
+  const closeAddressSearch = () => {
+    setFormData({ ...formData, showAddressSearch: false });
+  };
+
+  const handleAddressSelect = (addressData: {
+    address: string;
+    roadAddress: string;
+    jibunAddress: string;
+    zonecode: string;
+  }) => {
+    console.log('handleAddressSelect called with:', addressData);
+
+    setFormData({
+      ...formData,
+      address: addressData.roadAddress || addressData.jibunAddress,
+      roadAddress: addressData.roadAddress,
+      jibunAddress: addressData.jibunAddress,
+      zonecode: addressData.zonecode,
+      showAddressSearch: false,
+    });
+
+    console.log('Address form data updated');
+  };
+
   const handleSubmit = () => {
     // 폼 유효성 검증
     const validationError = validateForm();
@@ -137,16 +178,16 @@ export const useMeetingCreate = () => {
       return;
     }
 
-    // API 요청 데이터 구성
+    // API 요청 데이터 구성 (서버에서 좌표 변환 처리)
     const requestData: CreateClubRequest = {
       name: formData.name.trim(),
       description: formData.description.trim() || undefined,
       maxParticipants: formData.participantCount,
       startDateTime: formData.date.toISOString(),
-      // endDateTime은 UI에 없으므로 생략 (선택사항)
-      // locationId는 나중에 장소 선택 기능 추가 시 사용
-      // imageUrl은 나중에 이미지 업로드 기능 추가 시 사용
+      address: formData.address || undefined,
     };
+
+    console.log(`requestData:`, requestData);
 
     createClubMutation.mutate(requestData);
   };
@@ -161,6 +202,11 @@ export const useMeetingCreate = () => {
     handleDateChange,
     handleTimeChange,
     handleSubmit,
+
+    // 주소 검색 관련
+    openAddressSearch,
+    closeAddressSearch,
+    handleAddressSelect,
 
     // 로딩 및 에러 상태
     isCreating: createClubMutation.isPending,

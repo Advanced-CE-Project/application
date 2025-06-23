@@ -18,6 +18,9 @@ export interface CreateClubRequest {
   locationId?: string | null;
   startDateTime: string;
   endDateTime?: string;
+  address?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface UpdateClubRequest {

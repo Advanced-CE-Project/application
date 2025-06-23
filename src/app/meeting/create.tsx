@@ -5,6 +5,7 @@ import React from 'react';
 import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
+import { DaumPostcode } from '@/components/ui/daum-postcode';
 import { Input } from '@/components/ui/input';
 import { useMeetingCreate } from '@/hooks/screens/use-meeting-create';
 
@@ -18,6 +19,9 @@ const CreateMeetingScreen = () => {
     handleSubmit,
     isCreating,
     isFormValid,
+    openAddressSearch,
+    closeAddressSearch,
+    handleAddressSelect,
   } = useMeetingCreate();
 
   return (
@@ -146,6 +150,68 @@ const CreateMeetingScreen = () => {
               <Feather name='chevron-down' size={20} color='#666' />
             </Pressable>
           </View>
+        </View>
+
+        {/* 모임 장소 섹션 */}
+        <View
+          style={{
+            backgroundColor: '#f8f9fa',
+            borderRadius: 16,
+            padding: 20,
+            marginBottom: 24,
+          }}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+            <View
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 16,
+                backgroundColor: '#e74c3c',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginRight: 10,
+              }}
+            >
+              <Feather name='map-pin' size={16} color='#fff' />
+            </View>
+            <Text style={{ fontSize: 18, fontWeight: '600', color: '#1a1a1a' }}>모임 장소</Text>
+          </View>
+
+          <Pressable
+            onPress={openAddressSearch}
+            disabled={isCreating}
+            style={{
+              backgroundColor: '#fff',
+              borderWidth: 1,
+              borderColor: formData.address ? '#4A90E2' : '#e0e0e0',
+              borderRadius: 12,
+              padding: 16,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              opacity: isCreating ? 0.6 : 1,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 16,
+                color: formData.address ? '#1a1a1a' : '#999',
+                flex: 1,
+                marginRight: 8,
+              }}
+              numberOfLines={1}
+            >
+              {formData.address || '주소를 검색하세요'}
+            </Text>
+            <Feather name='search' size={20} color='#666' />
+          </Pressable>
+
+          {formData.address && (
+            <View style={{ marginTop: 8 }}>
+              <Text style={{ fontSize: 12, color: '#666' }}>우편번호: {formData.zonecode}</Text>
+            </View>
+          )}
         </View>
 
         {/* 모집 인원 섹션 */}
@@ -286,6 +352,13 @@ const CreateMeetingScreen = () => {
           disabled={!isFormValid || isCreating}
         />
       </ScrollView>
+
+      {/* Daum Postcode 모달 */}
+      <DaumPostcode
+        visible={formData.showAddressSearch}
+        onClose={closeAddressSearch}
+        onComplete={handleAddressSelect}
+      />
 
       {/* 날짜 선택기 */}
       {formData.showDatePicker && (
