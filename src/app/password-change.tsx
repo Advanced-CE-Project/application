@@ -67,40 +67,6 @@ const PasswordChangeScreen = () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#f8f9fa' }}>
-      {/* 헤더 */}
-      <View
-        style={{
-          paddingTop: insets.top,
-          paddingHorizontal: 16,
-          paddingBottom: 16,
-          backgroundColor: '#fff',
-          borderBottomWidth: 1,
-          borderBottomColor: '#f0f0f0',
-        }}
-      >
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Pressable onPress={() => router.back()}>
-            <Feather name='arrow-left' size={24} color='#333' />
-          </Pressable>
-          <Text
-            style={{
-              fontSize: 18,
-              fontWeight: '600',
-              color: '#333',
-            }}
-          >
-            비밀번호 변경
-          </Text>
-          <View style={{ width: 24 }} />
-        </View>
-      </View>
-
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 20 }}
