@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 
+import { useLocation } from '@/hooks';
 import { useMe } from '@/hooks/use-me';
 
 interface MeProviderProps {
@@ -8,7 +9,8 @@ interface MeProviderProps {
 }
 
 const MeProvider = ({ children }: MeProviderProps) => {
-  const { me } = useMe({ enabled: true });
+  useMe({ enabled: true });
+  useLocation({ enabled: true });
 
   return <>{children}</>;
 };
