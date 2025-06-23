@@ -28,10 +28,14 @@ export interface RegisterResponse {
 
 export interface ForgotPasswordRequest {
   email: string;
+  code?: string | null;
+  password?: string | null;
+  resetToken?: string | null;
 }
 
 export interface ForgotPasswordResponse {
   message: string;
+  resetToken?: string;
 }
 
 // 인증 API 함수들

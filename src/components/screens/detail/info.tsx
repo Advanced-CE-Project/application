@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons';
+import { AppleMaps, GoogleMaps } from 'expo-maps';
 import React from 'react';
-import { Image, Modal, Pressable, Text, View } from 'react-native';
+import { Image, Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { useMeetingInfo } from '@/hooks/screens/use-info';
@@ -71,8 +72,82 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
     displayLocation,
   } = useMeetingInfo(meeting);
 
+  // 지도 영역을 위한 기본 좌표 (서울 중심)
+  const defaultMapRegion = {
+    latitude: 37.5665,
+    longitude: 126.978,
+  };
+
+  // 모임 장소가 있다면 해당 위치, 없다면 기본 위치
+  const mapRegion = meeting.location
+    ? {
+        // 실제로는 meeting.location에서 좌표를 추출해야 함
+        // 여기서는 더미 데이터로 설정
+        latitude: 37.5665 + (Math.random() - 0.5) * 0.01,
+        longitude: 126.978 + (Math.random() - 0.5) * 0.01,
+      }
+    : defaultMapRegion;
+
+  // 지도 컴포넌트 렌더링 (플랫폼별 분기)
+  const renderMap = () => {
+    const cameraPosition = {
+      coordinates: mapRegion,
+      zoom: 15,
+    };
+
+    // 모임 장소가 있다면 마커 표시
+    const markers = meeting.location
+      ? [
+          {
+            id: 'meeting-location',
+            coordinates: mapRegion,
+            title: meeting.location,
+            description: '모임 장소',
+          },
+        ]
+      : [];
+
+    if (Platform.OS === 'ios') {
+      return (
+        <AppleMaps.View
+          style={styles.map}
+          cameraPosition={cameraPosition}
+          markers={markers}
+          uiSettings={{
+            compassEnabled: false,
+          }}
+        />
+      );
+    } else if (Platform.OS === 'android') {
+      return (
+        <GoogleMaps.View
+          style={styles.map}
+          cameraPosition={cameraPosition}
+          markers={markers}
+          uiSettings={{
+            myLocationButtonEnabled: false,
+            zoomControlsEnabled: true,
+            mapToolbarEnabled: false,
+            compassEnabled: false,
+            scrollGesturesEnabled: true,
+            zoomGesturesEnabled: true,
+          }}
+        />
+      );
+    } else {
+      return (
+        <View style={styles.mapPlaceholder}>
+          <Feather name='map' size={32} color='#999' />
+          <Text style={styles.mapPlaceholderText}>
+            {displayLocation || '지도는 iOS와 Android에서만 지원됩니다'}
+          </Text>
+        </View>
+      );
+    }
+  };
+
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+    <View style={{ flex: 1, backgroundColor: '#fff', paddingHorizontal: 20 }}>
       {/* 기본 정보 카드 */}
       <View
         style={{
@@ -102,29 +177,30 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
         />
       </View>
 
-      {/* 지도 대체 박스 */}
-      <View
-        style={{
-          height: 180,
-          backgroundColor: '#f0f0f0',
-          borderRadius: 16,
-          marginBottom: 24,
-          justifyContent: 'center',
-          alignItems: 'center',
-          borderWidth: 1,
-          borderColor: '#e0e0e0',
-        }}
-      >
-        <Feather name='map' size={32} color='#999' />
-        <Text style={{ color: '#999', marginTop: 8, fontSize: 14 }}>
-          {displayLocation ? (
-            displayLocation
-          ) : (
-            <Pressable onPress={handleRecommendPlace}>
-              <Text style={{ color: '#4A90E2', fontWeight: '600' }}>장소 추천 받기</Text>
-            </Pressable>
-          )}
-        </Text>
+      {/* 지도 영역 */}
+      <View style={styles.mapContainer}>
+        {renderMap()}
+
+        {/* 장소 추천 버튼 (장소가 없을 때만 표시) */}
+        {!meeting.location && (
+          <Pressable onPress={handleRecommendPlace} style={styles.recommendButton}>
+            <Feather name='map-pin' size={16} color='#4A90E2' style={{ marginRight: 8 }} />
+            <Text style={{ color: '#4A90E2', fontWeight: '600', fontSize: 14 }}>
+              장소 추천 받기
+            </Text>
+          </Pressable>
+        )}
+
+        {/* 현재 위치 버튼 */}
+        <Pressable
+          onPress={() => {
+            // 현재 위치로 이동하는 로직
+            console.log('현재 위치로 이동');
+          }}
+          style={styles.currentLocationButton}
+        >
+          <Feather name='crosshair' size={18} color='#4A90E2' />
+        </Pressable>
       </View>
 
       {/* 모임 설명 */}
@@ -231,5 +307,65 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  mapContainer: {
+    height: 200,
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginBottom: 24,
+    position: 'relative',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  map: {
+    flex: 1,
+  },
+  mapPlaceholder: {
+    flex: 1,
+    backgroundColor: '#f0f0f0',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  mapPlaceholderText: {
+    fontSize: 16,
+    color: '#999',
+    marginTop: 8,
+    textAlign: 'center',
+  },
+  recommendButton: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    backgroundColor: '#fff',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  currentLocationButton: {
+    position: 'absolute',
+    right: 12,
+    bottom: 12,
+    backgroundColor: '#fff',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+});
 
 export default InfoTab;
