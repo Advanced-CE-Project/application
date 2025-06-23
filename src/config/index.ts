@@ -1,9 +1,12 @@
-import Constants from 'expo-constants';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
+
+const IS_EXPO_GO = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 
 /**
  * 애플리케이션 설정
  */
 const config = {
+  IS_EXPO_GO,
   // 환경 정보
   NODE_ENV: (Constants.expoConfig?.extra?.NODE_ENV || process.env.NODE_ENV || 'development') as
     | 'development'

@@ -1,12 +1,12 @@
 import { router } from 'expo-router';
 import React from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/screens/use-auth';
 
-const AuthScreen = () => {
+export default function AuthModal() {
   const {
     insets,
     formData,
@@ -49,15 +49,14 @@ const AuthScreen = () => {
                 borderColor: '#e8f2ff',
               }}
             >
-              <Text
+              <Image
+                source={require('@/assets/images/icon.png')}
                 style={{
-                  fontSize: 32,
-                  fontWeight: 'bold',
-                  color: '#4A90E2',
+                  width: 80,
+                  height: 80,
                 }}
-              >
-                BeMo
-              </Text>
+                resizeMode='contain'
+              />
             </View>
             <Text
               style={{
@@ -212,6 +211,4 @@ const AuthScreen = () => {
       </ScrollView>
     </View>
   );
-};
-
-export default AuthScreen;
+}

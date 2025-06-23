@@ -41,7 +41,6 @@ const MeetingDetailScreen = () => {
 
   const handleAttendance = () => {
     router.push('/(modals)/attendance-manage');
-    // router.push('/(modals)/attendance-check');
   };
 
   const handleApplication = () => {

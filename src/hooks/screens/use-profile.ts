@@ -5,14 +5,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import useMe from '@/hooks/use-me';
 
-const DUMMY_USER = {
-  email: 'bemo@bemo.com',
-  name: '김비모',
-  nickname: '김비모',
-  bio: '안녕하세요! 다양한 모임에 참여하고 싶은 김비모입니다. 독서와 독서를 좋아합니다.',
-  interests: ['독서', '영화'],
-};
-
 const AVAILABLE_TAGS = [
   '독서',
   '영화',
@@ -59,7 +51,6 @@ export const useProfile = () => {
   };
 
   const navigateToLogin = () => {
-    console.log('Navigate to login called'); // 디버깅용 로그
     router.push('/(modals)/auth');
   };
 

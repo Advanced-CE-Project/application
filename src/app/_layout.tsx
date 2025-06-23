@@ -5,12 +5,12 @@ import Providers from '@/app/_providers';
 const Layout = () => {
   return (
     <Providers>
-      <Stack>
+      <Stack initialRouteName='(tabs)'>
         <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
         <Stack.Screen name='(modals)' options={{ presentation: 'modal', headerShown: false }} />
+        <Stack.Screen name='(terms)' options={{ headerShown: false }} />
         <Stack.Screen name='meeting' options={{ headerShown: false }} />
         <Stack.Screen name='help' options={{ headerShown: false }} />
-        <Stack.Screen name='(terms)' options={{ headerShown: false }} />
         <Stack.Screen name='account-info' options={{ headerShown: false }} />
         <Stack.Screen name='password-change' options={{ headerShown: false }} />
         <Stack.Screen

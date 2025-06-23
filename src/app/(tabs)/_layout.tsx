@@ -1,4 +1,4 @@
-import { Feather, FontAwesome6 } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 
 const Icon = ({ name, color }: { name: string; color: string }) => {
@@ -24,30 +24,31 @@ const TabLayout = () => (
         marginTop: 4, // 아이콘과 텍스트 사이 간격 추가
       },
     }}
+    initialRouteName='index'
   >
     <Tabs.Screen
-      name='(home)/index'
+      name='index'
       options={{
         title: '홈',
         tabBarIcon: ({ color }) => <Icon name='home' color={color} />,
       }}
     />
     <Tabs.Screen
-      name='search/index'
+      name='search'
       options={{
         title: '검색',
         tabBarIcon: ({ color }) => <Icon name='search' color={color} />,
       }}
     />
     <Tabs.Screen
-      name='clubs/index'
+      name='clubs'
       options={{
         title: '클럽',
         tabBarIcon: ({ color }) => <Icon name='clubs' color={color} />,
       }}
     />
     <Tabs.Screen
-      name='profile/index'
+      name='profile'
       options={{
         title: '프로필',
         tabBarIcon: ({ color }) => <Icon name='user' color={color} />,

@@ -5,9 +5,8 @@ import { ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MeetingCard } from '@/components/ui/meeting-card';
+import { formatShortKoreanDateTime } from '@/lib/dayjs';
 import { getClubRecentlyJoined } from '@/services/clubs';
-import { formatShortKoreanDateTime } from '@/lib/date';
-
 
 interface Club {
   id: string;
@@ -43,21 +42,20 @@ const useRecentMeetings = () => {
   const [recentClubs, setRecentClubs] = useState<Club[]>([]);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const recent = await getClubRecentlyJoined();
+        setRecentClubs(recent.clubs);
+      } catch (error) {
+        console.error('최근 참여 모임 불러오기 실패:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const recent = await getClubRecentlyJoined();
-          setRecentClubs(recent.clubs);
-        } catch (error) {
-          console.error('최근 참여 모임 불러오기 실패:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
-  
-      fetchData();
-    }, []);
+    fetchData();
+  }, []);
 
   const navigateToMeetingDetail = (meetingId: string) => {
     // 모임 상세 페이지로 이동
@@ -68,7 +66,7 @@ const useRecentMeetings = () => {
     insets,
     navigateToMeetingDetail,
     recentClubs,
-    loading
+    loading,
   };
 };
 
@@ -132,7 +130,7 @@ const RecentMeetingsScreen = () => {
                   title={meeting.name}
                   date={formatShortKoreanDateTime(meeting.startDateTime)}
                   location={meeting.location.name}
-                  tags={meeting.tags.map(tag => tag.name)}
+                  tags={meeting.tags.map((tag) => tag.name)}
                   onPress={() => navigateToMeetingDetail(meeting.id)}
                   style={{
                     shadowColor: 'transparent',
