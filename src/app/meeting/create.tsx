@@ -1,34 +1,16 @@
 import { Feather } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Slider from '@react-native-community/slider';
-import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useCreateMeetingForm } from '@/hooks/screens/use-create-club';
+import { useMeetingCreate } from '@/hooks/screens/use-meeting-create';
 
 const CreateMeetingScreen = () => {
-  const navigation = useNavigation();
-  const insets = useSafeAreaInsets();
-
-  const {
-    title,
-    setTitle,
-    date,
-    showDatePicker,
-    setShowDatePicker,
-    showTimePicker,
-    setShowTimePicker,
-    participantCount,
-    setParticipantCount,
-    description,
-    setDescription,
-    handleDateChange,
-    handleTimeChange,
-  } = useCreateMeetingForm();
+  const { insets, formData, setFormData, handleDateChange, handleTimeChange, handleSubmit } =
+    useMeetingCreate();
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -67,8 +49,8 @@ const CreateMeetingScreen = () => {
             <Text style={{ fontSize: 18, fontWeight: '600', color: '#1a1a1a' }}>모임명</Text>
           </View>
           <Input
-            value={title}
-            onChangeText={setTitle}
+            value={formData.name}
+            onChangeText={(text) => setFormData({ ...formData, name: text })}
             placeholder='모임의 이름을 입력하세요'
             style={{
               backgroundColor: '#fff',
@@ -110,7 +92,7 @@ const CreateMeetingScreen = () => {
 
           <View style={{ gap: 12 }}>
             <Pressable
-              onPress={() => setShowDatePicker(true)}
+              onPress={() => setFormData({ ...formData, showDatePicker: true })}
               style={{
                 backgroundColor: '#fff',
                 borderWidth: 1,
@@ -123,17 +105,13 @@ const CreateMeetingScreen = () => {
               }}
             >
               <Text style={{ fontSize: 16, color: '#1a1a1a' }}>
-                {date.toLocaleDateString('ko-KR', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
+                {formData.date.format('YYYY년 MM월 DD일')}
               </Text>
               <Feather name='chevron-down' size={20} color='#666' />
             </Pressable>
 
             <Pressable
-              onPress={() => setShowTimePicker(true)}
+              onPress={() => setFormData({ ...formData, showTimePicker: true })}
               style={{
                 backgroundColor: '#fff',
                 borderWidth: 1,
@@ -146,11 +124,7 @@ const CreateMeetingScreen = () => {
               }}
             >
               <Text style={{ fontSize: 16, color: '#1a1a1a' }}>
-                {date.toLocaleTimeString('ko-KR', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  hour12: true,
-                })}
+                {formData.date.format('A h시 mm분')}
               </Text>
               <Feather name='chevron-down' size={20} color='#666' />
             </Pressable>
@@ -199,7 +173,7 @@ const CreateMeetingScreen = () => {
                 marginBottom: 8,
               }}
             >
-              {participantCount}명
+              {formData.participantCount}명
             </Text>
             <Text
               style={{
@@ -215,8 +189,8 @@ const CreateMeetingScreen = () => {
               minimumValue={1}
               maximumValue={15}
               step={1}
-              value={participantCount}
-              onValueChange={setParticipantCount}
+              value={formData.participantCount}
+              onValueChange={(value) => setFormData({ ...formData, participantCount: value })}
               minimumTrackTintColor='#4A90E2'
               maximumTrackTintColor='#e0e0e0'
               thumbTintColor='#4A90E2'
@@ -261,8 +235,8 @@ const CreateMeetingScreen = () => {
             <Text style={{ fontSize: 18, fontWeight: '600', color: '#1a1a1a' }}>모임 설명</Text>
           </View>
           <Input
-            value={description}
-            onChangeText={setDescription}
+            value={formData.description}
+            onChangeText={(text) => setFormData({ ...formData, description: text })}
             placeholder={'모임에 대한 설명을 입력하세요\n예: 등산 초보자도 환영합니다!'}
             multiline
             numberOfLines={4}
@@ -282,19 +256,13 @@ const CreateMeetingScreen = () => {
         </View>
 
         {/* 모임 생성 버튼 */}
-        <Button
-          title='모임 생성하기'
-          onPress={() => {
-            console.log({ title, date, participantCount, description });
-            navigation.goBack();
-          }}
-        />
+        <Button title='모임 생성하기' onPress={handleSubmit} />
       </ScrollView>
 
       {/* 날짜 선택기 */}
-      {showDatePicker && (
+      {formData.showDatePicker && (
         <DateTimePicker
-          value={date}
+          value={formData.date.toDate()}
           mode='date'
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={handleDateChange}
@@ -302,9 +270,9 @@ const CreateMeetingScreen = () => {
       )}
 
       {/* 시간 선택기 */}
-      {showTimePicker && (
+      {formData.showTimePicker && (
         <DateTimePicker
-          value={date}
+          value={formData.date.toDate()}
           mode='time'
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={handleTimeChange}

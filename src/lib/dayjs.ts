@@ -13,4 +13,6 @@ export const formatShortKoreanDateTime = (isoString: string | Date) => {
   return dayjs(isoString).format('M월 d일 (ddd) A h시');
 };
 
+export type Dayjs = dayjs.Dayjs;
+
 export default dayjs;

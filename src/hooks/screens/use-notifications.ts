@@ -20,14 +20,10 @@ export const useNotifications = () => {
     refetchOnWindowFocus: true,
   });
 
-  // 읽지 않은 알림 개수
-  const unreadCount = notifications.filter((notification) => !notification.isRead).length;
-
   return {
     insets,
     notifications,
     isLoading,
     error,
-    unreadCount,
   };
 };

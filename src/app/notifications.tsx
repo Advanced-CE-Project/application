@@ -1,7 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import React from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ScrollView, Text, View } from 'react-native';
 
 import { NotificationCard } from '@/components/ui/notification-card';
 import { NotificationCardSkeleton } from '@/components/ui/skeleton';
@@ -9,7 +8,7 @@ import { Spacer } from '@/components/ui/spacer';
 import { useNotifications } from '@/hooks/screens/use-notifications';
 
 const NotificationsScreen = () => {
-  const { insets, notifications, isLoading, error, unreadCount } = useNotifications();
+  const { insets, notifications, isLoading, error } = useNotifications();
 
   if (error) {
     return (
@@ -50,11 +49,7 @@ const NotificationsScreen = () => {
           ) : notifications.length > 0 ? (
             <View style={{ gap: 12 }}>
               {notifications.map((notification) => (
-                <NotificationCard
-                  key={notification.id}
-                  notification={notification}
-                  onPress={() => handleNotificationPress(notification.id)}
-                />
+                <NotificationCard key={notification.id} notification={notification} />
               ))}
             </View>
           ) : (
