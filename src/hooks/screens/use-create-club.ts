@@ -11,14 +11,15 @@ export const useCreateMeetingForm = () => {
 
   const handleDateChange = (event: any, selectedDate?: Date) => {
     if (event.type === 'set' && selectedDate) {
-      setDate(prev =>
-        new Date(
-          selectedDate.getFullYear(),
-          selectedDate.getMonth(),
-          selectedDate.getDate(),
-          prev.getHours(),
-          prev.getMinutes()
-        )
+      setDate(
+        (prev) =>
+          new Date(
+            selectedDate.getFullYear(),
+            selectedDate.getMonth(),
+            selectedDate.getDate(),
+            prev.getHours(),
+            prev.getMinutes(),
+          ),
       );
     }
     if (Platform.OS !== 'ios') {
@@ -28,14 +29,15 @@ export const useCreateMeetingForm = () => {
 
   const handleTimeChange = (event: any, selectedTime?: Date) => {
     if (event.type === 'set' && selectedTime) {
-      setDate(prev =>
-        new Date(
-          prev.getFullYear(),
-          prev.getMonth(),
-          prev.getDate(),
-          selectedTime.getHours(),
-          selectedTime.getMinutes()
-        )
+      setDate(
+        (prev) =>
+          new Date(
+            prev.getFullYear(),
+            prev.getMonth(),
+            prev.getDate(),
+            selectedTime.getHours(),
+            selectedTime.getMinutes(),
+          ),
       );
     }
     if (Platform.OS !== 'ios') {

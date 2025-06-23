@@ -47,12 +47,12 @@ export const getClubById = async (id: string) => {
 export const getClubByInterest = async () => {
   const response = await apiClient.get('/clubs/by-interests');
   return response.data;
-}
+};
 
 export const getClubRecentlyJoined = async () => {
   const response = await apiClient.get('/clubs/recent-joined');
   return response.data;
-}
+};
 
 export const createClub = async (data: CreateClubRequest) => {
   const response = await apiClient.post('/clubs', data);

@@ -1,14 +1,13 @@
-import React from 'react';
-import { View, Text, Pressable, ScrollView, Platform } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Slider from '@react-native-community/slider';
-import { Feather } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
 import { useCreateMeetingForm } from '@/hooks/screens/use-create-club';
 
 const CreateMeetingScreen = () => {
@@ -63,14 +62,14 @@ const CreateMeetingScreen = () => {
                 marginRight: 10,
               }}
             >
-              <Feather name="edit-3" size={16} color="#fff" />
+              <Feather name='edit-3' size={16} color='#fff' />
             </View>
             <Text style={{ fontSize: 18, fontWeight: '600', color: '#1a1a1a' }}>모임명</Text>
           </View>
           <Input
             value={title}
             onChangeText={setTitle}
-            placeholder="모임의 이름을 입력하세요"
+            placeholder='모임의 이름을 입력하세요'
             style={{
               backgroundColor: '#fff',
               borderColor: '#e0e0e0',
@@ -104,7 +103,7 @@ const CreateMeetingScreen = () => {
                 marginRight: 10,
               }}
             >
-              <Feather name="calendar" size={16} color="#fff" />
+              <Feather name='calendar' size={16} color='#fff' />
             </View>
             <Text style={{ fontSize: 18, fontWeight: '600', color: '#1a1a1a' }}>날짜 및 시간</Text>
           </View>
@@ -130,7 +129,7 @@ const CreateMeetingScreen = () => {
                   day: 'numeric',
                 })}
               </Text>
-              <Feather name="chevron-down" size={20} color="#666" />
+              <Feather name='chevron-down' size={20} color='#666' />
             </Pressable>
 
             <Pressable
@@ -153,7 +152,7 @@ const CreateMeetingScreen = () => {
                   hour12: true,
                 })}
               </Text>
-              <Feather name="chevron-down" size={20} color="#666" />
+              <Feather name='chevron-down' size={20} color='#666' />
             </Pressable>
           </View>
         </View>
@@ -179,7 +178,7 @@ const CreateMeetingScreen = () => {
                 marginRight: 10,
               }}
             >
-              <Feather name="users" size={16} color="#fff" />
+              <Feather name='users' size={16} color='#fff' />
             </View>
             <Text style={{ fontSize: 18, fontWeight: '600', color: '#1a1a1a' }}>모집 인원</Text>
           </View>
@@ -218,9 +217,9 @@ const CreateMeetingScreen = () => {
               step={1}
               value={participantCount}
               onValueChange={setParticipantCount}
-              minimumTrackTintColor="#4A90E2"
-              maximumTrackTintColor="#e0e0e0"
-              thumbTintColor="#4A90E2"
+              minimumTrackTintColor='#4A90E2'
+              maximumTrackTintColor='#e0e0e0'
+              thumbTintColor='#4A90E2'
             />
             <View
               style={{
@@ -257,7 +256,7 @@ const CreateMeetingScreen = () => {
                 marginRight: 10,
               }}
             >
-              <Feather name="file-text" size={16} color="#fff" />
+              <Feather name='file-text' size={16} color='#fff' />
             </View>
             <Text style={{ fontSize: 18, fontWeight: '600', color: '#1a1a1a' }}>모임 설명</Text>
           </View>
@@ -284,7 +283,7 @@ const CreateMeetingScreen = () => {
 
         {/* 모임 생성 버튼 */}
         <Button
-          title="모임 생성하기"
+          title='모임 생성하기'
           onPress={() => {
             console.log({ title, date, participantCount, description });
             navigation.goBack();
@@ -296,7 +295,7 @@ const CreateMeetingScreen = () => {
       {showDatePicker && (
         <DateTimePicker
           value={date}
-          mode="date"
+          mode='date'
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={handleDateChange}
         />
@@ -306,7 +305,7 @@ const CreateMeetingScreen = () => {
       {showTimePicker && (
         <DateTimePicker
           value={date}
-          mode="time"
+          mode='time'
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={handleTimeChange}
         />

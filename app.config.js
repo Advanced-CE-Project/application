@@ -82,6 +82,13 @@ export default {
           iosUrlScheme: 'com.googleusercontent.apps.472392046415-iim3qp0v1hlipc2f99vounb0o0m7q0ta',
         },
       ],
+      [
+        'expo-maps',
+        {
+          requestLocationPermission: true,
+          locationPermission: '$(PRODUCT_NAME)이(가) 위치 정보를 사용하도록 허용하시겠습니까?',
+        },
+      ],
     ],
     experiments: {
       typedRoutes: true,
