@@ -21,6 +21,7 @@ export interface CreateClubRequest {
   address?: string;
   latitude?: number;
   longitude?: number;
+  tags?: string[];
 }
 
 export interface UpdateClubRequest {

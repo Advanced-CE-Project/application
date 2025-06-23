@@ -20,6 +20,9 @@ interface FormData {
   jibunAddress: string;
   zonecode: string;
   showAddressSearch: boolean;
+  tags: string[];
+  tagInput: string;
+  showTagInput: boolean;
 }
 
 export const useMeetingCreate = () => {
@@ -40,6 +43,9 @@ export const useMeetingCreate = () => {
     jibunAddress: '',
     zonecode: '',
     showAddressSearch: false,
+    tags: [],
+    tagInput: '',
+    showTagInput: false,
   });
 
   console.log(`formData:`, formData);
@@ -170,6 +176,33 @@ export const useMeetingCreate = () => {
     console.log('Address form data updated');
   };
 
+  // 태그 관련 함수들
+  const addTag = () => {
+    const trimmedTag = formData.tagInput.trim();
+    if (trimmedTag && !formData.tags.includes(trimmedTag) && formData.tags.length < 5) {
+      setFormData({
+        ...formData,
+        tags: [...formData.tags, trimmedTag],
+        tagInput: '',
+      });
+    }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    setFormData({
+      ...formData,
+      tags: formData.tags.filter((tag) => tag !== tagToRemove),
+    });
+  };
+
+  const toggleTagInput = () => {
+    setFormData({
+      ...formData,
+      showTagInput: !formData.showTagInput,
+      tagInput: '',
+    });
+  };
+
   const handleSubmit = () => {
     // 폼 유효성 검증
     const validationError = validateForm();
@@ -185,6 +218,7 @@ export const useMeetingCreate = () => {
       maxParticipants: formData.participantCount,
       startDateTime: formData.date.toISOString(),
       address: formData.address || undefined,
+      tags: formData.tags.length > 0 ? formData.tags : undefined,
     };
 
     console.log(`requestData:`, requestData);
@@ -207,6 +241,11 @@ export const useMeetingCreate = () => {
     openAddressSearch,
     closeAddressSearch,
     handleAddressSelect,
+
+    // 태그 관련
+    addTag,
+    removeTag,
+    toggleTagInput,
 
     // 로딩 및 에러 상태
     isCreating: createClubMutation.isPending,

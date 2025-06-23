@@ -22,6 +22,9 @@ const CreateMeetingScreen = () => {
     openAddressSearch,
     closeAddressSearch,
     handleAddressSelect,
+    addTag,
+    removeTag,
+    toggleTagInput,
   } = useMeetingCreate();
 
   return (
@@ -291,6 +294,135 @@ const CreateMeetingScreen = () => {
               <Text style={{ fontSize: 12, color: '#999' }}>15명</Text>
             </View>
           </View>
+        </View>
+
+        {/* 태그 섹션 */}
+        <View
+          style={{
+            backgroundColor: '#f8f9fa',
+            borderRadius: 16,
+            padding: 20,
+            marginBottom: 24,
+          }}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+            <View
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 16,
+                backgroundColor: '#2ecc71',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginRight: 10,
+              }}
+            >
+              <Feather name='tag' size={16} color='#fff' />
+            </View>
+            <Text style={{ fontSize: 18, fontWeight: '600', color: '#1a1a1a' }}>태그</Text>
+            <Text style={{ fontSize: 14, color: '#666', marginLeft: 8 }}>(선택사항, 최대 5개)</Text>
+          </View>
+
+          {/* 추가된 태그들 */}
+          {formData.tags.length > 0 && (
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                marginBottom: 12,
+                gap: 8,
+              }}
+            >
+              {formData.tags.map((tag, index) => (
+                <Pressable
+                  key={index}
+                  onPress={() => removeTag(tag)}
+                  style={{
+                    backgroundColor: '#4A90E2',
+                    borderRadius: 20,
+                    paddingHorizontal: 12,
+                    paddingVertical: 6,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Text style={{ color: '#fff', fontSize: 14, marginRight: 4 }}>#{tag}</Text>
+                  <Feather name='x' size={14} color='#fff' />
+                </Pressable>
+              ))}
+            </View>
+          )}
+
+          {/* 태그 추가 버튼/입력 */}
+          {!formData.showTagInput ? (
+            <Pressable
+              onPress={toggleTagInput}
+              disabled={isCreating || formData.tags.length >= 5}
+              style={{
+                backgroundColor: '#fff',
+                borderWidth: 1,
+                borderColor: '#e0e0e0',
+                borderRadius: 12,
+                padding: 16,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                opacity: isCreating || formData.tags.length >= 5 ? 0.6 : 1,
+              }}
+            >
+              <Feather name='plus' size={20} color='#4A90E2' style={{ marginRight: 8 }} />
+              <Text style={{ color: '#4A90E2', fontSize: 16, fontWeight: '500' }}>
+                태그 추가하기
+              </Text>
+            </Pressable>
+          ) : (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <Input
+                value={formData.tagInput}
+                onChangeText={(text) => setFormData({ ...formData, tagInput: text })}
+                placeholder='태그 입력 (예: 스포츠, 실내활동)'
+                style={{
+                  backgroundColor: '#fff',
+                  borderColor: '#4A90E2',
+                  borderRadius: 12,
+                  paddingHorizontal: 16,
+                  paddingVertical: 14,
+                  fontSize: 16,
+                  flex: 1,
+                }}
+                containerStyle={{ marginBottom: 0, flex: 1 }}
+                onSubmitEditing={addTag}
+                autoFocus
+                editable={!isCreating}
+              />
+              <Pressable
+                onPress={addTag}
+                disabled={!formData.tagInput.trim() || isCreating}
+                style={{
+                  backgroundColor: formData.tagInput.trim() ? '#4A90E2' : '#e0e0e0',
+                  borderRadius: 12,
+                  padding: 14,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Feather name='check' size={20} color='#fff' />
+              </Pressable>
+              <Pressable
+                onPress={toggleTagInput}
+                disabled={isCreating}
+                style={{
+                  backgroundColor: '#e0e0e0',
+                  borderRadius: 12,
+                  padding: 14,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Feather name='x' size={20} color='#666' />
+              </Pressable>
+            </View>
+          )}
         </View>
 
         {/* 모임 설명 섹션 */}
