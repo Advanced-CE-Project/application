@@ -6,7 +6,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import services from '@/services';
 import { useLocationStore } from '@/stores/location';
-import { ClubItem } from '@/types/models/club';
+import type { ClubItem } from '@/types/models/club';
+import type { Tag } from '@/types/models/tag';
 
 export const useSearch = () => {
   const insets = useSafeAreaInsets();
@@ -15,13 +16,23 @@ export const useSearch = () => {
   const { location } = useLocationStore();
 
   const [searchText, setSearchText] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('전체');
+  const [selectedTag, setSelectedTag] = useState<string>('ALL');
 
   const debouncedSearchText = useDebounce(searchText, 500);
 
+  const tagsQuery = useQuery<Tag[]>({
+    queryKey: ['tags'],
+    queryFn: services.clubs.getTags,
+    initialData: [],
+  });
+
   const clubsQuery = useQuery<ClubItem[]>({
-    queryKey: ['clubs', debouncedSearchText],
-    queryFn: () => services.clubs.getClubs({ search: debouncedSearchText }),
+    queryKey: ['clubs', debouncedSearchText, selectedTag],
+    queryFn: () =>
+      services.clubs.getClubs({
+        search: debouncedSearchText,
+        tagId: selectedTag === 'ALL' ? null : selectedTag,
+      }),
     initialData: [],
   });
 
@@ -38,11 +49,6 @@ export const useSearch = () => {
     setSearchText(text);
     // 실제 검색 로직 구현
     console.log('Searching for:', text);
-  };
-
-  const selectCategory = (category: string) => {
-    setSelectedCategory(category);
-    console.log('Selected category:', category);
   };
 
   const openLocationFilter = () => {
@@ -76,14 +82,16 @@ export const useSearch = () => {
   return {
     insets,
     searchText,
-    selectedCategory,
-    isFetching: clubsQuery.isFetching,
+    selectedTag,
+    isClubFetching: clubsQuery.isFetching,
+    isTagFetching: tagsQuery.isFetching,
+    tags: tagsQuery.data ? [{ id: 'ALL', name: '전체' }, ...tagsQuery.data] : [],
     clubs: clubsQuery.data ?? [],
     location,
     mapRegion,
     goBack,
     handleSearch,
-    selectCategory,
+    setSelectedTag,
     openLocationFilter,
     openTimeFilter,
     navigateToMeetingDetail,

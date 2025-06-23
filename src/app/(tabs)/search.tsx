@@ -10,23 +10,19 @@ import { Tag } from '@/components/ui/tag';
 import { useSearch } from '@/hooks/screens/use-search';
 import { formatShortKoreanDateTime } from '@/lib/dayjs';
 
-// 카테고리 데이터
-const CATEGORIES = ['전체', '운동', '스터디', '친목', '음식', '여행'];
-
 const SearchScreen = () => {
   const {
-    isFetching,
     insets,
     searchText,
-    selectedCategory,
+    selectedTag,
+    isClubFetching,
+    isTagFetching,
     location,
     mapRegion,
+    tags,
     clubs,
-    goBack,
     handleSearch,
-    selectCategory,
-    openLocationFilter,
-    openTimeFilter,
+    setSelectedTag,
     navigateToMeetingDetail,
     handleCurrentLocationSearch,
     handleMapClick,
@@ -155,12 +151,12 @@ const SearchScreen = () => {
             style={{ marginBottom: 20 }}
             contentContainerStyle={{ paddingRight: 16 }}
           >
-            {CATEGORIES.map((category, index) => (
+            {tags.map((tag, index) => (
               <Tag
-                key={category}
-                title={category}
-                selected={selectedCategory === category}
-                onPress={() => selectCategory(category)}
+                key={tag.id}
+                title={tag.name}
+                selected={selectedTag === tag.id}
+                onPress={() => setSelectedTag(tag.id)}
                 style={{
                   marginRight: 8,
                 }}
@@ -178,7 +174,7 @@ const SearchScreen = () => {
 
           {/* 검색 결과 */}
           <View style={{ gap: 16 }}>
-            {isFetching ? (
+            {isClubFetching ? (
               // 로딩 상태 스켈레톤 UI
               <>
                 {Array.from({ length: 3 }, (_, index) => (

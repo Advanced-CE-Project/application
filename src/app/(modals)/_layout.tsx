@@ -39,6 +39,12 @@ export default function ModalsLayout() {
         }}
       />
       <Stack.Screen
+        name='password-forgot'
+        options={{
+          title: '비밀번호 찾기',
+        }}
+      />
+      <Stack.Screen
         name='share'
         options={{
           title: '공유하기',

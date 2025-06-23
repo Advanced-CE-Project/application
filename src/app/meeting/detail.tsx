@@ -1,9 +1,9 @@
 import React from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
-import MissionTab from '@/app/(modals)/mission';
-import ResourcesTab from '@/app/(modals)/share';
-import InfoTab from '@/app/info';
+import InfoTab from '@/components/screens/detail/info';
+import MissionTab from '@/components/screens/detail/mission';
+import ResourcesTab from '@/components/screens/detail/resources';
 import { Button } from '@/components/ui/button';
 import { TABS, useMeetingDetail } from '@/hooks/screens/use-meeting-detail';
 import { formatShortKoreanDateTime } from '@/lib/dayjs';

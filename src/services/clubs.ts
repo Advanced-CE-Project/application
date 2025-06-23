@@ -4,6 +4,7 @@ import apiClient from './apiClient';
 
 export interface GetClubsRequest {
   search?: string;
+  tagId?: string | null;
 }
 
 // 모임 관련 타입 정의
@@ -33,8 +34,8 @@ export interface ApproveParticipantRequest {
 }
 
 // 모임 API 함수들
-export const getClubs = async ({ search }: GetClubsRequest) => {
-  const response = await apiClient.get('/clubs', { params: { search } });
+export const getClubs = async ({ search, tagId }: GetClubsRequest) => {
+  const response = await apiClient.get('/clubs', { params: { search, tagId } });
   return response.data;
 };
 
@@ -80,5 +81,10 @@ export const joinClub = async (id: string) => {
 
 export const approveParticipant = async (id: string, data: ApproveParticipantRequest) => {
   const response = await apiClient.post(`/clubs/${id}/approve`, data);
+  return response.data;
+};
+
+export const getTags = async () => {
+  const response = await apiClient.get('/clubs/tags');
   return response.data;
 };
