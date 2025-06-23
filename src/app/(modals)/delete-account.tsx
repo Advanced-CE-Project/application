@@ -4,65 +4,18 @@ import React, { useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { CONFIRM_TEXT, WARNING_ITEMS, useDeleteAccount } from '@/hooks/screens/use-delete-account';
+
 const DeleteAccountModal = () => {
-  const insets = useSafeAreaInsets();
-  const router = useRouter();
-
-  const [confirmText, setConfirmText] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const CONFIRM_TEXT = '계정 삭제';
-  const isConfirmValid = confirmText === CONFIRM_TEXT;
-
-  const handleDeleteAccount = async () => {
-    if (!isConfirmValid) {
-      Alert.alert('확인 필요', `"${CONFIRM_TEXT}"를 정확히 입력해주세요.`);
-      return;
-    }
-
-    setIsDeleting(true);
-
-    // 실제 API 호출 시뮬레이션
-    setTimeout(() => {
-      setIsDeleting(false);
-      Alert.alert(
-        '계정 삭제 완료',
-        '계정이 성공적으로 삭제되었습니다.\n이용해 주셔서 감사합니다.',
-        [
-          {
-            text: '확인',
-            onPress: () => {
-              router.dismissAll();
-              // TODO: 로그인 화면으로 리다이렉트
-            },
-          },
-        ],
-      );
-    }, 2000);
-  };
-
-  const warningItems = [
-    {
-      icon: 'user-x',
-      title: '계정 정보 삭제',
-      description: '프로필, 개인정보 등 모든 계정 데이터가 삭제됩니다.',
-    },
-    {
-      icon: 'calendar',
-      title: '모임 기록 삭제',
-      description: '참여했던 모든 모임 기록과 활동 내역이 삭제됩니다.',
-    },
-    {
-      icon: 'message-circle',
-      title: '메시지 삭제',
-      description: '주고받은 모든 메시지와 대화 내용이 삭제됩니다.',
-    },
-    {
-      icon: 'clock',
-      title: '복구 불가능',
-      description: '삭제된 데이터는 복구할 수 없으며, 복원이 불가능합니다.',
-    },
-  ];
+  const {
+    isLoading,
+    router,
+    isConfirmValid,
+    insets,
+    confirmText,
+    setConfirmText,
+    handleDeleteAccount,
+  } = useDeleteAccount();
 
   return (
     <View style={{ flex: 1, backgroundColor: '#f8f9fa' }}>
@@ -134,7 +87,7 @@ const DeleteAccountModal = () => {
                 marginLeft: 8,
               }}
             >
-              ⚠️ 주의사항
+              주의사항
             </Text>
           </View>
           <Text
@@ -175,7 +128,7 @@ const DeleteAccountModal = () => {
             삭제될 데이터
           </Text>
 
-          {warningItems.map((item, index) => (
+          {WARNING_ITEMS.map((item, index) => (
             <View key={index}>
               <View
                 style={{
@@ -220,7 +173,7 @@ const DeleteAccountModal = () => {
                   </Text>
                 </View>
               </View>
-              {index < warningItems.length - 1 && (
+              {index < WARNING_ITEMS.length - 1 && (
                 <View
                   style={{
                     height: 1,
@@ -304,16 +257,16 @@ const DeleteAccountModal = () => {
         <View style={{ paddingHorizontal: 20 }}>
           <Pressable
             onPress={handleDeleteAccount}
-            disabled={!isConfirmValid || isDeleting}
+            disabled={!isConfirmValid || isLoading}
             style={{
-              backgroundColor: isConfirmValid && !isDeleting ? '#e74c3c' : '#ccc',
+              backgroundColor: isConfirmValid && !isLoading ? '#e74c3c' : '#ccc',
               borderRadius: 12,
               paddingVertical: 16,
               alignItems: 'center',
               marginBottom: 12,
             }}
           >
-            {isDeleting ? (
+            {isLoading ? (
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff', marginRight: 8 }}>
                   삭제 중...
@@ -334,7 +287,7 @@ const DeleteAccountModal = () => {
                 style={{
                   fontSize: 16,
                   fontWeight: '600',
-                  color: isConfirmValid ? '#fff' : '#999',
+                  color: isConfirmValid && !isLoading ? '#fff' : '#999',
                 }}
               >
                 계정 영구 삭제

@@ -15,7 +15,7 @@ export default function MeetingLayout() {
         alignItems: 'center',
       }}
     >
-      <Feather name='chevron-left' size={24} color='#4A90E2' />
+      <Feather name='chevron-left' size={24} color='#000' />
     </Pressable>
   );
 
@@ -26,7 +26,7 @@ export default function MeetingLayout() {
         headerStyle: {
           backgroundColor: '#fff',
         },
-        headerTintColor: '#4A90E2',
+        headerTintColor: '#000',
         headerTitleStyle: {
           fontWeight: 'bold',
         },
