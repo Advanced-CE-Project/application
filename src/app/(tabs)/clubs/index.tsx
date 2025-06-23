@@ -1,77 +1,57 @@
 import { Feather } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import React from 'react';
+import { useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MeetingCard } from '@/components/ui/meeting-card';
 import { Spacer } from '@/components/ui/spacer';
+import { getMyClubs } from '@/services/clubs';
+import { formatShortKoreanDateTime } from '@/lib/date';
 
-// 더미 데이터 - 내가 만든 모임들
-const MY_MEETINGS = [
-  {
-    id: '1',
-    title: '주말 등산 모임',
-    date: '4/15 (토)',
-    location: '북한산 국립공원',
-    tags: ['등산'],
-    participants: {
-      current: 8,
-      max: 10,
-    },
-  },
-  {
-    id: '2',
-    title: '영어 스터디',
-    date: '4/18 (화)',
-    location: '강남 스터디카페',
-    tags: ['스터디'],
-    participants: {
-      current: 5,
-      max: 8,
-    },
-  },
-  {
-    id: '3',
-    title: '맛집 탐방',
-    date: '5/20 (토)',
-    location: '이태원 일대',
-    tags: ['음식'],
-    participants: {
-      current: 3,
-      max: 6,
-    },
-  },
-];
+interface Club {
+  id: string;
+  name: string;
+  description: string;
+  startDateTime: string;
+  endDateTime: string;
+  createdAt: string;
+}
 
-const useClubs = () => {
+const MyClubsScreen = () => {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
+
+  const [myClubs, setMyClubs] = useState<Club[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchMyClubs = async () => {
+      setLoading(true);
+      try {
+        const data = await getMyClubs();
+        setMyClubs(data.clubs || []);
+      } catch (error) {
+        console.error('내 모임 목록 불러오기 실패:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMyClubs();
+  }, []);
 
   const navigateToCreateMeeting = () => {
-    // 새 모임 만들기 화면으로 이동
-    // console.log('Navigate to create meeting');
     router.push('/meeting/create');
   };
 
-  const navigateToMeetingDetail = (meetingId: string) => {
-    // 모임 상세 페이지로 이동 (관리 모드)
-    // console.log('Navigate to meeting detail:', meetingId);
-    router.push(`/meeting/detail?id=${meetingId}&mode=manage`);
+  const navigateToMeetingDetail = (clubId: string) => {
+    router.push(`/meeting/detail?id=${clubId}&mode=manage`);
   };
-
-  return {
-    insets,
-    navigateToCreateMeeting,
-    navigateToMeetingDetail,
-  };
-};
-
-const ClubsScreen = () => {
-  const { insets, navigateToCreateMeeting, navigateToMeetingDetail } = useClubs();
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
-      {/* 고정 헤더 */}
+      {/* 헤더 */}
       <View
         style={{
           paddingHorizontal: 16,
@@ -111,12 +91,12 @@ const ClubsScreen = () => {
               justifyContent: 'center',
             }}
           >
-            <Feather name='plus' size={20} color='#fff' />
+            <Feather name="plus" size={20} color="#fff" />
           </Pressable>
         </View>
       </View>
 
-      {/* 스크롤 가능한 모임 리스트 */}
+      {/* 모임 리스트 */}
       <ScrollView style={{ flex: 1 }}>
         <View
           style={{
@@ -125,22 +105,23 @@ const ClubsScreen = () => {
             paddingBottom: insets.bottom + 16,
           }}
         >
-          {MY_MEETINGS.length > 0 ? (
+          {loading ? (
+            <Text style={{ textAlign: 'center', marginTop: 40 }}>로딩 중...</Text>
+          ) : myClubs.length > 0 ? (
             <View style={{ gap: 16 }}>
-              {MY_MEETINGS.map((meeting) => (
+              {myClubs.map((club) => (
                 <MeetingCard
-                  key={meeting.id}
-                  title={meeting.title}
-                  date={meeting.date}
-                  location={meeting.location}
-                  tags={meeting.tags}
-                  participants={meeting.participants}
-                  onPress={() => navigateToMeetingDetail(meeting.id)}
+                  key={club.id}
+                  title={club.name}
+                  date={formatShortKoreanDateTime(club.startDateTime)}
+                  location={'장소 정보 없음'} // API에 위치 정보가 없으므로 임시 텍스트
+                  tags={[]} // 태그 정보가 없으므로 빈 배열 전달
+                  participants={{ current: 0, max: 0 }} // 참가자 정보도 API에 없으면 0 처리
+                  onPress={() => navigateToMeetingDetail(club.id)}
                 />
               ))}
             </View>
           ) : (
-            // 빈 상태 UI
             <View
               style={{
                 alignItems: 'center',
@@ -175,4 +156,4 @@ const ClubsScreen = () => {
   );
 };
 
-export default ClubsScreen;
+export default MyClubsScreen;

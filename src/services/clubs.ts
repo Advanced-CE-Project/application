@@ -44,7 +44,7 @@ export const getClubById = async (id: string) => {
   return response.data;
 };
 
-export const createClub = async (data: CreateClubRequest) => {
+export const createClub = async (data: CreateClubRequest): Promise<{ message: string; clubId: string }> => {
   const response = await apiClient.post('/clubs', data);
   return response.data;
 };
