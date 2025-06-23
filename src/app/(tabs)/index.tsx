@@ -4,6 +4,7 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useWindowDimensions } from 'react-native';
 
 import { MeetingCard } from '@/components/ui/meeting-card';
+import { MeetingCardSkeleton } from '@/components/ui/skeleton';
 import { Spacer } from '@/components/ui/spacer';
 import { useHome } from '@/hooks/screens/use-home';
 import { formatShortKoreanDateTime } from '@/lib/dayjs';
@@ -11,6 +12,9 @@ import { formatShortKoreanDateTime } from '@/lib/dayjs';
 const HomeScreen = () => {
   const dimensions = useWindowDimensions();
   const {
+    isLoading,
+    isRecentClubsLoading,
+    isRecommendedClubsLoading,
     insets,
     navigateToSearch,
     navigateToMeetingDetail,
@@ -78,17 +82,24 @@ const HomeScreen = () => {
               contentContainerStyle={{ gap: 12 }}
               style={{ marginHorizontal: -16, paddingHorizontal: 16 }}
             >
-              {recentClubs.map((meeting) => (
-                <MeetingCard
-                  key={meeting.id}
-                  title={meeting.name}
-                  date={formatShortKoreanDateTime(meeting.startDateTime)}
-                  location={meeting.location.name}
-                  tags={meeting.tags.map((tag) => tag.name)}
-                  onPress={() => navigateToMeetingDetail(meeting.id)}
-                  style={{ width: dimensions.width * 0.6 }}
-                />
-              ))}
+              {isRecentClubsLoading
+                ? Array.from({ length: 3 }, (_, index) => (
+                    <MeetingCardSkeleton
+                      key={`skeleton-recent-${index}`}
+                      style={{ width: dimensions.width * 0.6 }}
+                    />
+                  ))
+                : recentClubs.map((meeting) => (
+                    <MeetingCard
+                      key={meeting.id}
+                      title={meeting.name}
+                      date={formatShortKoreanDateTime(meeting.startDateTime)}
+                      location={meeting.location.name}
+                      tags={meeting.tags.map((tag) => tag.name)}
+                      onPress={() => navigateToMeetingDetail(meeting.id)}
+                      style={{ width: dimensions.width * 0.6 }}
+                    />
+                  ))}
             </ScrollView>
           </View>
 
@@ -109,16 +120,20 @@ const HomeScreen = () => {
             </Text>
 
             <View style={{ gap: 16 }}>
-              {recommendedClubs?.map((meeting) => (
-                <MeetingCard
-                  key={meeting.id}
-                  title={meeting.name}
-                  date={formatShortKoreanDateTime(meeting.startDateTime)}
-                  location={meeting.location.name}
-                  tags={meeting.tags.map((tag) => tag.name)}
-                  onPress={() => navigateToMeetingDetail(meeting.id)}
-                />
-              ))}
+              {isRecommendedClubsLoading
+                ? Array.from({ length: 3 }, (_, index) => (
+                    <MeetingCardSkeleton key={`skeleton-recommended-${index}`} />
+                  ))
+                : recommendedClubs?.map((meeting) => (
+                    <MeetingCard
+                      key={meeting.id}
+                      title={meeting.name}
+                      date={formatShortKoreanDateTime(meeting.startDateTime)}
+                      location={meeting.location.name}
+                      tags={meeting.tags.map((tag) => tag.name)}
+                      onPress={() => navigateToMeetingDetail(meeting.id)}
+                    />
+                  ))}
             </View>
           </View>
 

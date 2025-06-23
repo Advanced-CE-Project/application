@@ -41,12 +41,14 @@ export const useHome = () => {
     queryKey: ['recommendedClubs'],
     queryFn: () => services.clubs.getClubByInterest(),
     initialData: [],
+    refetchOnWindowFocus: true,
   });
 
   const { data: recentClubs, isFetching: isRecentClubsLoading } = useQuery<Club[]>({
     queryKey: ['recentClubs'],
     queryFn: () => services.clubs.getClubRecentlyJoined(),
     initialData: [],
+    refetchOnWindowFocus: true,
   });
 
   const navigateToSearch = () => {
@@ -62,6 +64,8 @@ export const useHome = () => {
   };
 
   return {
+    isRecommendedClubsLoading,
+    isRecentClubsLoading,
     isLoading: isRecommendedClubsLoading || isRecentClubsLoading,
     insets,
     navigateToSearch,
