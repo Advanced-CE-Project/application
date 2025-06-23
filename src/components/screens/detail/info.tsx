@@ -109,14 +109,18 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
 
     if (Platform.OS === 'ios') {
       return (
-        <AppleMaps.View
-          style={styles.map}
-          cameraPosition={cameraPosition}
-          markers={markers}
-          uiSettings={{
-            compassEnabled: false,
-          }}
-        />
+        <View style={{ flex: 1 }}>
+          <AppleMaps.View
+            style={styles.map}
+            cameraPosition={cameraPosition}
+            markers={markers}
+            uiSettings={{
+              compassEnabled: false,
+            }}
+          />
+          {/* 터치 비활성화를 위한 투명한 오버레이 */}
+          <View style={StyleSheet.absoluteFill} pointerEvents='auto' />
+        </View>
       );
     } else if (Platform.OS === 'android') {
       return (
@@ -126,11 +130,11 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
           markers={markers}
           uiSettings={{
             myLocationButtonEnabled: false,
-            zoomControlsEnabled: true,
+            zoomControlsEnabled: false,
             mapToolbarEnabled: false,
             compassEnabled: false,
-            scrollGesturesEnabled: true,
-            zoomGesturesEnabled: true,
+            scrollGesturesEnabled: false,
+            zoomGesturesEnabled: false,
           }}
         />
       );
@@ -147,7 +151,7 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff', paddingHorizontal: 20 }}>
+    <View style={{ flex: 1, backgroundColor: '#fff', paddingHorizontal: 0 }}>
       {/* 기본 정보 카드 */}
       <View
         style={{
