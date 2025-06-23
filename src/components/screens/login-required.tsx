@@ -89,7 +89,6 @@ export const LoginRequiredScreen = ({ onLoginPress }: { onLoginPress: () => void
 
         <Pressable
           onPress={() => {
-            console.log('Login button pressed'); // 디버깅용 로그
             onLoginPress();
           }}
           style={{

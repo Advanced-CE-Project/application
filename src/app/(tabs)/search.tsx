@@ -1,7 +1,18 @@
 import { Feather } from '@expo/vector-icons';
+import * as Location from 'expo-location';
+import { AppleMaps, GoogleMaps } from 'expo-maps';
 import { useRouter } from 'expo-router';
-import React, { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  Alert,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MeetingCard } from '@/components/ui/meeting-card';
@@ -61,6 +72,38 @@ const useSearch = () => {
   const [selectedCategory, setSelectedCategory] = useState('전체');
   const [selectedLocation, setSelectedLocation] = useState('서울시 강남구');
   const [selectedTimeFilter, setSelectedTimeFilter] = useState('이번 주');
+  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(
+    null,
+  );
+  const [mapRegion, setMapRegion] = useState({
+    latitude: 37.5665, // 서울 시청 좌표
+    longitude: 126.978,
+  });
+
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
+
+  const getCurrentLocation = async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('권한 필요', '위치 서비스를 사용하려면 위치 권한이 필요합니다.');
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      const coords = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      };
+      setUserLocation(coords);
+      setMapRegion(coords);
+    } catch (error) {
+      console.error('위치 가져오기 실패:', error);
+      Alert.alert('오류', '현재 위치를 가져올 수 없습니다.');
+    }
+  };
 
   const goBack = () => {
     router.back();
@@ -91,18 +134,37 @@ const useSearch = () => {
     console.log('Navigate to meeting detail:', meetingId);
   };
 
+  const handleCurrentLocationSearch = () => {
+    console.log('Searching for current location');
+    getCurrentLocation();
+  };
+
+  const handleMapClick = (event: any) => {
+    console.log('Map clicked at:', event.coordinates);
+    if (event.coordinates?.latitude && event.coordinates?.longitude) {
+      setMapRegion({
+        latitude: event.coordinates.latitude,
+        longitude: event.coordinates.longitude,
+      });
+    }
+  };
+
   return {
     insets,
     searchText,
     selectedCategory,
     selectedLocation,
     selectedTimeFilter,
+    userLocation,
+    mapRegion,
     goBack,
     handleSearch,
     selectCategory,
     openLocationFilter,
     openTimeFilter,
     navigateToMeetingDetail,
+    handleCurrentLocationSearch,
+    handleMapClick,
   };
 };
 
@@ -113,12 +175,16 @@ const SearchScreen = () => {
     selectedCategory,
     selectedLocation,
     selectedTimeFilter,
+    userLocation,
+    mapRegion,
     goBack,
     handleSearch,
     selectCategory,
     openLocationFilter,
     openTimeFilter,
     navigateToMeetingDetail,
+    handleCurrentLocationSearch,
+    handleMapClick,
   } = useSearch();
 
   const filteredResults = useMemo(() => {
@@ -128,11 +194,57 @@ const SearchScreen = () => {
     return SEARCH_RESULTS.filter((meeting) => meeting.tags.includes(selectedCategory));
   }, [selectedCategory]);
 
-  const handleCurrentLocationSearch = () => {
-    console.log('Searching for current location');
-    // 현재 위치 검색 로직 구현
-    // setSelectedLocation('현재 위치'); // 예시로 현재 위치로 설정
-    // 위치가 유효하지 않을 때 경고 알림
+  // 지도 컴포넌트 렌더링 (플랫폼별 분기)
+  const renderMap = () => {
+    const cameraPosition = {
+      coordinates: mapRegion,
+      zoom: 13,
+    };
+
+    const markers = userLocation
+      ? [
+          {
+            id: 'user-location',
+            coordinates: userLocation,
+            title: '내 위치',
+          },
+        ]
+      : [];
+
+    if (Platform.OS === 'ios') {
+      return (
+        <AppleMaps.View
+          style={styles.map}
+          cameraPosition={cameraPosition}
+          onMapClick={handleMapClick}
+          markers={markers}
+          uiSettings={{
+            compassEnabled: false,
+          }}
+        />
+      );
+    } else if (Platform.OS === 'android') {
+      return (
+        <GoogleMaps.View
+          style={styles.map}
+          cameraPosition={cameraPosition}
+          onMapClick={handleMapClick}
+          markers={markers}
+          uiSettings={{
+            myLocationButtonEnabled: false,
+            zoomControlsEnabled: false,
+            mapToolbarEnabled: false,
+            compassEnabled: false,
+          }}
+        />
+      );
+    } else {
+      return (
+        <View style={styles.mapPlaceholder}>
+          <Text style={styles.mapPlaceholderText}>지도는 iOS와 Android에서만 지원됩니다</Text>
+        </View>
+      );
+    }
   };
 
   return (
@@ -247,40 +359,9 @@ const SearchScreen = () => {
           </View>
 
           {/* 지도 영역 */}
-          <View
-            style={{
-              height: 200,
-              backgroundColor: '#f0f0f0',
-              borderRadius: 12,
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: 24,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 16,
-                color: '#999',
-              }}
-            >
-              지도
-            </Text>
-            <Pressable
-              onPress={handleCurrentLocationSearch}
-              style={{
-                position: 'absolute',
-                left: 12,
-                bottom: 12,
-                backgroundColor: '#fff',
-                padding: 8,
-                borderRadius: 20,
-                elevation: 3,
-                shadowColor: '#000',
-                shadowOpacity: 0.1,
-                shadowRadius: 4,
-                shadowOffset: { width: 0, height: 2 },
-              }}
-            >
+          <View style={styles.mapContainer}>
+            {renderMap()}
+            <Pressable onPress={handleCurrentLocationSearch} style={styles.currentLocationButton}>
               <Feather name='crosshair' size={20} color='#4A90E2' />
             </Pressable>
           </View>
@@ -312,5 +393,41 @@ const SearchScreen = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  mapContainer: {
+    height: 200,
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginBottom: 24,
+    position: 'relative',
+  },
+  map: {
+    flex: 1,
+  },
+  mapPlaceholder: {
+    flex: 1,
+    backgroundColor: '#f0f0f0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mapPlaceholderText: {
+    fontSize: 16,
+    color: '#999',
+  },
+  currentLocationButton: {
+    position: 'absolute',
+    left: 12,
+    bottom: 12,
+    backgroundColor: '#fff',
+    padding: 8,
+    borderRadius: 20,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+});
 
 export default SearchScreen;

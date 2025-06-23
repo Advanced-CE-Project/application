@@ -1,3 +1,30 @@
+export interface ClubItem {
+  id: string;
+  name: string;
+  description: string;
+  tags: {
+    id: string;
+    name: string;
+    createdAt: string;
+  }[];
+  location: {
+    id: string;
+    name: string;
+    address: string;
+    latitude: number;
+    longitude: number;
+    placeType: string;
+    rating: number;
+    createdAt: string;
+    updatedAt: string;
+  };
+  startDateTime: string;
+  endDateTime: string;
+  maxParticipants: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ClubDetail {
   id: string;
   name: string;

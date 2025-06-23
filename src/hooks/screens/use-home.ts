@@ -1,37 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import services from '@/services';
-import { getClubByInterest, getClubRecentlyJoined } from '@/services/clubs';
-
-export interface Club {
-  id: string;
-  name: string;
-  description: string;
-  tags: {
-    id: string;
-    name: string;
-    createdAt: string;
-  }[];
-  location: {
-    id: string;
-    name: string;
-    address: string;
-    latitude: number;
-    longitude: number;
-    placeType: string;
-    rating: number;
-    createdAt: string;
-    updatedAt: string;
-  };
-  startDateTime: string;
-  endDateTime: string;
-  maxParticipants: number;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { ClubItem } from '@/types/models/club';
 
 export const useHome = () => {
   const insets = useSafeAreaInsets();
@@ -44,7 +16,7 @@ export const useHome = () => {
     refetchOnWindowFocus: true,
   });
 
-  const { data: recentClubs, isFetching: isRecentClubsLoading } = useQuery<Club[]>({
+  const { data: recentClubs, isFetching: isRecentClubsLoading } = useQuery<ClubItem[]>({
     queryKey: ['recentClubs'],
     queryFn: () => services.clubs.getClubRecentlyJoined(),
     initialData: [],

@@ -1,11 +1,12 @@
 import { Feather } from '@expo/vector-icons';
-import { router } from 'expo-router';
 import React from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { LoginRequiredScreen } from '@/components/screens/login-required';
 import { MeetingCard } from '@/components/ui/meeting-card';
 import { Spacer } from '@/components/ui/spacer';
+import { useClubs } from '@/hooks/screens/use-clubs';
+import { formatShortKoreanDateTime } from '@/lib/dayjs';
 
 // 더미 데이터 - 내가 만든 모임들
 const MY_MEETINGS = [
@@ -44,30 +45,15 @@ const MY_MEETINGS = [
   },
 ];
 
-const useClubs = () => {
-  const insets = useSafeAreaInsets();
-
-  const navigateToCreateMeeting = () => {
-    // 새 모임 만들기 화면으로 이동
-    // console.log('Navigate to create meeting');
-    router.push('/meeting/create');
-  };
-
-  const navigateToMeetingDetail = (meetingId: string) => {
-    // 모임 상세 페이지로 이동 (관리 모드)
-    // console.log('Navigate to meeting detail:', meetingId);
-    router.push(`/meeting/detail?id=${meetingId}&mode=manage`);
-  };
-
-  return {
-    insets,
-    navigateToCreateMeeting,
-    navigateToMeetingDetail,
-  };
-};
-
 const ClubsScreen = () => {
-  const { insets, navigateToCreateMeeting, navigateToMeetingDetail } = useClubs();
+  const { me, insets, clubs, navigateToCreateMeeting, navigateToMeetingDetail, navigateToLogin } =
+    useClubs();
+
+  if (!me) {
+    return <LoginRequiredScreen onLoginPress={navigateToLogin} />;
+  }
+
+  console.log('clubs', clubs);
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -125,16 +111,16 @@ const ClubsScreen = () => {
             paddingBottom: insets.bottom + 16,
           }}
         >
-          {MY_MEETINGS.length > 0 ? (
+          {clubs.length > 0 ? (
             <View style={{ gap: 16 }}>
-              {MY_MEETINGS.map((meeting) => (
+              {clubs.map((meeting) => (
                 <MeetingCard
                   key={meeting.id}
-                  title={meeting.title}
-                  date={meeting.date}
-                  location={meeting.location}
-                  tags={meeting.tags}
-                  participants={meeting.participants}
+                  title={meeting.name}
+                  date={formatShortKoreanDateTime(meeting.startDateTime)}
+                  location={meeting.location.name}
+                  tags={meeting.tags.map((tag: any) => tag.name)}
+                  // participants={meeting.participants}
                   onPress={() => navigateToMeetingDetail(meeting.id)}
                 />
               ))}
