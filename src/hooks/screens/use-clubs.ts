@@ -11,27 +11,19 @@ export const useClubs = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const { data, isLoading, error } = useQuery<{ clubs: ClubItem[] }>({
+  const { data, isFetching, error } = useQuery<ClubItem[]>({
     enabled: !!me,
-    queryKey: ['clubs'],
-    queryFn: () => services.clubs.getClubs(),
+    queryKey: ['clubs', me?.id ?? 'unknown'],
+    queryFn: services.clubs.getMyClubs,
     refetchOnWindowFocus: true,
-    initialData: {
-      clubs: [],
-    },
+    initialData: [],
   });
 
-  // console.log('data', data);
-
   const navigateToCreateMeeting = () => {
-    // 새 모임 만들기 화면으로 이동
-    // console.log('Navigate to create meeting');
     router.push('/meeting/create');
   };
 
   const navigateToMeetingDetail = (meetingId: string) => {
-    // 모임 상세 페이지로 이동 (관리 모드)
-    // console.log('Navigate to meeting detail:', meetingId);
     router.push(`/meeting/detail?id=${meetingId}&mode=manage`);
   };
 
@@ -40,9 +32,11 @@ export const useClubs = () => {
   };
 
   return {
+    isFetching,
+    error,
     me,
     insets,
-    clubs: data?.clubs ?? [],
+    clubs: data ?? [],
     navigateToCreateMeeting,
     navigateToMeetingDetail,
     navigateToLogin,

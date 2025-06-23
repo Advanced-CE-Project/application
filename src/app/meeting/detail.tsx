@@ -112,8 +112,8 @@ const MeetingDetailScreen = () => {
               location: club.location?.name ?? null,
               description: club.description,
               participants: {
-                current: club.members.length,
-                max: club.maxParticipants,
+                current: club.members?.length ?? 0,
+                max: club?.maxParticipants ?? 1,
               },
               members: club.members,
             }}

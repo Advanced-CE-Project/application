@@ -2,6 +2,10 @@ import config from '@/config';
 
 import apiClient from './apiClient';
 
+export interface GetClubsRequest {
+  search?: string;
+}
+
 // 모임 관련 타입 정의
 export interface CreateClubRequest {
   name: string;
@@ -29,8 +33,8 @@ export interface ApproveParticipantRequest {
 }
 
 // 모임 API 함수들
-export const getClubs = async () => {
-  const response = await apiClient.get('/clubs');
+export const getClubs = async ({ search }: GetClubsRequest) => {
+  const response = await apiClient.get('/clubs', { params: { search } });
   return response.data;
 };
 

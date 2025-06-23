@@ -4,50 +4,22 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { LoginRequiredScreen } from '@/components/screens/login-required';
 import { MeetingCard } from '@/components/ui/meeting-card';
+import { MeetingCardSkeleton } from '@/components/ui/skeleton';
 import { Spacer } from '@/components/ui/spacer';
 import { useClubs } from '@/hooks/screens/use-clubs';
 import { formatShortKoreanDateTime } from '@/lib/dayjs';
 
-// 더미 데이터 - 내가 만든 모임들
-const MY_MEETINGS = [
-  {
-    id: '1',
-    title: '주말 등산 모임',
-    date: '4/15 (토)',
-    location: '북한산 국립공원',
-    tags: ['등산'],
-    participants: {
-      current: 8,
-      max: 10,
-    },
-  },
-  {
-    id: '2',
-    title: '영어 스터디',
-    date: '4/18 (화)',
-    location: '강남 스터디카페',
-    tags: ['스터디'],
-    participants: {
-      current: 5,
-      max: 8,
-    },
-  },
-  {
-    id: '3',
-    title: '맛집 탐방',
-    date: '5/20 (토)',
-    location: '이태원 일대',
-    tags: ['음식'],
-    participants: {
-      current: 3,
-      max: 6,
-    },
-  },
-];
-
 const ClubsScreen = () => {
-  const { me, insets, clubs, navigateToCreateMeeting, navigateToMeetingDetail, navigateToLogin } =
-    useClubs();
+  const {
+    isFetching,
+    error,
+    me,
+    insets,
+    clubs,
+    navigateToCreateMeeting,
+    navigateToMeetingDetail,
+    navigateToLogin,
+  } = useClubs();
 
   if (!me) {
     return <LoginRequiredScreen onLoginPress={navigateToLogin} />;
@@ -109,7 +81,14 @@ const ClubsScreen = () => {
             paddingBottom: insets.bottom + 16,
           }}
         >
-          {clubs.length > 0 ? (
+          {isFetching ? (
+            // 로딩 상태 스켈레톤 UI
+            <View style={{ gap: 16 }}>
+              {Array.from({ length: 3 }, (_, index) => (
+                <MeetingCardSkeleton key={`skeleton-club-${index}`} />
+              ))}
+            </View>
+          ) : clubs.length > 0 ? (
             <View style={{ gap: 16 }}>
               {clubs.map((meeting) => (
                 <MeetingCard
