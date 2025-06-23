@@ -64,15 +64,20 @@ export const useSearch = () => {
   };
 
   const navigateToMeetingDetail = (meetingId: string) => {
-    console.log('Navigate to meeting detail:', meetingId);
+    router.push(`/meeting/detail?id=${meetingId}`);
   };
 
   const handleCurrentLocationSearch = () => {
     console.log('Searching for current location');
+    setSearchText('');
+    setSelectedTag('ALL');
+    setMapRegion({
+      latitude: location?.coords?.latitude ?? 37.5665,
+      longitude: location?.coords?.longitude ?? 126.978,
+    });
   };
 
   const handleMapClick = (event: any) => {
-    console.log('Map clicked at:', event.coordinates);
     if (event.coordinates?.latitude && event.coordinates?.longitude) {
       setMapRegion({
         latitude: event.coordinates.latitude,

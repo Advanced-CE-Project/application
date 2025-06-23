@@ -98,6 +98,12 @@ const HomeScreen = () => {
                       tags={meeting.tags.map((tag) => tag.name)}
                       onPress={() => navigateToMeetingDetail(meeting.id)}
                       style={{ width: dimensions.width * 0.6 }}
+                      participants={{
+                        current: meeting.currentParticipants,
+                        max: meeting.maxParticipants,
+                      }}
+                      isStarted={meeting.isStarted}
+                      isEnded={meeting.isEnded}
                     />
                   ))}
             </ScrollView>
@@ -132,6 +138,12 @@ const HomeScreen = () => {
                       location={meeting?.location?.name || ''}
                       tags={meeting.tags.map((tag: any) => tag.name)}
                       onPress={() => navigateToMeetingDetail(meeting.id)}
+                      participants={{
+                        current: meeting.currentParticipants,
+                        max: meeting.maxParticipants,
+                      }}
+                      isStarted={meeting.isStarted}
+                      isEnded={meeting.isEnded}
                     />
                   ))}
             </View>

@@ -89,6 +89,12 @@ export default {
           locationPermission: '$(PRODUCT_NAME)이(가) 위치 정보를 사용하도록 허용하시겠습니까?',
         },
       ],
+      [
+        'expo-camera',
+        {
+          cameraPermission: '$(PRODUCT_NAME)이(가) QR 코드 스캔을 위해 카메라를 사용하도록 허용하시겠습니까?',
+        },
+      ],
     ],
     experiments: {
       typedRoutes: true,

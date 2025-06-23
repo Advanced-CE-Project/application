@@ -190,12 +190,12 @@ const SearchScreen = () => {
                   location={meeting.location?.name ?? ''}
                   tags={meeting.tags.map((tag) => tag.name)}
                   participants={{
-                    // current: meeting.participants?.length ?? 0,
-                    // max: meeting.maxParticipants ?? 1,
-                    current: 0,
-                    max: 1,
+                    current: meeting.currentParticipants,
+                    max: meeting.maxParticipants,
                   }}
                   onPress={() => navigateToMeetingDetail(meeting.id)}
+                  isStarted={meeting.isStarted}
+                  isEnded={meeting.isEnded}
                 />
               ))
             ) : (

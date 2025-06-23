@@ -87,6 +87,13 @@ export default function ModalsLayout() {
           title: '신청자 관리',
         }}
       />
+      <Stack.Screen
+        name='qr-scan'
+        options={{
+          title: '출석 체크',
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }

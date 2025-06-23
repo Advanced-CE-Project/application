@@ -87,6 +87,21 @@ export const joinClub = async (id: string) => {
   return response.data;
 };
 
+export const startClub = async (id: string) => {
+  const response = await apiClient.post(`/clubs/${id}/start`);
+  return response.data;
+};
+
+export const endClub = async (id: string) => {
+  const response = await apiClient.put(`/clubs/${id}/end`);
+  return response.data;
+};
+
+export const getApplicants = async (id: string) => {
+  const response = await apiClient.get(`/clubs/${id}/applicants`);
+  return response.data;
+};
+
 export const approveParticipant = async (id: string, data: ApproveParticipantRequest) => {
   const response = await apiClient.post(`/clubs/${id}/approve`, data);
   return response.data;
