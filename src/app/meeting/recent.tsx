@@ -129,7 +129,7 @@ const RecentMeetingsScreen = () => {
                 <MeetingCard
                   title={meeting.name}
                   date={formatShortKoreanDateTime(meeting.startDateTime)}
-                  location={meeting.location.name}
+                  location={meeting?.location?.name || ''}
                   tags={meeting.tags.map((tag) => tag.name)}
                   onPress={() => navigateToMeetingDetail(meeting.id)}
                   style={{

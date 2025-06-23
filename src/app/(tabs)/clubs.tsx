@@ -95,7 +95,7 @@ const ClubsScreen = () => {
                   key={meeting.id}
                   title={meeting.name}
                   date={formatShortKoreanDateTime(meeting.startDateTime)}
-                  location={meeting.location.name}
+                  location={meeting?.location?.name || ''}
                   tags={meeting.tags.map((tag: any) => tag.name)}
                   // participants={meeting.participants}
                   onPress={() => navigateToMeetingDetail(meeting.id)}

@@ -9,8 +9,16 @@ import { Input } from '@/components/ui/input';
 import { useMeetingCreate } from '@/hooks/screens/use-meeting-create';
 
 const CreateMeetingScreen = () => {
-  const { insets, formData, setFormData, handleDateChange, handleTimeChange, handleSubmit } =
-    useMeetingCreate();
+  const {
+    insets,
+    formData,
+    setFormData,
+    handleDateChange,
+    handleTimeChange,
+    handleSubmit,
+    isCreating,
+    isFormValid,
+  } = useMeetingCreate();
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -54,7 +62,7 @@ const CreateMeetingScreen = () => {
             placeholder='모임의 이름을 입력하세요'
             style={{
               backgroundColor: '#fff',
-              borderColor: '#e0e0e0',
+              borderColor: formData.name.trim().length >= 2 ? '#4A90E2' : '#e0e0e0',
               borderRadius: 12,
               paddingHorizontal: 16,
               paddingVertical: 14,
@@ -62,6 +70,11 @@ const CreateMeetingScreen = () => {
             }}
             containerStyle={{ marginBottom: 0 }}
           />
+          {formData.name.trim().length > 0 && formData.name.trim().length < 2 && (
+            <Text style={{ fontSize: 12, color: '#F44336', marginTop: 4 }}>
+              모임명은 2자 이상 입력해주세요
+            </Text>
+          )}
         </View>
 
         {/* 날짜 및 시간 섹션 */}
@@ -93,6 +106,7 @@ const CreateMeetingScreen = () => {
           <View style={{ gap: 12 }}>
             <Pressable
               onPress={() => setFormData({ ...formData, showDatePicker: true })}
+              disabled={isCreating}
               style={{
                 backgroundColor: '#fff',
                 borderWidth: 1,
@@ -102,6 +116,7 @@ const CreateMeetingScreen = () => {
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
+                opacity: isCreating ? 0.6 : 1,
               }}
             >
               <Text style={{ fontSize: 16, color: '#1a1a1a' }}>
@@ -112,6 +127,7 @@ const CreateMeetingScreen = () => {
 
             <Pressable
               onPress={() => setFormData({ ...formData, showTimePicker: true })}
+              disabled={isCreating}
               style={{
                 backgroundColor: '#fff',
                 borderWidth: 1,
@@ -121,6 +137,7 @@ const CreateMeetingScreen = () => {
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
+                opacity: isCreating ? 0.6 : 1,
               }}
             >
               <Text style={{ fontSize: 16, color: '#1a1a1a' }}>
@@ -194,6 +211,7 @@ const CreateMeetingScreen = () => {
               minimumTrackTintColor='#4A90E2'
               maximumTrackTintColor='#e0e0e0'
               thumbTintColor='#4A90E2'
+              disabled={isCreating}
             />
             <View
               style={{
@@ -252,31 +270,131 @@ const CreateMeetingScreen = () => {
               lineHeight: 22,
             }}
             containerStyle={{ marginBottom: 0 }}
+            editable={!isCreating}
           />
+          {formData.description.trim().length > 0 && formData.description.trim().length < 5 && (
+            <Text style={{ fontSize: 12, color: '#F44336', marginTop: 4 }}>
+              모임 설명은 5자 이상 입력해주세요
+            </Text>
+          )}
         </View>
 
         {/* 모임 생성 버튼 */}
-        <Button title='모임 생성하기' onPress={handleSubmit} />
+        <Button
+          title={isCreating ? '모임 생성 중...' : '모임 생성하기'}
+          onPress={handleSubmit}
+          disabled={!isFormValid || isCreating}
+        />
       </ScrollView>
 
       {/* 날짜 선택기 */}
       {formData.showDatePicker && (
-        <DateTimePicker
-          value={formData.date.toDate()}
-          mode='date'
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          onChange={handleDateChange}
-        />
+        <>
+          {Platform.OS === 'ios' && (
+            <Pressable
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                justifyContent: 'flex-end',
+              }}
+              onPress={() => setFormData({ ...formData, showDatePicker: false })}
+            >
+              <View style={{ backgroundColor: '#fff', paddingBottom: insets.bottom }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    paddingHorizontal: 16,
+                    paddingVertical: 12,
+                    borderBottomWidth: 1,
+                    borderBottomColor: '#e0e0e0',
+                  }}
+                >
+                  <Pressable onPress={() => setFormData({ ...formData, showDatePicker: false })}>
+                    <Text style={{ color: '#4A90E2', fontSize: 16 }}>취소</Text>
+                  </Pressable>
+                  <Pressable onPress={() => setFormData({ ...formData, showDatePicker: false })}>
+                    <Text style={{ color: '#4A90E2', fontSize: 16, fontWeight: '600' }}>완료</Text>
+                  </Pressable>
+                </View>
+                <DateTimePicker
+                  value={formData.date.toDate()}
+                  mode='date'
+                  display='spinner'
+                  onChange={handleDateChange}
+                  minimumDate={new Date()}
+                />
+              </View>
+            </Pressable>
+          )}
+          {Platform.OS === 'android' && (
+            <DateTimePicker
+              value={formData.date.toDate()}
+              mode='date'
+              display='default'
+              onChange={handleDateChange}
+              minimumDate={new Date()}
+            />
+          )}
+        </>
       )}
 
       {/* 시간 선택기 */}
       {formData.showTimePicker && (
-        <DateTimePicker
-          value={formData.date.toDate()}
-          mode='time'
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          onChange={handleTimeChange}
-        />
+        <>
+          {Platform.OS === 'ios' && (
+            <Pressable
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                justifyContent: 'flex-end',
+              }}
+              onPress={() => setFormData({ ...formData, showTimePicker: false })}
+            >
+              <View style={{ backgroundColor: '#fff', paddingBottom: insets.bottom }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    paddingHorizontal: 16,
+                    paddingVertical: 12,
+                    borderBottomWidth: 1,
+                    borderBottomColor: '#e0e0e0',
+                  }}
+                >
+                  <Pressable onPress={() => setFormData({ ...formData, showTimePicker: false })}>
+                    <Text style={{ color: '#4A90E2', fontSize: 16 }}>취소</Text>
+                  </Pressable>
+                  <Pressable onPress={() => setFormData({ ...formData, showTimePicker: false })}>
+                    <Text style={{ color: '#4A90E2', fontSize: 16, fontWeight: '600' }}>완료</Text>
+                  </Pressable>
+                </View>
+                <DateTimePicker
+                  value={formData.date.toDate()}
+                  mode='time'
+                  display='spinner'
+                  onChange={handleTimeChange}
+                />
+              </View>
+            </Pressable>
+          )}
+          {Platform.OS === 'android' && (
+            <DateTimePicker
+              value={formData.date.toDate()}
+              mode='time'
+              display='default'
+              onChange={handleTimeChange}
+            />
+          )}
+        </>
       )}
     </View>
   );

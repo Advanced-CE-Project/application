@@ -94,7 +94,7 @@ const HomeScreen = () => {
                       key={meeting.id}
                       title={meeting.name}
                       date={formatShortKoreanDateTime(meeting.startDateTime)}
-                      location={meeting.location.name}
+                      location={meeting?.location?.name || ''}
                       tags={meeting.tags.map((tag) => tag.name)}
                       onPress={() => navigateToMeetingDetail(meeting.id)}
                       style={{ width: dimensions.width * 0.6 }}
@@ -129,7 +129,7 @@ const HomeScreen = () => {
                       key={meeting.id}
                       title={meeting.name}
                       date={formatShortKoreanDateTime(meeting.startDateTime)}
-                      location={meeting.location.name}
+                      location={meeting?.location?.name || ''}
                       tags={meeting.tags.map((tag: any) => tag.name)}
                       onPress={() => navigateToMeetingDetail(meeting.id)}
                     />
