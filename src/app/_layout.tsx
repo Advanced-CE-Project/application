@@ -14,11 +14,23 @@ const Layout = () => {
         <Stack.Screen name='account-info' options={{ headerShown: false }} />
         <Stack.Screen name='password-change' options={{ headerShown: false }} />
         <Stack.Screen
+          name='notifications'
+          options={{
+            title: '알림',
+            headerBackTitle: '뒤로',
+            headerTintColor: '#000',
+            headerTitleStyle: {
+              fontSize: 18,
+              fontWeight: 'bold',
+            },
+          }}
+        />
+        <Stack.Screen
           name='settings'
           options={{
             title: '설정',
             headerBackTitle: '뒤로',
-            headerTintColor: '#4A90E2',
+            headerTintColor: '#000',
             headerTitleStyle: {
               fontSize: 18,
               fontWeight: 'bold',

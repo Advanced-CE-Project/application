@@ -2,14 +2,16 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import useMe from '@/hooks/use-me';
 import services from '@/services';
 import type { ClubItem } from '@/types/models/club';
 
 export const useHome = () => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { me } = useMe();
 
-  const { data: recommendedClubs, isFetching: isRecommendedClubsLoading } = useQuery<Club[]>({
+  const { data: recommendedClubs, isFetching: isRecommendedClubsLoading } = useQuery<ClubItem[]>({
     queryKey: ['recommendedClubs'],
     queryFn: () => services.clubs.getClubByInterest(),
     initialData: [],
@@ -23,8 +25,12 @@ export const useHome = () => {
     refetchOnWindowFocus: true,
   });
 
-  const navigateToSearch = () => {
-    router.push('/search');
+  const navigateToNotification = () => {
+    if (!!me) {
+      router.push('/notifications');
+    } else {
+      router.push('/(modals)/auth');
+    }
   };
 
   const navigateToMeetingDetail = (meetingId: string) => {
@@ -40,7 +46,7 @@ export const useHome = () => {
     isRecentClubsLoading,
     isLoading: isRecommendedClubsLoading || isRecentClubsLoading,
     insets,
-    navigateToSearch,
+    navigateToNotification,
     navigateToMeetingDetail,
     viewAllRecent,
     recommendedClubs,

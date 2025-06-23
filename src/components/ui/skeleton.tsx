@@ -96,3 +96,47 @@ export const MeetingCardSkeleton: React.FC<MeetingCardSkeletonProps> = ({ style 
     </View>
   );
 };
+
+interface NotificationCardSkeletonProps {
+  style?: ViewStyle;
+}
+
+export const NotificationCardSkeleton: React.FC<NotificationCardSkeletonProps> = ({ style }) => {
+  return (
+    <View
+      style={[
+        {
+          backgroundColor: '#fff',
+          borderRadius: 12,
+          padding: 16,
+          borderWidth: 1,
+          borderColor: '#f0f0f0',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.05,
+          shadowRadius: 2,
+          elevation: 1,
+        },
+        style,
+      ]}
+    >
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+        {/* 아이콘 */}
+        <Skeleton height={40} width={40} borderRadius={20} style={{ marginRight: 12 }} />
+
+        {/* 알림 내용 */}
+        <View style={{ flex: 1 }}>
+          {/* 제목 */}
+          <Skeleton height={16} width='80%' style={{ marginBottom: 4 }} />
+
+          {/* 내용 */}
+          <Skeleton height={14} width='100%' style={{ marginBottom: 2 }} />
+          <Skeleton height={14} width='60%' style={{ marginBottom: 8 }} />
+
+          {/* 시간 */}
+          <Skeleton height={12} width='40%' />
+        </View>
+      </View>
+    </View>
+  );
+};

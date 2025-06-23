@@ -16,7 +16,7 @@ const HomeScreen = () => {
     isRecentClubsLoading,
     isRecommendedClubsLoading,
     insets,
-    navigateToSearch,
+    navigateToNotification,
     navigateToMeetingDetail,
     viewAllRecent,
     recommendedClubs,
@@ -45,8 +45,8 @@ const HomeScreen = () => {
         >
           <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#4A90E2' }}>BeMo</Text>
 
-          <Pressable onPress={navigateToSearch} style={{ padding: 8 }}>
-            <Feather name='search' size={24} color='#333' />
+          <Pressable onPress={navigateToNotification} style={{ padding: 8 }}>
+            <Feather name='bell' size={24} color='#333' />
           </Pressable>
         </View>
       </View>

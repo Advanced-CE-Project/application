@@ -53,8 +53,6 @@ const ClubsScreen = () => {
     return <LoginRequiredScreen onLoginPress={navigateToLogin} />;
   }
 
-  console.log('clubs', clubs);
-
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
       {/* 고정 헤더 */}
