@@ -1,9 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import * as Location from 'expo-location';
 import React from 'react';
 import { Platform } from 'react-native';
 
 import useMe from '@/hooks/use-me';
+import services from '@/services';
 import { useLocationStore } from '@/stores/location';
 
 interface UseLocationProps {
@@ -11,7 +12,7 @@ interface UseLocationProps {
 }
 
 export const useLocation = ({ enabled }: UseLocationProps) => {
-  const { me } = useMe();
+  const { me, refetchMe } = useMe();
   const { location, error, setLocation, setError } = useLocationStore();
 
   const getLocation = async () => {
@@ -44,10 +45,20 @@ export const useLocation = ({ enabled }: UseLocationProps) => {
     refetchOnWindowFocus: true,
   });
 
-  React.useEffect(() => {
-    if (!me || !location || !!error) return;
+  const updateMyLocationMutation = useMutation({
+    mutationFn: services.users.updateLocation,
+    onSuccess: () => {
+      refetchMe();
+    },
+  });
 
-    console.log('location', location);
+  React.useEffect(() => {
+    if (!me || !location || !location.coords || !!error) return;
+
+    updateMyLocationMutation.mutate({
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    });
   }, [location, me, error]);
 
   return {
