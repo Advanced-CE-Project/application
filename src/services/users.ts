@@ -10,8 +10,9 @@ export interface UpdateUserRequest {
 }
 
 export interface ResetPasswordRequest {
-  email: string;
+  currentPassword: string;
   newPassword: string;
+  confirmNewPassword: string;
 }
 
 export interface ResetPasswordResponse {
