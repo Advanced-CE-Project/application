@@ -22,6 +22,18 @@ export default {
         backgroundColor: '#ffffff',
       },
       package: 'kr.ac.konkuk.bemo.app',
+      intentFilters: [
+        {
+          action: 'VIEW',
+          autoVerify: true,
+          data: [
+            {
+              scheme: 'bemo',
+            },
+          ],
+          category: ['BROWSABLE', 'DEFAULT'],
+        },
+      ],
     },
     web: {
       bundler: 'metro',
@@ -69,6 +81,7 @@ export default {
             authCodeHandlerActivity: true,
             followChannelHandlerActivity: true,
             forwardKakaoLinkIntentFilterToMainActivity: true,
+            enableLogging: IS_DEV,
           },
           ios: {
             handleKakaoOpenUrl: true,
@@ -85,6 +98,7 @@ export default {
       [
         'expo-maps',
         {
+          googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
           requestLocationPermission: true,
           locationPermission: '$(PRODUCT_NAME)이(가) 위치 정보를 사용하도록 허용하시겠습니까?',
         },

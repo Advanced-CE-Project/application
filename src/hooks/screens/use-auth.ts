@@ -89,16 +89,51 @@ export const useAuth = () => {
 
   const handleKakaoLogin = async () => {
     try {
+      console.log('Kakao login started...');
       const response = await kakaoLogin();
+      console.log('Kakao login response:', response);
 
       if (response.accessToken) {
+        console.log('Kakao access token received, sending to server...');
         kakaoLoginMutation.mutate(response.accessToken);
       } else {
+        console.error('No access token in Kakao response');
         Alert.alert('오류', '카카오 액세스 토큰을 받을 수 없습니다.');
       }
-    } catch (error) {
-      console.error(`error:`, error);
-      Alert.alert('오류', '카카오 로그인에 실패했습니다.');
+    } catch (error: any) {
+      console.error('Kakao login error details:', error);
+
+      // Kakao SDK 에러 코드에 따른 상세 처리
+      if (error.code) {
+        switch (error.code) {
+          case 'CANCELLED':
+            // 사용자가 취소한 경우는 별도 알림 없음
+            console.log('User cancelled Kakao login');
+            break;
+          case 'INVALID_REQUEST':
+            Alert.alert('오류', '잘못된 요청입니다. 앱을 다시 시작해주세요.');
+            break;
+          case 'INVALID_CLIENT':
+            Alert.alert('오류', '카카오 앱 설정에 문제가 있습니다.');
+            break;
+          case 'INVALID_SCOPE':
+            Alert.alert('오류', '권한 설정에 문제가 있습니다.');
+            break;
+          case 'SERVER_ERROR':
+            Alert.alert(
+              '오류',
+              '카카오 서버에 일시적인 문제가 있습니다. 잠시 후 다시 시도해주세요.',
+            );
+            break;
+          case 'NETWORK_ERROR':
+            Alert.alert('오류', '네트워크 연결을 확인해주세요.');
+            break;
+          default:
+            Alert.alert('오류', `카카오 로그인에 실패했습니다. (${error.code})`);
+        }
+      } else {
+        Alert.alert('오류', '카카오 로그인에 실패했습니다.');
+      }
     }
   };
 

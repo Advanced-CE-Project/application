@@ -37,7 +37,8 @@
     "submit": "eas submit",
     "submit:android": "eas submit --platform android",
     "submit:ios": "eas submit --platform ios",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "check-maps-key": "node scripts/check-google-maps-key.js"
   },
   "dependencies": {
     "@expo/cli": "^0.24.15",

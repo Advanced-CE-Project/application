@@ -107,43 +107,56 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
         ]
       : [];
 
-    if (Platform.OS === 'ios') {
-      return (
-        <View style={{ flex: 1 }}>
-          <AppleMaps.View
+    try {
+      if (Platform.OS === 'ios') {
+        return (
+          <View style={{ flex: 1 }}>
+            <AppleMaps.View
+              style={styles.map}
+              cameraPosition={cameraPosition}
+              markers={markers}
+              uiSettings={{
+                compassEnabled: false,
+              }}
+            />
+            {/* 터치 비활성화를 위한 투명한 오버레이 */}
+            <View style={StyleSheet.absoluteFill} pointerEvents='auto' />
+          </View>
+        );
+      } else if (Platform.OS === 'android') {
+        return (
+          <GoogleMaps.View
             style={styles.map}
             cameraPosition={cameraPosition}
             markers={markers}
             uiSettings={{
+              myLocationButtonEnabled: false,
+              zoomControlsEnabled: false,
+              mapToolbarEnabled: false,
               compassEnabled: false,
+              scrollGesturesEnabled: false,
+              zoomGesturesEnabled: false,
             }}
           />
-          {/* 터치 비활성화를 위한 투명한 오버레이 */}
-          <View style={StyleSheet.absoluteFill} pointerEvents='auto' />
-        </View>
-      );
-    } else if (Platform.OS === 'android') {
-      return (
-        <GoogleMaps.View
-          style={styles.map}
-          cameraPosition={cameraPosition}
-          markers={markers}
-          uiSettings={{
-            myLocationButtonEnabled: false,
-            zoomControlsEnabled: false,
-            mapToolbarEnabled: false,
-            compassEnabled: false,
-            scrollGesturesEnabled: false,
-            zoomGesturesEnabled: false,
-          }}
-        />
-      );
-    } else {
+        );
+      } else {
+        return (
+          <View style={styles.mapPlaceholder}>
+            <Feather name='map' size={32} color='#999' />
+            <Text style={styles.mapPlaceholderText}>
+              {displayLocation || '지도는 iOS와 Android에서만 지원됩니다'}
+            </Text>
+          </View>
+        );
+      }
+    } catch (error) {
+      console.error('Map rendering error:', error);
       return (
         <View style={styles.mapPlaceholder}>
           <Feather name='map' size={32} color='#999' />
           <Text style={styles.mapPlaceholderText}>
-            {displayLocation || '지도는 iOS와 Android에서만 지원됩니다'}
+            지도를 로드할 수 없습니다.{'\n'}
+            {displayLocation || 'Google Maps API 키를 확인해주세요.'}
           </Text>
         </View>
       );

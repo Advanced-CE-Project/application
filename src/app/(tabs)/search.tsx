@@ -45,37 +45,49 @@ const SearchScreen = () => {
         ]
       : [];
 
-    if (Platform.OS === 'ios') {
-      return (
-        <AppleMaps.View
-          style={styles.map}
-          cameraPosition={cameraPosition}
-          onMapClick={handleMapClick}
-          markers={markers}
-          uiSettings={{
-            compassEnabled: false,
-          }}
-        />
-      );
-    } else if (Platform.OS === 'android') {
-      return (
-        <GoogleMaps.View
-          style={styles.map}
-          cameraPosition={cameraPosition}
-          onMapClick={handleMapClick}
-          markers={markers}
-          uiSettings={{
-            myLocationButtonEnabled: false,
-            zoomControlsEnabled: false,
-            mapToolbarEnabled: false,
-            compassEnabled: false,
-          }}
-        />
-      );
-    } else {
+    try {
+      if (Platform.OS === 'ios') {
+        return (
+          <AppleMaps.View
+            style={styles.map}
+            cameraPosition={cameraPosition}
+            onMapClick={handleMapClick}
+            markers={markers}
+            uiSettings={{
+              compassEnabled: false,
+            }}
+          />
+        );
+      } else if (Platform.OS === 'android') {
+        return (
+          <GoogleMaps.View
+            style={styles.map}
+            cameraPosition={cameraPosition}
+            onMapClick={handleMapClick}
+            markers={markers}
+            uiSettings={{
+              myLocationButtonEnabled: false,
+              zoomControlsEnabled: false,
+              mapToolbarEnabled: false,
+              compassEnabled: false,
+            }}
+          />
+        );
+      } else {
+        return (
+          <View style={styles.mapPlaceholder}>
+            <Text style={styles.mapPlaceholderText}>지도는 iOS와 Android에서만 지원됩니다</Text>
+          </View>
+        );
+      }
+    } catch (error) {
+      console.error('Map rendering error:', error);
       return (
         <View style={styles.mapPlaceholder}>
-          <Text style={styles.mapPlaceholderText}>지도는 iOS와 Android에서만 지원됩니다</Text>
+          <Feather name='map' size={32} color='#999' />
+          <Text style={styles.mapPlaceholderText}>
+            지도를 로드할 수 없습니다.{'\n'}Google Maps API 키를 확인해주세요.
+          </Text>
         </View>
       );
     }
