@@ -49,20 +49,17 @@ const html = `
             window.scrollTo(0, 0);
           },
           oncomplete: function(data) {
-            console.log('Postcode completed:', data);
             window.ReactNativeWebView.postMessage(JSON.stringify(data));
           },
           onresize: function(size) {
             document.getElementById('layer').style.height = size.height + 'px';
           },
           onclose: function() {
-            console.log('Postcode closed');
             window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'close' }));
           },
           width : '100%',
           height: '100%',
         }).embed(element_layer);
-        console.log('Postcode embedded successfully');
       } catch (error) {
         console.error('Postcode embed error:', error);
         window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'error', message: error.toString() }));

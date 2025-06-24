@@ -34,6 +34,8 @@ const ProfileScreen = () => {
     selectedTags,
     toggleTag,
     addNewTag,
+    saveProfile,
+    isSaving,
     navigateToSettings,
     navigateToLogin,
   } = useProfile();
@@ -41,10 +43,6 @@ const ProfileScreen = () => {
   if (!isLoggedIn) {
     return <LoginRequiredScreen onLoginPress={navigateToLogin} />;
   }
-
-  const onSave = () => {
-    Alert.alert('저장 완료', '프로필이 성공적으로 저장되었습니다.');
-  };
 
   const onChangeProfileImage = () => {
     Alert.alert('프로필 사진 변경', '프로필 사진을 변경하시겠습니까?', [
@@ -158,7 +156,7 @@ const ProfileScreen = () => {
                 color: '#333',
               }}
             >
-              {user.name}
+              {user?.nickname || user?.email || '사용자'}
             </Text>
           </View>
 
@@ -203,17 +201,14 @@ const ProfileScreen = () => {
               style={{
                 flexDirection: 'row',
                 flexWrap: 'wrap',
-                marginBottom: 8,
               }}
             >
-              {AVAILABLE_TAGS.map((tag) => (
-                <Tag
-                  key={tag}
-                  title={tag}
-                  selected={selectedTags.includes(tag)}
-                  onPress={() => toggleTag(tag)}
-                />
-              ))}
+              {/* 선택된 커스텀 태그들 */}
+              {selectedTags
+                .filter((tag) => !AVAILABLE_TAGS.includes(tag))
+                .map((tag) => (
+                  <Tag key={tag} title={tag} selected onPress={() => toggleTag(tag)} />
+                ))}
 
               {/* 추가 버튼 */}
               <Tag
@@ -227,23 +222,6 @@ const ProfileScreen = () => {
                 }}
               />
             </View>
-
-            {/* 선택된 커스텀 태그들 표시 */}
-            {selectedTags.filter((tag) => !AVAILABLE_TAGS.includes(tag)).length > 0 && (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  marginTop: 8,
-                }}
-              >
-                {selectedTags
-                  .filter((tag) => !AVAILABLE_TAGS.includes(tag))
-                  .map((tag) => (
-                    <Tag key={tag} title={tag} selected onPress={() => toggleTag(tag)} />
-                  ))}
-              </View>
-            )}
           </View>
 
           <Spacer height={100} />
@@ -268,7 +246,12 @@ const ProfileScreen = () => {
           borderRadius: 25,
         }}
       >
-        <Button title='저장' onPress={onSave} accessibilityLabel='save-profile-button' />
+        <Button
+          title={isSaving ? '저장 중...' : '저장'}
+          onPress={saveProfile}
+          disabled={isSaving}
+          accessibilityLabel='save-profile-button'
+        />
       </View>
     </View>
   );

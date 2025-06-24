@@ -96,14 +96,18 @@ const FileCard = ({ file }: { file: any }) => {
   );
 };
 
-const SharedResourcesScreen = () => {
+interface SharedResourcesScreenProps {
+  isOwner?: boolean;
+}
+
+const SharedResourcesScreen: React.FC<SharedResourcesScreenProps> = ({ isOwner = false }) => {
   const insets = useSafeAreaInsets();
   const [modalVisible, setModalVisible] = useState(false);
   const [photoViewPage, setPhotoViewPage] = useState<number | null>(null);
 
   const screenWidth = Dimensions.get('window').width;
-  const availableWidth = screenWidth - 40;
-  const PHOTO_BOX_SIZE = (availableWidth - 16) / 3;
+  // 사진 컨테이너 패딩 32 (16*2) + gap 16 (8*2) = 총 48
+  const PHOTO_BOX_SIZE = (screenWidth - 96) / 3;
 
   // 사진 더미 데이터
   const photoDummyArray = Array.from({ length: 9 });
@@ -233,29 +237,31 @@ const SharedResourcesScreen = () => {
         }}
       >
         {/* 헤더 영역 */}
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'flex-end',
-            paddingVertical: 16,
-          }}
-        >
-          <Pressable
-            onPress={() => setModalVisible(true)}
+        {isOwner && (
+          <View
             style={{
-              backgroundColor: '#f0f4fa',
-              borderRadius: 20,
-              padding: 10,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.1,
-              shadowRadius: 4,
-              elevation: 3,
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+              paddingVertical: 16,
             }}
           >
-            <Feather name='upload' size={20} color='#4A90E2' />
-          </Pressable>
-        </View>
+            <Pressable
+              onPress={() => setModalVisible(true)}
+              style={{
+                backgroundColor: '#f0f4fa',
+                borderRadius: 20,
+                padding: 10,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 3,
+              }}
+            >
+              <Feather name='upload' size={20} color='#4A90E2' />
+            </Pressable>
+          </View>
+        )}
 
         {/* 사진 섹션 */}
         <View style={{ marginBottom: 32 }}>
@@ -268,7 +274,7 @@ const SharedResourcesScreen = () => {
             }}
           >
             <Text style={{ fontSize: 18, fontWeight: '700', color: '#1a1a1a' }}>사진</Text>
-            {photoDummyArray.length > 6 && (
+            {photoDummyArray.length > 5 && (
               <Pressable
                 onPress={() => setPhotoViewPage(0)}
                 style={{
@@ -322,18 +328,20 @@ const SharedResourcesScreen = () => {
               }}
             >
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-                {photoDummyArray.slice(0, 6).map((_, idx) => (
-                  <View
-                    key={idx}
-                    style={{
-                      width: PHOTO_BOX_SIZE,
-                      height: PHOTO_BOX_SIZE,
-                      borderRadius: 12,
-                      backgroundColor: '#e0e0e0',
-                    }}
-                  />
-                ))}
-                {photoDummyArray.length > 6 && (
+                {photoDummyArray
+                  .slice(0, photoDummyArray.length > 5 ? 5 : photoDummyArray.length)
+                  .map((_, idx) => (
+                    <View
+                      key={idx}
+                      style={{
+                        width: PHOTO_BOX_SIZE,
+                        height: PHOTO_BOX_SIZE,
+                        borderRadius: 12,
+                        backgroundColor: '#e0e0e0',
+                      }}
+                    />
+                  ))}
+                {photoDummyArray.length > 5 && (
                   <Pressable
                     onPress={() => setPhotoViewPage(0)}
                     style={{
@@ -395,25 +403,19 @@ const SharedResourcesScreen = () => {
       </ScrollView>
 
       {/* 자료 업로드 모달 */}
-      <Modal visible={modalVisible} transparent animationType='slide'>
-        <Pressable
-          style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)' }}
-          onPress={() => setModalVisible(false)}
-        >
-          <Pressable
+      <Modal visible={modalVisible} transparent animationType='fade'>
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' }}>
+          <Pressable style={{ flex: 1 }} onPress={() => setModalVisible(false)} />
+          <View
             style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              bottom: 0,
               backgroundColor: '#fff',
               borderTopLeftRadius: 20,
               borderTopRightRadius: 20,
               paddingHorizontal: 24,
               paddingTop: 32,
               paddingBottom: insets.bottom + 24,
+              maxHeight: '80%',
             }}
-            onPress={() => {}}
           >
             <View
               style={{
@@ -521,8 +523,8 @@ const SharedResourcesScreen = () => {
             >
               <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>업로드하기</Text>
             </Pressable>
-          </Pressable>
-        </Pressable>
+          </View>
+        </View>
       </Modal>
     </View>
   );

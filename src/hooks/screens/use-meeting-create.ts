@@ -48,8 +48,6 @@ export const useMeetingCreate = () => {
     showTagInput: false,
   });
 
-  console.log(`formData:`, formData);
-
   const createClubMutation = useMutation({
     mutationFn: createClub,
     onSuccess: (data) => {
@@ -162,8 +160,6 @@ export const useMeetingCreate = () => {
     jibunAddress: string;
     zonecode: string;
   }) => {
-    console.log('handleAddressSelect called with:', addressData);
-
     setFormData({
       ...formData,
       address: addressData.roadAddress || addressData.jibunAddress,
@@ -172,8 +168,6 @@ export const useMeetingCreate = () => {
       zonecode: addressData.zonecode,
       showAddressSearch: false,
     });
-
-    console.log('Address form data updated');
   };
 
   // 태그 관련 함수들

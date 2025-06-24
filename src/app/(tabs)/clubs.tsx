@@ -9,6 +9,7 @@ import { MeetingCard } from '@/components/ui/meeting-card';
 import { MeetingCardSkeleton } from '@/components/ui/skeleton';
 import { Spacer } from '@/components/ui/spacer';
 import { useClubs } from '@/hooks/screens/use-clubs';
+import { useRefetchOnFocus } from '@/hooks/use-refetch-on-focus';
 import { formatShortKoreanDateTime } from '@/lib/dayjs';
 import services from '@/services';
 import type { ClubItem } from '@/types/models/club';
@@ -19,20 +20,26 @@ const ClubsScreen = () => {
 
   const { me, navigateToCreateMeeting, navigateToMeetingDetail, navigateToLogin } = useClubs();
 
+  useRefetchOnFocus();
+
   // 내가 만든 모임
   const { data: myClubs, isFetching: isMyClubsLoading } = useQuery<ClubItem[]>({
-    queryKey: ['myClubs'],
+    queryKey: ['myClubs', selectedTab],
     queryFn: services.clubs.getMyClubs,
-    enabled: !!me,
+    enabled: !!me && selectedTab === 'created',
     initialData: [],
+    refetchOnWindowFocus: true,
+    staleTime: 0, // 항상 최신 데이터 가져오기
   });
 
   // 내가 참가한 모임
   const { data: participatedClubs, isFetching: isParticipatedLoading } = useQuery<ClubItem[]>({
-    queryKey: ['myParticipatedClubs'],
+    queryKey: ['myParticipatedClubs', selectedTab],
     queryFn: services.clubs.getMyParticipatedClubs,
-    enabled: !!me,
+    enabled: !!me && selectedTab === 'participated',
     initialData: [],
+    refetchOnWindowFocus: true,
+    staleTime: 0, // 항상 최신 데이터 가져오기
   });
 
   if (!me) {
@@ -57,14 +64,14 @@ const ClubsScreen = () => {
         flex: 1,
         paddingVertical: 12,
         alignItems: 'center',
-        borderBottomWidth: 2,
-        borderBottomColor: isSelected ? '#4A90E2' : 'transparent',
+        backgroundColor: isSelected ? '#E3F2FD' : 'transparent',
+        borderRadius: 8,
       }}
     >
       <Text
         style={{
           fontSize: 16,
-          fontWeight: isSelected ? '600' : '400',
+          fontWeight: isSelected ? '700' : '400',
           color: isSelected ? '#4A90E2' : '#666',
         }}
       >

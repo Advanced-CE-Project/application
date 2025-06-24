@@ -2,11 +2,28 @@ import config from '@/config';
 
 import apiClient from './apiClient';
 
+// User 타입 정의
+export interface User {
+  id: string;
+  email: string;
+  nickname: string | null;
+  profileImage: string | null;
+  bio: string | null;
+  role: string;
+  createdAt: string;
+  interests?: {
+    id: string;
+    name: string;
+    createdAt: string;
+  }[];
+}
+
 // 사용자 관련 타입 정의
 export interface UpdateUserRequest {
   nickname?: string;
   profileImage?: string;
   bio?: string;
+  interests?: string[];
 }
 
 export interface ResetPasswordRequest {
@@ -33,7 +50,7 @@ export interface UpdateUserSettingsRequest {
 }
 
 // 사용자 API 함수들
-export const getMe = async () => {
+export const getMe = async (): Promise<User> => {
   const response = await apiClient.get('/users/me');
   return response.data;
 };

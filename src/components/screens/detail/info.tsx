@@ -196,13 +196,7 @@ const InfoTab: React.FC<InfoTabProps> = ({ meeting }) => {
         )}
 
         {/* 현재 위치 버튼 */}
-        <Pressable
-          onPress={() => {
-            // 현재 위치로 이동하는 로직
-            console.log('현재 위치로 이동');
-          }}
-          style={styles.currentLocationButton}
-        >
+        <Pressable onPress={() => {}} style={styles.currentLocationButton}>
           <Feather name='crosshair' size={18} color='#4A90E2' />
         </Pressable>
       </View>

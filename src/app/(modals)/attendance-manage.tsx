@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
-import { ActivityIndicator, Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import services from '@/services';
@@ -21,6 +21,7 @@ const AttendanceManageScreen = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const queryClient = useQueryClient();
 
   // 모임 정보 및 출석 현황 조회
   const { data: clubData, isLoading: clubLoading } = useQuery({
@@ -45,6 +46,32 @@ const AttendanceManageScreen = () => {
     refetchOnWindowFocus: true, // 화면 포커스 시 자동 갱신
     refetchInterval: 1000 * 5, // 5초마다 갱신
   });
+
+  // 수동 출석 변경 mutation
+  const updateAttendanceMutation = useMutation({
+    mutationFn: ({ userId, status }: { userId: string; status: 'PRESENT' | 'ABSENT' }) =>
+      services.attendance.updateAttendance(id!, userId, { status }),
+    onSuccess: () => {
+      // 출석 현황 다시 조회
+      queryClient.invalidateQueries({ queryKey: ['attendance', id] });
+    },
+    onError: (error: any) => {
+      Alert.alert('오류', error?.message || '출석 상태 변경에 실패했습니다.');
+    },
+  });
+
+  const handleToggleAttendance = (userId: string, currentStatus: string) => {
+    const newStatus = currentStatus === 'PRESENT' ? 'ABSENT' : 'PRESENT';
+    const statusText = newStatus === 'PRESENT' ? '출석' : '비출석';
+
+    Alert.alert('출석 상태 변경', `정말로 ${statusText}으로 변경하시겠습니까?`, [
+      { text: '취소', style: 'cancel' },
+      {
+        text: '확인',
+        onPress: () => updateAttendanceMutation.mutate({ userId, status: newStatus }),
+      },
+    ]);
+  };
 
   if (clubLoading || qrLoading || attendanceLoading) {
     return (
@@ -170,7 +197,14 @@ const AttendanceManageScreen = () => {
                     marginRight: 12,
                   }}
                 >
-                  <Ionicons name='person' size={20} color='#6c757d' />
+                  {attendance.user.profileImage ? (
+                    <Image
+                      source={{ uri: attendance.user.profileImage }}
+                      style={{ width: 40, height: 40, borderRadius: 20 }}
+                    />
+                  ) : (
+                    <Ionicons name='person' size={20} color='#6c757d' />
+                  )}
                 </View>
 
                 {/* 이름 */}
@@ -185,34 +219,60 @@ const AttendanceManageScreen = () => {
                   {attendance.user.nickname}
                 </Text>
 
-                {/* 출석 상태 */}
+                {/* 출석 상태 및 토글 버튼 */}
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <Text
                     style={{
                       fontSize: 14,
                       fontWeight: '500',
                       color: statusColor,
-                      marginRight: 6,
+                      marginRight: 12,
                     }}
                   >
                     {statusText}
                   </Text>
-                  <View
+
+                  {/* 토글 버튼 */}
+                  <Pressable
+                    onPress={() => handleToggleAttendance(attendance.user.id, attendance.status)}
+                    disabled={updateAttendanceMutation.isPending}
                     style={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: 12,
+                      width: 50,
+                      height: 28,
+                      borderRadius: 14,
                       backgroundColor: isPresent ? '#28a745' : '#e9ecef',
                       justifyContent: 'center',
-                      alignItems: 'center',
+                      paddingHorizontal: 2,
+                      opacity: updateAttendanceMutation.isPending ? 0.5 : 1,
                     }}
                   >
-                    <Ionicons
-                      name={isPresent ? 'checkmark' : 'close'}
-                      size={16}
-                      color={isPresent ? '#fff' : '#6c757d'}
-                    />
-                  </View>
+                    <View
+                      style={{
+                        width: 24,
+                        height: 24,
+                        borderRadius: 12,
+                        backgroundColor: '#fff',
+                        alignSelf: isPresent ? 'flex-end' : 'flex-start',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 1 },
+                        shadowOpacity: 0.2,
+                        shadowRadius: 2,
+                        elevation: 2,
+                      }}
+                    >
+                      {updateAttendanceMutation.isPending ? (
+                        <ActivityIndicator size='small' color='#666' />
+                      ) : (
+                        <Ionicons
+                          name={isPresent ? 'checkmark' : 'close'}
+                          size={14}
+                          color={isPresent ? '#28a745' : '#6c757d'}
+                        />
+                      )}
+                    </View>
+                  </Pressable>
                 </View>
               </View>
             );

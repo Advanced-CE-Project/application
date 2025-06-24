@@ -22,20 +22,23 @@ const QRScanModal: React.FC = () => {
   const queryClient = useQueryClient();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [permission, requestPermission] = useCameraPermissions();
-  const [isScanning, setIsScanning] = useState(true);
-  const [isProcessed, setIsProcessed] = useState(false); // 중복 처리 방지
+  const [scanState, setScanState] = useState<
+    'scanning' | 'processing' | 'success' | 'error' | 'alert-shown'
+  >('scanning');
+  const [lastScannedData, setLastScannedData] = useState<string>(''); // 중복 스캔 방지
 
   const verifyQRMutation = useMutation({
     mutationFn: services.attendance.verifyQR,
     onSuccess: (data: { message: string }) => {
-      // 중복 처리 방지
-      if (isProcessed) return;
-      setIsProcessed(true);
+      // 이미 성공 상태이거나 Alert가 이미 표시되었다면 무시 (중복 처리 방지)
+      if (scanState === 'success' || scanState === 'alert-shown') return;
+
+      setScanState('alert-shown');
 
       // 출석 관련 쿼리들 무효화
       if (id) {
-        queryClient.invalidateQueries({ queryKey: ['meeting', id] }); // 특정 모임 디테일 페이지 무효화
-        queryClient.invalidateQueries({ queryKey: ['attendance', id] }); // 특정 모임 출석 현황 무효화
+        queryClient.invalidateQueries({ queryKey: ['meeting', id] });
+        queryClient.invalidateQueries({ queryKey: ['attendance', id] });
       }
       queryClient.invalidateQueries({ queryKey: ['club'] });
       queryClient.invalidateQueries({ queryKey: ['attendance'] });
@@ -51,13 +54,20 @@ const QRScanModal: React.FC = () => {
       ]);
     },
     onError: (error: any) => {
-      setIsProcessed(false); // 에러 시 재시도 가능하도록 리셋
+      // 이미 에러 상태이거나 Alert가 이미 표시되었다면 무시 (중복 처리 방지)
+      if (scanState === 'error' || scanState === 'alert-shown') return;
+
+      setScanState('alert-shown');
       const errorMessage =
         error.response?.data?.message || error.message || '출석 처리 중 오류가 발생했습니다.';
+
       Alert.alert('출석 실패', errorMessage, [
         {
           text: '다시 시도',
-          onPress: () => setIsScanning(true),
+          onPress: () => {
+            setScanState('scanning');
+            setLastScannedData(''); // 재시도 시 마지막 스캔 데이터 초기화
+          },
         },
         {
           text: '취소',
@@ -77,9 +87,13 @@ const QRScanModal: React.FC = () => {
   }, [permission, requestPermission]);
 
   const handleBarCodeScanned = ({ data }: { data: string }) => {
-    if (!isScanning || verifyQRMutation.isPending || isProcessed) return;
+    // 스캔 중이 아니거나, 이미 처리 중이거나, 같은 데이터를 이미 스캔했다면 무시
+    if (scanState !== 'scanning' || verifyQRMutation.isPending || data === lastScannedData) {
+      return;
+    }
 
-    setIsScanning(false);
+    setScanState('processing');
+    setLastScannedData(data);
     verifyQRMutation.mutate({ qrData: data });
   };
 
@@ -138,7 +152,7 @@ const QRScanModal: React.FC = () => {
         <CameraView
           style={styles.camera}
           facing='back'
-          onBarcodeScanned={isScanning ? handleBarCodeScanned : undefined}
+          onBarcodeScanned={scanState === 'scanning' ? handleBarCodeScanned : undefined}
           barcodeScannerSettings={{
             barcodeTypes: ['qr'],
           }}
@@ -171,11 +185,19 @@ const QRScanModal: React.FC = () => {
         )}
 
         <TouchableOpacity
-          onPress={() => setIsScanning(true)}
-          style={[styles.rescanButton, !isScanning && styles.rescanButtonActive]}
+          onPress={() => {
+            setScanState('scanning');
+            setLastScannedData('');
+          }}
+          style={[styles.rescanButton, scanState !== 'scanning' && styles.rescanButtonActive]}
           disabled={verifyQRMutation.isPending}
         >
-          <Text style={[styles.rescanButtonText, !isScanning && styles.rescanButtonTextActive]}>
+          <Text
+            style={[
+              styles.rescanButtonText,
+              scanState !== 'scanning' && styles.rescanButtonTextActive,
+            ]}
+          >
             다시 스캔하기
           </Text>
         </TouchableOpacity>

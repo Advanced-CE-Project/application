@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useRefetchOnFocus } from '@/hooks/use-refetch-on-focus';
 import services from '@/services';
 import { useLocationStore } from '@/stores/location';
 import type { ClubItem } from '@/types/models/club';
@@ -24,6 +25,8 @@ export const useSearch = () => {
   });
 
   const debouncedSearchText = useDebounce(searchText, 500);
+
+  useRefetchOnFocus();
 
   const tagsQuery = useQuery<Tag[]>({
     queryKey: ['tags'],
@@ -49,19 +52,11 @@ export const useSearch = () => {
 
   const handleSearch = (text: string) => {
     setSearchText(text);
-    // 실제 검색 로직 구현
-    console.log('Searching for:', text);
   };
 
-  const openLocationFilter = () => {
-    console.log('Open location filter');
-    // 위치 필터 모달 열기
-  };
+  const openLocationFilter = () => {};
 
-  const openTimeFilter = () => {
-    console.log('Open time filter');
-    // 시간 필터 모달 열기
-  };
+  const openTimeFilter = () => {};
 
   const navigateToMeetingDetail = (meetingId: string) => {
     router.push(`/meeting/detail?id=${meetingId}`);

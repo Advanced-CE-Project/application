@@ -5,6 +5,7 @@ import { Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import useMe from '@/hooks/use-me';
+import { useRefetchMeetingOnFocus } from '@/hooks/use-refetch-on-focus';
 import services from '@/services';
 import { type ClubDetail } from '@/types/models/club';
 
@@ -44,6 +45,9 @@ export const useMeetingDetail = () => {
 
   const [selectedTab, setSelectedTab] = React.useState<TabType>(TABS[0]);
 
+  // Navigation focus 시 모임 데이터 refetch
+  useRefetchMeetingOnFocus(id);
+
   // 모임 정보 조회
   const { data, isLoading, error } = useQuery<ClubDetailResponse>({
     queryKey: ['meeting', id],
@@ -53,8 +57,6 @@ export const useMeetingDetail = () => {
       memberStatus: null,
       attendanceStatus: null,
     },
-    refetchOnWindowFocus: true, // 화면 포커스 시 자동 갱신 (출석 상태 업데이트 반영)
-    refetchInterval: 1000 * 5, // 5초마다 갱신
   });
 
   // 평가 상태 조회
@@ -62,7 +64,6 @@ export const useMeetingDetail = () => {
     queryKey: ['evaluationStatus', id],
     queryFn: () => services.meetings.getUserEvaluationStatus(id!),
     enabled: !!id && !!data?.club?.isEnded, // 모임이 종료된 경우에만 조회
-    refetchInterval: 1000 * 5, // 5초마다 갱신
   });
 
   // 참가 신청 mutation
@@ -103,6 +104,12 @@ export const useMeetingDetail = () => {
               queryKey: ['clubs'], // 내 클럽 목록, 검색 결과 등 모든 클럽 관련 쿼리
             });
             queryClient.invalidateQueries({
+              queryKey: ['myClubs'], // 내가 만든 모임
+            });
+            queryClient.invalidateQueries({
+              queryKey: ['myParticipatedClubs'], // 내가 참가한 모임
+            });
+            queryClient.invalidateQueries({
               queryKey: ['recommendedClubs'], // 홈 - 추천 모임
             });
             queryClient.invalidateQueries({
@@ -135,10 +142,20 @@ export const useMeetingDetail = () => {
               queryKey: ['clubs'], // 내 클럽 목록, 검색 결과 등 모든 클럽 관련 쿼리
             });
             queryClient.invalidateQueries({
+              queryKey: ['myClubs'], // 내가 만든 모임
+            });
+            queryClient.invalidateQueries({
+              queryKey: ['myParticipatedClubs'], // 내가 참가한 모임
+            });
+            queryClient.invalidateQueries({
               queryKey: ['recommendedClubs'], // 홈 - 추천 모임
             });
             queryClient.invalidateQueries({
               queryKey: ['recentClubs'], // 홈 - 최근 모임
+            });
+            // 평가 상태도 무효화 (모임 종료 후 평가 가능하도록)
+            queryClient.invalidateQueries({
+              queryKey: ['evaluationStatus', id],
             });
           },
         },
@@ -252,14 +269,6 @@ export const useMeetingDetail = () => {
       ]);
     }
   }, [id, endClubMutation, meetingState.isOwner]);
-
-  // 디버그 로그
-  React.useEffect(() => {
-    console.log(
-      `Meeting Detail - Owner: ${meetingState.isOwner}, Member: ${data?.memberStatus}, Attendance: ${data?.attendanceStatus}`,
-      data,
-    );
-  }, [meetingState.isOwner, data?.memberStatus, data?.attendanceStatus, data]);
 
   return {
     // 기본 상태

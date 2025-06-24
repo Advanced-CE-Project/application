@@ -159,7 +159,11 @@ const MissionCard = ({ mission, onPress }: { mission: any; onPress?: () => void 
   );
 };
 
-const MissionTab = () => {
+interface MissionTabProps {
+  isOwner?: boolean;
+}
+
+const MissionTab: React.FC<MissionTabProps> = ({ isOwner = false }) => {
   const insets = useSafeAreaInsets();
   const [modalVisible, setModalVisible] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -194,23 +198,25 @@ const MissionTab = () => {
         }}
       >
         {/* 헤더 영역 */}
-        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', paddingVertical: 16 }}>
-          <Pressable
-            onPress={() => setModalVisible(true)}
-            style={{
-              backgroundColor: '#f0f4fa',
-              borderRadius: 20,
-              padding: 10,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.1,
-              shadowRadius: 4,
-              elevation: 3,
-            }}
-          >
-            <Feather name='plus' size={20} color='#4A90E2' />
-          </Pressable>
-        </View>
+        {isOwner && (
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-end', paddingVertical: 16 }}>
+            <Pressable
+              onPress={() => setModalVisible(true)}
+              style={{
+                backgroundColor: '#f0f4fa',
+                borderRadius: 20,
+                padding: 10,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 3,
+              }}
+            >
+              <Feather name='plus' size={20} color='#4A90E2' />
+            </Pressable>
+          </View>
+        )}
 
         {/* 진행 예정 */}
         {pendingMissions.length > 0 && (
@@ -331,21 +337,17 @@ const MissionTab = () => {
       </Modal>
 
       {/* 미션 추가 모달 */}
-      <Modal visible={modalVisible} transparent animationType='slide'>
-        <Pressable
-          style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)' }}
-          onPress={() => setModalVisible(false)}
-        >
-          <Pressable
-            onPress={() => {}}
+      <Modal visible={modalVisible} transparent animationType='fade'>
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' }}>
+          <Pressable style={{ flex: 1 }} onPress={() => setModalVisible(false)} />
+          <ScrollView
             style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              bottom: 0,
               backgroundColor: '#fff',
               borderTopLeftRadius: 20,
               borderTopRightRadius: 20,
+              maxHeight: '80%',
+            }}
+            contentContainerStyle={{
               paddingHorizontal: 24,
               paddingTop: 32,
               paddingBottom: insets.bottom + 24,
@@ -524,8 +526,8 @@ const MissionTab = () => {
             >
               <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>미션 생성하기</Text>
             </Pressable>
-          </Pressable>
-        </Pressable>
+          </ScrollView>
+        </View>
       </Modal>
     </View>
   );

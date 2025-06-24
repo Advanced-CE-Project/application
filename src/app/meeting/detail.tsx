@@ -116,9 +116,10 @@ const TabButton: React.FC<TabButtonProps> = ({ tab, isSelected, onPress }) => (
 interface TabContentProps {
   selectedTab: string;
   club: any;
+  isOwner: boolean;
 }
 
-const TabContent: React.FC<TabContentProps> = ({ selectedTab, club }) => {
+const TabContent: React.FC<TabContentProps> = ({ selectedTab, club, isOwner }) => {
   // 승인된 멤버만 필터링
   const approvedMembers = club.members?.filter((member: any) => member.status === 'APPROVED') || [];
 
@@ -140,9 +141,9 @@ const TabContent: React.FC<TabContentProps> = ({ selectedTab, club }) => {
         />
       );
     case '자료':
-      return <ResourcesTab />;
+      return <ResourcesTab isOwner={isOwner} />;
     case '미션':
-      return <MissionTab />;
+      return <MissionTab isOwner={isOwner} />;
     default:
       return null;
   }
@@ -233,16 +234,21 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         </View>
       );
     }
+
+    // 모임 종료된 경우 - 방장도 평가 가능
+    if (isEnded) {
+      if (isEvaluationCompleted) {
+        return <Button title='평가 완료됨' disabled icon='✅' />;
+      }
+      return <Button title='모임 평가하기' onPress={onEvaluation} icon='⭐' />;
+    }
+
     return <Button title='모임 종료됨' disabled />;
   }
 
   // 참가 승인된 사용자
   if (isApproved) {
     if (isEnded) {
-      if (!hasAttended) {
-        return <Button title='모임 종료됨' disabled />;
-      }
-
       if (isEvaluationCompleted) {
         return <Button title='평가 완료됨' disabled icon='✅' />;
       }
@@ -345,7 +351,7 @@ const MeetingDetailScreen: React.FC = () => {
         </View>
 
         {/* 탭 콘텐츠 */}
-        <TabContent selectedTab={selectedTab} club={club} />
+        <TabContent selectedTab={selectedTab} club={club} isOwner={isOwner} />
       </ScrollView>
 
       {/* 하단 고정 버튼 */}

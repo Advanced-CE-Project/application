@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import useMe from '@/hooks/use-me';
+import { useRefetchOnFocus } from '@/hooks/use-refetch-on-focus';
 import services from '@/services';
 import type { ClubItem } from '@/types/models/club';
 
@@ -11,18 +12,19 @@ export const useHome = () => {
   const router = useRouter();
   const { me } = useMe();
 
+  // Navigation focus 시 홈 화면 데이터 refetch
+  useRefetchOnFocus();
+
   const { data: recommendedClubs, isFetching: isRecommendedClubsLoading } = useQuery<ClubItem[]>({
     queryKey: ['recommendedClubs'],
     queryFn: () => services.clubs.getClubByInterest(),
     initialData: [],
-    refetchOnWindowFocus: true,
   });
 
   const { data: recentClubs, isFetching: isRecentClubsLoading } = useQuery<ClubItem[]>({
     queryKey: ['recentClubs'],
     queryFn: () => services.clubs.getClubRecentlyJoined(),
     initialData: [],
-    refetchOnWindowFocus: true,
   });
 
   const navigateToNotification = () => {

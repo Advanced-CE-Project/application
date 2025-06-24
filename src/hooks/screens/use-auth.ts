@@ -49,7 +49,6 @@ export const useAuth = () => {
   const kakaoLoginMutation = useMutation({
     mutationFn: (kakaoAccessToken: string) => services.auth.socialKakaoLogin({ kakaoAccessToken }),
     onSuccess: async (response) => {
-      console.log(`kakaoLoginMutation response:`, response);
       await setAccessToken(response.accessToken);
       await setRefreshToken(response.refreshToken);
       refetchMe().then(() => {
@@ -91,7 +90,6 @@ export const useAuth = () => {
   const handleKakaoLogin = async () => {
     try {
       const response = await kakaoLogin();
-      console.log(`kakaoLogin response:`, response);
 
       if (response.accessToken) {
         kakaoLoginMutation.mutate(response.accessToken);
@@ -99,7 +97,7 @@ export const useAuth = () => {
         Alert.alert('오류', '카카오 액세스 토큰을 받을 수 없습니다.');
       }
     } catch (error) {
-      console.log(`error:`, error);
+      console.error(`error:`, error);
       Alert.alert('오류', '카카오 로그인에 실패했습니다.');
     }
   };
